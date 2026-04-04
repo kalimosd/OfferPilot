@@ -4,9 +4,17 @@
 
 OfferPilot supports three main output types:
 
+- resume diagnosis
 - optimized resume
 - job-targeted resume
 - cover letter
+
+## Resume Diagnosis Expectations
+
+- identifies strengths that are already supported by the source
+- identifies gaps relative to either general job-readiness or a target job
+- calls out risks without inventing problems
+- suggests the highest-value rewrite priorities before generation
 
 ## Language Options
 

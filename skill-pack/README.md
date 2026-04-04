@@ -2,7 +2,7 @@
 
 This directory contains the portable, platform-agnostic version of OfferPilot.
 
-Use it when you want to optimize resumes, tailor resumes to job descriptions, or draft cover letters with an AI agent, without depending on the repository's legacy CLI.
+Use it when you want to diagnose resumes, optimize resumes, tailor resumes to job descriptions, or draft cover letters with an AI agent, without depending on the repository's legacy CLI.
 
 ## Start Order
 
@@ -36,3 +36,10 @@ Use it when you want to optimize resumes, tailor resumes to job descriptions, or
 - If the source is `.pdf` or `.docx` and the agent cannot reliably read it natively, run `python3 skill-pack/scripts/extract_text.py "path/to/file"` before drafting
 - Use the extracted text as the working source for prompting, review, and validation
 - `validate_inputs.py` and `validate_outputs.py` remain optional checks; `extract_text.py` is the required helper when native file reading is unavailable
+
+## Recommended Flow
+
+- Use diagnosis first when the user is unsure whether the resume should be rewritten or merely tightened
+- Use optimization when the user wants a stronger general-purpose resume
+- Use targeted rewriting when a specific job description is available
+- Use cover letter generation only after the resume and target role are clear

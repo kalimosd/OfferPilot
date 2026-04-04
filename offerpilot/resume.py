@@ -58,6 +58,58 @@ Target Job Description:
 """.strip()
 
 
+def build_resume_diagnosis_prompt(
+    resume_text: str,
+    target_language: str = "same",
+    job_text: str | None = None,
+) -> str:
+    language_instruction = _build_diagnosis_language_instruction(target_language)
+    job_instruction = _build_diagnosis_job_instruction(job_text)
+
+    return f"""
+You are an expert resume reviewer for job applications.
+
+Analyze the resume below and produce a structured diagnosis before any rewrite.
+
+Requirements:
+- Do not rewrite the resume
+- Do not invent facts, missing experience, or missing metrics
+- Identify strengths, weaknesses, risks, and missing signals
+- Focus on what matters for hiring outcomes
+- Be specific and practical rather than generic
+- If a job description is provided, evaluate fit against that job
+- If no job description is provided, evaluate general job-readiness
+- Preserve the candidate's legal name exactly if you mention it
+- Keep the output concise, readable, and decision-oriented
+
+Language:
+- {language_instruction}
+
+Job targeting:
+- {job_instruction}
+
+Output format:
+- Use Markdown
+- Include these sections in order:
+  1. `## Summary`
+  2. `## Strengths`
+  3. `## Gaps`
+  4. `## Risks`
+  5. `## Recommended Fixes`
+- Under `## Strengths`, list 3-5 bullets
+- Under `## Gaps`, list 3-5 bullets
+- Under `## Risks`, list only real concerns that are supported by the resume
+- Under `## Recommended Fixes`, list the highest-value improvements first
+- Return only the diagnosis with no extra commentary
+
+Resume:
+{resume_text}
+
+Target Job Description:
+{job_text.strip() if job_text else "Not provided."}
+""".strip()
+
+
 def _build_language_instruction(target_language: str) -> str:
     if target_language == "en":
         return (
@@ -102,3 +154,23 @@ def _build_job_instruction(job_text: str | None) -> str:
         )
 
     return "No specific job description is provided, so optimize for general job-readiness."
+
+
+def _build_diagnosis_language_instruction(target_language: str) -> str:
+    if target_language == "en":
+        return "Write the entire diagnosis in polished English."
+
+    if target_language == "zh":
+        return "Write the entire diagnosis in concise, professional Simplified Chinese."
+
+    return "Keep the diagnosis in the same language as the source content unless the source mixes languages."
+
+
+def _build_diagnosis_job_instruction(job_text: str | None) -> str:
+    if job_text and job_text.strip():
+        return (
+            "Assess fit against the provided job description. Call out matching signals, missing requirements, "
+            "keyword gaps, and places where the resume undersells relevant experience."
+        )
+
+    return "Assess the resume for general job-readiness, clarity, credibility, and interview potential."

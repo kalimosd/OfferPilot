@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import argparse
 import sys
 
@@ -5,7 +7,10 @@ from offerpilot.cover import build_cover_letter_prompt
 from offerpilot.export import render_markdown_to_pdf
 from offerpilot.io import load_text_from_file, save_text_to_file
 from offerpilot.llm import call_llm
-from offerpilot.resume import build_resume_optimization_prompt
+from offerpilot.resume import (
+    build_resume_diagnosis_prompt,
+    build_resume_optimization_prompt,
+)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -59,6 +64,41 @@ def build_parser() -> argparse.ArgumentParser:
         help="LLM provider to use. Default: deepseek.",
     )
     optimize_parser.add_argument(
+        "--model",
+        default=None,
+        help="Optional model override.",
+    )
+
+    diagnose_parser = subparsers.add_parser(
+        "diagnose",
+        help="Diagnose a resume and identify strengths, gaps, and risks.",
+    )
+    diagnose_parser.add_argument(
+        "resume_path",
+        help="Path to a .txt, .md, .pdf, or .docx resume.",
+    )
+    diagnose_parser.add_argument(
+        "--job",
+        default=None,
+        help="Optional path to a .txt, .md, .pdf, or .docx job description for fit diagnosis.",
+    )
+    diagnose_parser.add_argument(
+        "--output",
+        default=None,
+        help="Optional path to save the diagnosis report.",
+    )
+    diagnose_parser.add_argument(
+        "--lang",
+        choices=["same", "zh", "en"],
+        default="same",
+        help="Output language for the diagnosis. Default: same.",
+    )
+    diagnose_parser.add_argument(
+        "--provider",
+        default="deepseek",
+        help="LLM provider to use. Default: deepseek.",
+    )
+    diagnose_parser.add_argument(
         "--model",
         default=None,
         help="Optional model override.",
@@ -129,9 +169,9 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     if args.command == "hello":
         print("OfferPilot running")
@@ -189,6 +229,45 @@ def main() -> int:
             return 0
 
         print(optimized_resume)
+        return 0
+
+    if args.command == "diagnose":
+        try:
+            resume_text = _load_required_text(args.resume_path, "resume file")
+            job_text = (
+                _load_required_text(args.job, "job description file")
+                if args.job
+                else None
+            )
+        except (FileNotFoundError, ValueError) as exc:
+            print(f"Error: {exc}", file=sys.stderr)
+            return 1
+
+        prompt = build_resume_diagnosis_prompt(
+            resume_text,
+            target_language=args.lang,
+            job_text=job_text,
+        )
+
+        try:
+            diagnosis = call_llm(
+                prompt,
+                provider=args.provider,
+                model=args.model,
+            )
+        except ValueError as exc:
+            print(f"Error: {exc}", file=sys.stderr)
+            return 1
+        except Exception as exc:
+            print(f"LLM request failed: {exc}", file=sys.stderr)
+            return 1
+
+        if args.output:
+            saved_path = save_text_to_file(args.output, diagnosis + "\n")
+            print(f"Resume diagnosis saved to {saved_path}")
+            return 0
+
+        print(diagnosis)
         return 0
 
     if args.command == "ask":

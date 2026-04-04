@@ -1,6 +1,9 @@
 import unittest
 
-from offerpilot.resume import build_resume_optimization_prompt
+from offerpilot.resume import (
+    build_resume_diagnosis_prompt,
+    build_resume_optimization_prompt,
+)
 
 
 class ResumePromptTests(unittest.TestCase):
@@ -45,6 +48,30 @@ class ResumePromptTests(unittest.TestCase):
 
         self.assertIn("Tailor the resume toward the provided job description", prompt)
         self.assertIn("Target Job Description:", prompt)
+
+    def test_diagnosis_prompt_requests_structured_sections(self) -> None:
+        prompt = build_resume_diagnosis_prompt("sample", target_language="zh")
+
+        self.assertIn("Analyze the resume below and produce a structured diagnosis", prompt)
+        self.assertIn("## Summary", prompt)
+        self.assertIn("## Strengths", prompt)
+        self.assertIn("## Gaps", prompt)
+        self.assertIn("## Risks", prompt)
+        self.assertIn("## Recommended Fixes", prompt)
+
+    def test_diagnosis_prompt_mentions_job_fit_when_job_provided(self) -> None:
+        prompt = build_resume_diagnosis_prompt(
+            "sample",
+            job_text="Need AI solution design and cross-functional delivery experience.",
+        )
+
+        self.assertIn("Assess fit against the provided job description", prompt)
+        self.assertIn("Target Job Description:", prompt)
+
+    def test_diagnosis_prompt_mentions_chinese_output_when_requested(self) -> None:
+        prompt = build_resume_diagnosis_prompt("sample", target_language="zh")
+
+        self.assertIn("concise, professional Simplified Chinese", prompt)
 
 
 if __name__ == "__main__":
