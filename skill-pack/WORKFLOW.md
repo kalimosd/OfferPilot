@@ -38,6 +38,7 @@ Input handling rules:
 - If the original file is private, avoid adding it to version control
 - If the source content is sparse, improve clarity but do not invent facts
 - If the source resume includes real contact details, keep them in the final deliverable unless the user explicitly asks for anonymization or redaction
+- If the source resume does not include a contact detail, do not guess it, infer it, or add a placeholder as if it were real
 
 ## 4. Generate the Draft
 
@@ -108,6 +109,7 @@ Preferred order:
 - [ ] job description included for `jd-fit diagnosis`
 - [ ] no fake achievements or fake metrics introduced
 - [ ] source contact details are preserved in the final deliverable unless anonymization was requested
+- [ ] missing contact details were not guessed, fabricated, or filled in without source support
 - [ ] no placeholder fields like `<name>` or `<email>` remain unless the user explicitly asked for them
 - [ ] private files kept out of git unless explicitly requested
 - [ ] English name ordering checked when relevant

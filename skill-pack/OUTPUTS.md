@@ -41,6 +41,7 @@ OfferPilot supports three main output types:
 - compact, interview-ready tone
 - preserves real source contact details in the final deliverable unless the user explicitly requested anonymization
 - does not leave placeholder fields such as `<name>`, `<phone number>`, or `<email>` in application-ready outputs
+- does not add guessed or fabricated contact details that are missing from the source
 
 ## Targeted Resume Expectations
 
@@ -72,6 +73,7 @@ Example:
 - [ ] name is correct
 - [ ] phone number is correct when present in the source
 - [ ] email address is correct when present in the source
+- [ ] missing contact details were left absent unless the user explicitly provided them later
 - [ ] dates are correct
 - [ ] titles and employer names are correct
 - [ ] content matches the intended task
