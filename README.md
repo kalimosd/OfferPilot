@@ -169,6 +169,7 @@ OfferPilot 主要面向仓库本地运行的 AI agent，包括：
 - OfferPilot 不再提供产品级 CLI
 - 与 skill 无关的旧 Python 产品层已移除，辅助脚本统一放在 `skill-pack/scripts/`
 - `skill-pack/data/` 用来放这类可复用的小型支持数据，例如中英技能别名表
+- `skill-pack/examples/` 默认使用匿名示例名和匿名示例文件名，不写真实姓名
 
 ## 示例文件
 

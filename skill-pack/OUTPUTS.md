@@ -43,6 +43,25 @@ OfferPilot supports three main output types:
 - does not leave placeholder fields such as `<name>`, `<phone number>`, or `<email>` in application-ready outputs
 - does not add guessed or fabricated contact details that are missing from the source
 
+## Recommended File Naming
+
+Use scheme `B` by default for locally saved resume deliverables:
+
+- if only a target role is known: `姓名_岗位_v1`
+- if both company and role are known: `姓名_公司_岗位_v1`
+- keep the version suffix even for the first saved draft
+- use `_` as the separator
+- avoid spaces in filenames
+- keep Markdown and PDF filenames aligned except for the file extension
+
+Examples:
+
+- `候选人A_安卓开发工程师_v1.md`
+- `候选人A_小米_安卓开发工程师_v1.md`
+- `候选人A_小米_安卓开发工程师_v2.pdf`
+
+If the user explicitly requests anonymized sample files, replace `姓名` with an obvious example name rather than a real person.
+
 ## Targeted Resume Expectations
 
 - emphasizes experience relevant to the target role
@@ -81,4 +100,5 @@ Example:
 - [ ] fit conclusions are supported by resume and JD evidence
 - [ ] rewrite suggestions are concrete and truthful
 - [ ] no placeholder contact fields remain unless anonymization was explicitly requested
+- [ ] saved filenames follow the default naming rule unless the user asked for a different scheme
 - [ ] nothing confidential is accidentally included in publishable artifacts

@@ -22,7 +22,7 @@ Use it when you want to diagnose resumes, analyze JD fit, optimize resumes, tail
 - `OUTPUTS.md`: expected output shapes and quality checks
 - `PROMPTS.md`: reusable prompt patterns and constraints
 - `data/`: reusable supporting data such as China-first skill alias mappings
-- `examples/`: example usage for different job-application tasks
+- `examples/`: example usage for different job-application tasks; keep example names and filenames anonymized by default
 - `scripts/`: text extraction, PDF rendering, and optional validation helpers
 - `adapters/`: thin platform-specific wrappers
 
