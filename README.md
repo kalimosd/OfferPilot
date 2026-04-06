@@ -6,24 +6,20 @@ Built fast as a practical AI product experiment, OfferPilot tackles a real probl
 
 ## Quick Example
 
-Extract a resume from PDF:
+Use OfferPilot as a repository-local skill pack:
 
-```bash
-python3 skill-pack/scripts/extract_text.py "resume.pdf" --output "resume.txt"
-```
+1. Prepare `resume.md` or `resume.pdf`
+2. Prepare `job.md` for the target role
+3. Open `skill-pack/README.md`
+4. Run the workflow through Cursor, a Codex-style agent, or Claude Code
+5. Generate a stronger resume, tailored rewrite, JD-fit analysis, or cover letter
 
-Export a reviewed draft to PDF:
+Typical flow:
 
-```bash
-python3 skill-pack/scripts/render_pdf.py "resume.md" "resume.pdf" --document-type resume --style classic
-```
-
-Typical usage is simple:
-
-1. Put your resume and target job description into local files.
-2. Run the OfferPilot skill pack through a repository agent such as Cursor, Codex-style agents, or Claude Code.
-3. Generate a stronger resume, a tailored version, or a cover letter.
-4. Review the Markdown output and export it when ready.
+1. Start with a base resume and an optional job description.
+2. Let the agent follow the `skill-pack` workflow and prompt rules.
+3. Review the generated Markdown output.
+4. Export it when the content is ready.
 
 ## Example Output
 
@@ -70,6 +66,52 @@ Their resumes are often too generic, their cover letters feel interchangeable, a
 
 - **main**: The `skill-pack/` directory, which contains the core workflow for resume optimization, targeted rewriting, JD-fit analysis, cover letters, examples, adapters, and scripts.
 - **profile-datastore**: The structured experience store in `profile_store.yaml`, used to generate more targeted and higher-quality outputs from a richer source of truth.
+
+```text
+.
+├── README.md
+├── profile_store.yaml
+├── skill-pack/
+│   ├── README.md
+│   ├── WORKFLOW.md
+│   ├── DATASTORE.md
+│   ├── JD_MATCHING.md
+│   ├── INPUTS.md
+│   ├── OUTPUTS.md
+│   ├── PROMPTS.md
+│   ├── adapters/
+│   │   ├── claude-code/
+│   │   ├── codex/
+│   │   └── cursor/
+│   ├── examples/
+│   │   ├── resume-optimization.md
+│   │   ├── targeted-resume.md
+│   │   ├── cover-letter.md
+│   │   └── profile_store_example.yaml
+│   ├── data/
+│   │   └── skill_aliases.zh-en.json
+│   └── scripts/
+│       ├── extract_text.py
+│       ├── render_pdf.py
+│       ├── validate_inputs.py
+│       └── validate_outputs.py
+└── tests/
+    └── test_export.py
+```
+
+## Advanced Usage
+
+Extract text from PDF or DOCX when the agent cannot read the source reliably:
+
+```bash
+python3 skill-pack/scripts/extract_text.py "resume.pdf" --output "resume.txt"
+```
+
+Export a reviewed draft to PDF:
+
+```bash
+python3 skill-pack/scripts/render_pdf.py "resume.md" "resume.pdf" --document-type resume --style classic
+```
 
 ## Roadmap
 
