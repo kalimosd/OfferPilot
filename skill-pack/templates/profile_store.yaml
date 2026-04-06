@@ -1,56 +1,79 @@
 # Profile Datastore Template
 #
-# Fill in your career materials below.
-# The more tagged bullets you add, the better the agent can select
-# and assemble a targeted resume for each JD.
+# 把你的全量经历填在下面，不用精简，越全越好。
+# agent 会根据 JD 从这里挑选最相关的内容组装简历。
 #
-# See skill-pack/DATASTORE.md for field reference.
+# 参考示例：skill-pack/examples/profile_store_example.yaml
+# 字段说明：skill-pack/DATASTORE.md
 
 meta:
-  name: ""
-  name_en: ""        # optional, Given Name Family Name
-  email: ""          # optional
-  phone: ""          # optional
-  updated: ""
+  name: ""           # 你的姓名，例如 "张三"
+  name_en: ""        # 英文名（可选），例如 "San Zhang"
+  email: ""          # 邮箱（可选），例如 "example@gmail.com"
+  phone: ""          # 电话（可选），例如 "+86-138-0000-0000"
+  updated: ""        # 最后更新日期，例如 "2026-04-06"
 
 experience:
-  - company: ""
-    role: ""
-    start: ""        # YYYY-MM
-    end: ""          # YYYY-MM or "present"
+  # 从最近的工作开始写，每段工作可以写很多条 bullet
+  - company: ""      # 公司名，例如 "某科技公司"
+    role: ""         # 你的职位，例如 "后端开发工程师"
+    start: ""        # 入职时间，例如 "2023-06"
+    end: ""          # 离职时间，例如 "2025-03"，在职写 "present"
     bullets:
-      - text: ""
-        tags: []
-        impact: ""   # quantified / qualitative / context-only
-        # variants:  # optional, uncomment to add
-        #   management: ""
-        #   technical: ""
+      - text: ""     # 你做了什么，例如 "设计并实现订单系统分库分表方案，支撑日均 500 万订单"
+        tags: []     # 相关技能标签，例如 [system-design, sql, distributed-systems]
+        impact: ""   # quantified = 有数字 / qualitative = 有成果但没数字 / context-only = 只描述职责
+        # variants:  # 同一件事的不同讲法（可选），取消注释后填写
+        #   management: ""  # 偏管理的说法，例如 "规划微服务拆分路线图，协调 3 个团队完成迁移"
+        #   technical: ""   # 偏技术的说法，例如 "设计服务边界与通信协议，完成 12 个微服务拆分"
+
+      # 继续加更多 bullet，每段工作建议 5-15 条
+      # - text: ""
+      #   tags: []
+      #   impact: ""
+
+  # 再加一段工作经历，复制上面的格式
+  # - company: ""
+  #   role: ""
+  #   start: ""
+  #   end: ""
+  #   bullets:
+  #     - text: ""
+  #       tags: []
+  #       impact: ""
 
 projects:
-  - name: ""
-    context: ""      # brief background, e.g. "internal tool for 200 ops staff"
+  # 工作之外的项目：开源、个人项目、比赛、校园项目等
+  - name: ""         # 项目名，例如 "内部运营效率平台"
+    context: ""      # 一句话背景，例如 "公司内部工具，服务 200+ 运营人员"
     bullets:
-      - text: ""
-        tags: []
+      - text: ""     # 你做了什么，例如 "从 0 到 1 搭建运营后台，替代 5 个 Excel 流程"
+        tags: []     # 例如 [react, node.js, full-stack]
         impact: ""
 
 skills:
-  - name: ""
-    level: ""        # familiar / proficient / expert
-    years: 0
-    evidence: []     # list of concrete uses
+  # 你会的技能，关联到具体用过的场景
+  - name: ""         # 技能名，例如 "Python"
+    level: ""        # familiar = 用过 / proficient = 熟练 / expert = 精通
+    years: 0         # 使用年限，例如 3
+    evidence: []     # 在哪里用过，例如 ["订单系统数据迁移脚本", "自动化测试框架"]
+
+  # - name: ""
+  #   level: ""
+  #   years: 0
+  #   evidence: []
 
 education:
-  - school: ""
-    degree: ""
-    major: ""
-    start: ""
-    end: ""
+  - school: ""       # 学校名，例如 "某大学"
+    degree: ""       # 学位，例如 "本科"、"硕士"
+    major: ""        # 专业，例如 "计算机科学与技术"
+    start: ""        # 例如 "2019-09"
+    end: ""          # 例如 "2023-06"
 
-certifications: []
-  # - name: ""
-  #   year: ""
+certifications: []   # 证书（可选），格式如下：
+  # - name: ""       # 例如 "AWS Solutions Architect Associate"
+  #   year: ""       # 例如 "2024"
 
-achievements: []
-  # - text: ""
-  #   tags: []
+achievements: []     # 荣誉/奖项（可选），格式如下：
+  # - text: ""       # 例如 "2024 年度最佳新人奖"
+  #   tags: []       # 例如 [recognition]
