@@ -11,6 +11,16 @@ from html import escape
 from pathlib import Path
 
 HEADER_ALIGNMENT_LEFT = 0
+
+_DATE_TAIL_RE = re.compile(r'[\s\u3000]+([\d]{4}[\.\-/][\d]{2}\s*[–\-~]\s*(?:[\d]{4}[\.\-/][\d]{2}|至今|present|Present))\s*$')
+
+
+def _split_date_tail(text: str) -> tuple[str, str | None]:
+    """Split trailing date range from text. Returns (main_text, date_or_None)."""
+    m = _DATE_TAIL_RE.search(text)
+    if m:
+        return text[:m.start()].rstrip(), m.group(1).strip()
+    return text, None
 LATIN_REGULAR_FONT = "Helvetica"
 LATIN_BOLD_FONT = "Helvetica-Bold"
 CJK_FONT = "STSong-Light"
@@ -54,7 +64,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--style",
-        choices=["classic", "ats", "compact"],
+        choices=["classic", "ats", "compact", "wondercv"],
         default="classic",
         help="PDF style to use. Default: classic.",
     )
@@ -120,7 +130,7 @@ def _parse_markdown_blocks(markdown_text: str) -> list[MarkdownBlock]:
 
         heading_text = _extract_heading_text(stripped)
         if heading_text is not None:
-            heading_level = 1 if stripped.startswith("# ") else 2
+            heading_level = 1 if stripped.startswith("# ") else (3 if stripped.startswith("### ") else 2)
             blocks.append(MarkdownBlock("heading", text=heading_text, level=heading_level))
             continue
 
@@ -128,12 +138,16 @@ def _parse_markdown_blocks(markdown_text: str) -> list[MarkdownBlock]:
             blocks.append(MarkdownBlock("bullet", text=stripped[2:].strip()))
             continue
 
-        if stripped.startswith("Phone:") or stripped.startswith("Email:"):
+        if stripped.startswith("Phone:") or stripped.startswith("Email:") or "@" in stripped and "|" in stripped:
             blocks.append(MarkdownBlock("meta", text=stripped))
             continue
 
         if stripped.startswith("**") and stripped.endswith("**"):
             blocks.append(MarkdownBlock("emphasis", text=_strip_markdown_inline(stripped[2:-2].strip())))
+            continue
+
+        if stripped.startswith("http://") or stripped.startswith("https://"):
+            blocks.append(MarkdownBlock("link_line", text=stripped))
             continue
 
         blocks.append(MarkdownBlock("paragraph", text=stripped))
@@ -150,13 +164,29 @@ def _render_blocks_to_html(
 ) -> str:
     body_parts: list[str] = []
     list_is_open = False
+    project_group_open = False
 
-    for block in blocks:
+    for i, block in enumerate(blocks):
         if block.kind != "bullet" and list_is_open:
             body_parts.append("</ul>")
             list_is_open = False
 
+        # Close project-group before a new emphasis, heading, or divider
+        if project_group_open and block.kind in ("emphasis", "heading", "divider", "blank"):
+            # Don't close on blank if next block is still part of the group
+            if block.kind == "blank":
+                next_b = blocks[i + 1] if i + 1 < len(blocks) else None
+                if next_b and next_b.kind not in ("emphasis", "heading", "divider"):
+                    continue  # skip blank inside project group
+            body_parts.append("</div>")
+            project_group_open = False
+
         if block.kind == "blank":
+            # Skip blank lines between a heading and its content to prevent page breaks
+            prev_b = blocks[i - 1] if i > 0 else None
+            next_b = blocks[i + 1] if i + 1 < len(blocks) else None
+            if prev_b and prev_b.kind == "heading" and next_b and next_b.kind in ("bullet", "link_line", "emphasis", "heading"):
+                continue
             body_parts.append('<div class="blank-line" aria-hidden="true"></div>')
             continue
 
@@ -165,11 +195,23 @@ def _render_blocks_to_html(
             continue
 
         if block.kind == "heading":
-            tag_name = "h1" if block.level == 1 else "h2"
-            css_class = "name" if block.level == 1 else "section-heading"
-            body_parts.append(
-                f'<{tag_name} class="{css_class}">{escape(block.text)}</{tag_name}>'
-            )
+            if block.level == 1:
+                tag_name, css_class = "h1", "name"
+            elif block.level == 2:
+                tag_name, css_class = "h2", "section-heading"
+            else:
+                tag_name, css_class = "h3", "sub-heading"
+            main_text, date_text = _split_date_tail(block.text)
+            if date_text and block.level != 1:
+                body_parts.append(
+                    f'<{tag_name} class="{css_class}">'
+                    f'<span class="date-right">{escape(date_text)}</span>'
+                    f'{escape(main_text)}</{tag_name}>'
+                )
+            else:
+                body_parts.append(
+                    f'<{tag_name} class="{css_class}">{escape(block.text)}</{tag_name}>'
+                )
             continue
 
         if block.kind == "bullet":
@@ -184,13 +226,32 @@ def _render_blocks_to_html(
             continue
 
         if block.kind == "emphasis":
+            if project_group_open:
+                body_parts.append("</div>")
+            body_parts.append('<div class="project-group">')
+            project_group_open = True
             body_parts.append(f'<p class="emphasis">{escape(block.text)}</p>')
             continue
 
-        body_parts.append(f'<p class="body">{_render_inline_html(block.text)}</p>')
+        if block.kind == "link_line":
+            url = block.text
+            body_parts.append(f'<p class="link-line"><a href="{escape(url)}">{escape(url)}</a></p>')
+            continue
+
+        main_text, date_text = _split_date_tail(block.text)
+        if date_text:
+            body_parts.append(
+                f'<p class="body">'
+                f'<span class="date-right">{escape(date_text)}</span>'
+                f'{_render_inline_html(main_text)}</p>'
+            )
+        else:
+            body_parts.append(f'<p class="body">{_render_inline_html(block.text)}</p>')
 
     if list_is_open:
         body_parts.append("</ul>")
+    if project_group_open:
+        body_parts.append("</div>")
 
     css = _build_pdf_css(style_config, document_type=document_type, style=style)
     body_html = "\n".join(body_parts)
@@ -299,6 +360,32 @@ def _build_pdf_css(style_config: dict, *, document_type: str, style: str) -> str
         line-height: {tokens["emphasis_line_height"]};
         font-weight: 600;
         margin-bottom: {tokens["emphasis_space_after"]};
+        break-after: avoid;
+      }}
+
+      .document h2.section-heading {{
+        font-size: {tokens["section_font_size"]};
+        line-height: {tokens["section_line_height"]};
+        font-weight: 700;
+        margin-top: {tokens["section_space_before"]};
+        margin-bottom: {tokens["section_space_after"]};
+        break-after: avoid;
+      }}
+
+      .document .project-group {{
+        break-inside: avoid;
+      }}
+
+      .document .link-line {{
+        font-size: 0.75em;
+        color: #6b7280;
+        margin-top: -0.1em;
+        margin-bottom: 0.3em;
+      }}
+
+      .document .link-line a {{
+        color: #6b7280;
+        text-decoration: none;
       }}
 
       .document p.body {{
@@ -308,6 +395,14 @@ def _build_pdf_css(style_config: dict, *, document_type: str, style: str) -> str
       .document .bullet-list {{
         margin: 0 0 {tokens["bullet_space_after"]} 0;
         padding-left: 1.15rem;
+        break-before: avoid;
+        page-break-before: avoid;
+      }}
+
+      .document .link-line + .blank-line + .bullet-list,
+      .document .link-line + .bullet-list {{
+        break-before: avoid;
+        page-break-before: avoid;
       }}
 
       .document .bullet-list li {{
@@ -333,6 +428,52 @@ def _build_pdf_css(style_config: dict, *, document_type: str, style: str) -> str
 
       .document code {{
         font-family: {MONOSPACE_FONT_STACK};
+      }}
+
+      .style-wondercv h1.name {{
+        text-align: center;
+      }}
+
+      .style-wondercv p.meta {{
+        text-align: center;
+      }}
+
+      .style-wondercv h2.section-heading {{
+        border-bottom: 1.2pt solid #333333;
+        padding-bottom: 2pt;
+      }}
+
+      .style-wondercv p.emphasis {{
+        color: #222222;
+        border-bottom: 0.6pt dashed #cccccc;
+        padding-bottom: 1.5pt;
+      }}
+
+      .style-wondercv .bullet-list li {{
+        color: #333333;
+      }}
+
+      .document h3.sub-heading {{
+        font-size: {tokens["emphasis_font_size"]};
+        line-height: {tokens["emphasis_line_height"]};
+        font-weight: 600;
+        margin-bottom: {tokens["emphasis_space_after"]};
+        margin-top: 0;
+        break-after: avoid;
+        page-break-after: avoid;
+      }}
+
+      .style-wondercv h3.sub-heading {{
+        border-bottom: 0.6pt dashed #cccccc;
+        padding-bottom: 1.5pt;
+      }}
+
+      .document .date-right {{
+        float: right;
+        font-weight: 400;
+        font-size: 0.92em;
+        min-width: 10em;
+        text-align: right;
       }}
     """
 
@@ -637,6 +778,34 @@ def _get_style_config(style: str, document_type: str) -> dict:
                 "paragraph_space_after": 2,
                 "blank_spacer": 0.04,
                 "section_break_spacer": 0.045,
+            }
+        )
+    elif style == "wondercv":
+        base.update(
+            {
+                "header_alignment": 1,  # centered
+                "margin_x": 0.7,
+                "margin_top": 0.5,
+                "margin_bottom": 0.5,
+                "name_font_size": 20,
+                "name_leading": 24,
+                "name_space_after": 2,
+                "meta_font_size": 9.5,
+                "meta_leading": 13,
+                "meta_space_after": 6,
+                "section_font_size": 11.5,
+                "section_leading": 15,
+                "section_space_before": 7,
+                "section_space_after": 3,
+                "emphasis_font_size": 10,
+                "emphasis_leading": 13,
+                "emphasis_space_after": 1.5,
+                "body_font_size": 9.5,
+                "body_leading": 12.5,
+                "bullet_space_after": 1,
+                "paragraph_space_after": 2,
+                "blank_spacer": 0.02,
+                "section_break_spacer": 0.02,
             }
         )
 

@@ -43,6 +43,21 @@ OfferPilot supports three main output types:
 - does not leave placeholder fields such as `<name>`, `<phone number>`, or `<email>` in application-ready outputs
 - does not add guessed or fabricated contact details that are missing from the source
 
+## PDF Style Options
+
+The `render_pdf.py` script supports multiple styles via `--style`:
+
+- `classic` — default, left-aligned, clean layout
+- `ats` — optimized for ATS parsing, slightly smaller text
+- `compact` — tighter margins and spacing for dense content
+- `wondercv` — centered name and contact info, section headings with solid underline, sub-headings with light dashed underline, dates right-aligned
+
+## PDF Formatting Rules
+
+- Project links (e.g. GitHub URLs) should be placed on a separate line below the project title in small text, not inline with the title
+- Dates in headings are rendered right-aligned; all date columns start at the same horizontal position
+- Section headings and their content are kept together across page breaks when possible
+
 ## Recommended File Naming
 
 Use scheme `B` by default for locally saved resume deliverables:

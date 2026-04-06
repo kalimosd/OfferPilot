@@ -120,8 +120,9 @@ projects:
 
 Agent rules for `ref`:
 
-- In work experience: use the short bullet text as-is, do not expand
-- In the project section: use the full bullets from the referenced project
+- In work experience: use a concise bullet that summarizes the work naturally; do not add parenthetical cross-references like "详见 XXX" or "see project XXX"
+- In the project section: use the full bullets from the referenced project to expand on details
+- The reader should be able to connect the two by content, not by explicit annotation
 - Never duplicate the same level of detail in both places
 - If the target JD only needs a brief mention, the project section entry can be omitted
 - If the target JD values the project highly, include both the brief mention and the detailed project section
