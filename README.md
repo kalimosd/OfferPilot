@@ -1,208 +1,86 @@
-# OfferPilot
+# OfferPilot AI
 
-OfferPilot 是一个开源的 AI skill pack，用于简历诊断、简历优化、面向岗位的简历改写，以及求职信工作流。
+AI job assistant that turns weak applications into interview-ready ones.
 
-这个仓库围绕可复用的工作流文档、提示词规则、agent 适配器和少量辅助脚本组织，方便其他人下载后，在不同的仓库型 AI agent 中复用同一套技能。
+Built fast as a practical AI product experiment, OfferPilot tackles a real problem: strong candidates often undersell themselves with generic resumes, weak positioning, and cover letters that sound the same. It helps turn raw experience into sharper, role-specific application materials that are more likely to earn interviews.
 
-## 适合谁用
+## Quick Example
 
-OfferPilot 适合下面这几类使用场景：
+Extract a resume from PDF:
 
-- 想把本地简历和岗位描述交给 AI agent 做定向改写的人
-- 想把“简历诊断 / 简历优化 / 定向简历 / 求职信”能力封装成 repository-local skill 的人
-- 想在本地保留原始材料、只把结构化文本交给模型处理的人
-
-它更偏向“本地文件 + agent 工作流 + 可复用规则”的使用方式，而不是在线 SaaS 或复杂模板编辑器。
-
-## 仓库提供的内容
-
-- 位于 `skill-pack/` 下的平台无关 skill pack
-- 面向简历诊断、简历优化、定向简历改写和求职信生成的工作流指导
-- 个人素材数据库（Profile Datastore），让 agent 根据 JD 从你的全量经历中筛选和组装简历
-- 面向多语言求职材料的提示词规则
-- 适配 Cursor、Codex 风格 agent 和 Claude Code 风格 agent 的适配器
-- 用于文本提取、输入校验和输出检查的辅助脚本
-
-## 快速上手
-
-如果你想把 OfferPilot 当作通用 skill pack 使用，最短路径是：
-
-1. 准备原始简历文件，以及可选的岗位描述文件
-2. 阅读 `skill-pack/README.md`
-3. 按照 `skill-pack/WORKFLOW.md` 执行
-4. 查看 `skill-pack/INPUTS.md`、`skill-pack/OUTPUTS.md` 和 `skill-pack/PROMPTS.md`
-5. 在 `skill-pack/adapters/` 下选择适合你所用 AI agent 的适配器
-6. 如果 agent 不能可靠读取 `.pdf` 或 `.docx`，先运行 `python3 skill-pack/scripts/extract_text.py "path/to/file"`
-7. 仅在确实需要校验时，再运行 `skill-pack/scripts/` 下的可选脚本
-
-OfferPilot 不再提供产品级 CLI 入口。仓库主入口和推荐使用方式都是 `skill-pack/`。
-
-## 从这里开始
-
-更完整的读取顺序如下：
-
-1. 阅读 `skill-pack/README.md`
-2. 按照 `skill-pack/WORKFLOW.md` 执行
-3. 查看 `skill-pack/INPUTS.md`、`skill-pack/OUTPUTS.md` 和 `skill-pack/PROMPTS.md`
-4. 在 `skill-pack/adapters/` 下选择适合你所用 AI agent 的适配器
-5. 如果 agent 不能可靠读取 `.pdf` 或 `.docx`，先运行 `python3 skill-pack/scripts/extract_text.py "path/to/file"`
-6. 仅在确实需要校验时，再运行 `skill-pack/scripts/` 下的可选脚本
-
-## 典型工作流
-
-一个典型的“定向简历改写”流程如下：
-
-1. 准备原始简历，例如 `resume.pdf`、`resume.docx` 或 `resume.md`
-2. 准备岗位描述，例如 `job.md` 或直接粘贴 JD 文本
-3. 如果输入是 `.pdf` 或 `.docx` 且 agent 不能稳定读取，运行 `python3 skill-pack/scripts/extract_text.py "resume.pdf"`
-4. 使用 `skill-pack/WORKFLOW.md` 分类任务为 `job-targeted resume rewrite`
-5. 按 `skill-pack/PROMPTS.md` 的约束生成 Markdown 版定向简历
-6. 按 `skill-pack/OUTPUTS.md` 检查名称、日期、职位、语言和事实一致性
-7. 如需最终交付，再导出为 PDF
-
-如果你有个人素材数据库（Profile Datastore），流程会更强：
-
-1. 按 `skill-pack/DATASTORE.md` 的规范，把你的全量经历填入 `profile_store.yaml`
-2. 准备岗位描述
-3. 告诉 agent 同时使用素材库和 JD
-4. agent 会从素材库中筛选最相关的 bullet，按 JD 要求排序和组装
-5. 不同的 JD 会从同一个素材库中产出不同的简历版本
-
-你也可以只停留在 Markdown 这一步。对很多求职场景来说，先人工 review Markdown，再决定是否导出 PDF，通常更稳妥。
-
-如果你还不确定要不要直接改写，可以先做“简历诊断”：
-
-1. 用原始简历生成一份诊断报告
-2. 查看当前优势、缺口、风险和建议修改项
-3. 再决定是做通用优化还是针对某个 JD 改写
-
-## 仓库结构
-
-```text
-.
-├── README.md
-├── LICENSE
-├── pyproject.toml
-├── sample_resume.md
-├── sample_resume.docx
-├── sample_job.md
-├── sample_job.docx
-├── docs/
-│   └── migration.md
-├── skill-pack/
-│   ├── README.md
-│   ├── WORKFLOW.md
-│   ├── DATASTORE.md
-│   ├── JD_MATCHING.md
-│   ├── INPUTS.md
-│   ├── OUTPUTS.md
-│   ├── PROMPTS.md
-│   ├── data/
-│   │   └── skill_aliases.zh-en.json
-│   ├── adapters/
-│   │   ├── claude-code/
-│   │   ├── codex/
-│   │   └── cursor/
-│   ├── examples/
-│   │   ├── cover-letter.md
-│   │   ├── jd-fit-zh.md
-│   │   ├── profile_store_example.yaml
-│   │   ├── resume-optimization.md
-│   │   └── targeted-resume.md
-│   ├── templates/
-│   │   └── profile_store.yaml
-│   └── scripts/
-│       ├── README.md
-│       ├── extract_text.py
-│       ├── render_pdf.py
-│       ├── validate_inputs.py
-│       └── validate_outputs.py
-└── tests/
-    ├── test_export.py
+```bash
+python3 skill-pack/scripts/extract_text.py "resume.pdf" --output "resume.txt"
 ```
 
-## 核心原则
+Export a reviewed draft to PDF:
 
-- 原始简历是事实来源
-- 生成结果是草稿，不是事实本身
-- 不要编造经历、指标或证书
-- 默认不要把私密简历文件加入版本控制
-- 中文姓名在英文场景下应采用 `Given Name + Family Name`
+```bash
+python3 skill-pack/scripts/render_pdf.py "resume.md" "resume.pdf" --document-type resume --style classic
+```
 
-私有文件处理建议：
+Typical usage is simple:
 
-- 对个人简历、职位描述或导出结果，优先使用本地 `.git/info/exclude` 做忽略
-- 不要把带有真实姓名或其他敏感信息的具体文件名写入版本化的 `.gitignore`
+1. Put your resume and target job description into local files.
+2. Run the OfferPilot skill pack through a repository agent such as Cursor, Codex-style agents, or Claude Code.
+3. Generate a stronger resume, a tailored version, or a cover letter.
+4. Review the Markdown output and export it when ready.
 
-示例：
+## Example Output
 
-- `中文名` -> `<Given Name> <Family Name>`
+**Before**
 
-## 支持的输入类型
+```text
+- Responsible for Android development and worked with different teams.
+- Helped fix bugs and improve app performance.
+```
 
-- `.txt`
-- `.md`
-- `.pdf`
-- `.docx`
+**After**
 
-不支持旧式 `.doc` 文件。
+```text
+- Improved Android system stability and performance by diagnosing rendering, memory, and ANR issues with Perfetto and Systrace, then driving fixes across platform teams.
+- Owned delivery for recent-tasks features, coordinating engineering stakeholders to ship on schedule and close cross-team issues faster.
+```
 
-## 兼容的 Agent
+These outputs are meant to be directly usable with minimal editing.
 
-OfferPilot 主要面向仓库本地运行的 AI agent，包括：
+## Why This Project
 
-- Cursor
-- Codex 风格的本地仓库 agent
-- Claude Code 风格的本地仓库 agent
+Many international students and early-career candidates do strong work but present it weakly.
 
-核心工作流文档按“即使 agent 不能执行本地脚本也仍然可用”的原则编写。
+Their resumes are often too generic, their cover letters feel interchangeable, and their most relevant experience gets buried. OfferPilot focuses on outcomes: clearer positioning, stronger materials, and better odds of getting interviews.
 
-## PDF 导出说明
+## Features
 
-当前仓库中的 PDF 导出脚本位于 `skill-pack/scripts/render_pdf.py`，优先使用 `HTML/CSS + Chromium` 浏览器渲染，而不是只依赖传统的 ReportLab 文本绘制。
+- **Resume optimization**: Tightens wording, removes filler, and strengthens bullet points without inventing facts.
+- **Job-targeted rewriting**: Rewrites and reorders content around a specific job description.
+- **Cover letter generation**: Produces concise, tailored letters grounded in real experience.
+- **Profile datastore support**: Pulls the most relevant experience from a structured data source.
+- **JD fit analysis**: Identifies match signals, gaps, and rewrite priorities.
+- **Local workflow tooling**: Supports text extraction, validation, and PDF export.
 
-这样做的主要原因是：
+## Tech Stack
 
-- 改善中文、英文、数字混排时的字体 fallback
-- 改善英文和数字在简历中的 kerning 与可读性
-- 让标题、列表、段落和不同 style 变体更容易通过 CSS 调整
+- Python
+- LLM-powered rewriting and analysis
+- Modular skill-pack architecture
+- YAML-based profile datastore
+- Playwright-based PDF export
 
-支持的样式（通过 `--style` 参数切换）：
+## Project Structure
 
-- `classic`：默认，左对齐，干净布局
-- `ats`：偏 ATS 友好，字号略小
-- `compact`：更紧凑的边距和间距
-- `standard_cn`：姓名和联系方式居中，大标题实线下划线，小标题淡色虚线，日期靠右对齐
+- **main**: The `skill-pack/` directory, which contains the core workflow for resume optimization, targeted rewriting, JD-fit analysis, cover letters, examples, adapters, and scripts.
+- **profile-datastore**: The structured experience store in `profile_store.yaml`, used to generate more targeted and higher-quality outputs from a richer source of truth.
 
-如果你需要在本地使用这条 PDF 导出链路：
+## Roadmap
 
-1. 安装项目依赖
-2. 运行 `playwright install chromium`
+- RAG-based job search and resume knowledge system
+- Interview simulation and feedback
+- Better datastore retrieval and ranking
+- Agent-driven application workflows
+- Resume versioning and targeting automation
 
-在 Chromium 不可用时，仓库中仍暂时保留 ReportLab fallback 作为兼容兜底。
+## Contributing / Feedback
 
-## 项目状态
+Feedback, issues, and pull requests are welcome.
 
-这个仓库当前的主入口是 `skill-pack/`。
-
-- 如果你想直接复用能力，优先从 `skill-pack/` 开始
-- OfferPilot 不再提供产品级 CLI
-- 与 skill 无关的旧 Python 产品层已移除，辅助脚本统一放在 `skill-pack/scripts/`
-- `skill-pack/data/` 用来放这类可复用的小型支持数据，例如中英技能别名表
-- `skill-pack/examples/` 默认使用匿名示例名和匿名示例文件名，不写真实姓名
-
-## 示例文件
-
-- `sample_resume.md`
-- `sample_job.md`
-
-## 项目范围
-
-OfferPilot 聚焦于求职材料相关场景：
-
-- 简历诊断
-- 通用简历优化
-- 面向岗位的简历改写
-- 求职信生成
-- 多语言输出指导
-- 面向 agent 的可复用工作流封装
+If you want to improve the workflow, test the output quality, or suggest product directions, open an issue or start a discussion.
