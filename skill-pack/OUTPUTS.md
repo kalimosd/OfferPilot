@@ -10,6 +10,24 @@ OfferPilot supports three main output types:
 - jd-fit diagnosis
 - cover letter
 
+## Default Section Ordering
+
+Use this order for resume outputs unless the user requests otherwise:
+
+1. 教育背景
+2. 工作经历
+3. 与目标岗位强相关的项目经历（如投 AI 岗则优先展示 AI 项目）
+4. 实习经历
+5. 其他项目经历（科研、学术等）
+6. 技能
+
+Rules:
+
+- 实习经历和项目经历必须分开，不能合并为同一个 section
+- 当存在多类项目时，与目标岗位相关性更高的项目 section 排在实习之前，其余排在实习之后
+- 如果没有明确的目标岗位，所有项目经历统一放在实习经历之后
+- 不要生成"工作亮点"等额外总结性 section，除非用户明确要求
+
 ## Resume Diagnosis Expectations
 
 - identifies strengths that are already supported by the source
