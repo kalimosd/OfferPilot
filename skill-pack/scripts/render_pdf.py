@@ -413,8 +413,9 @@ def _build_pdf_css(style_config: dict, *, document_type: str, style: str) -> str
       }}
 
       .document .link-line a {{
-        color: #6b7280;
+        color: #4b6b8a;
         text-decoration: none;
+        font-weight: bold;
       }}
 
       .document p.body {{
@@ -492,7 +493,8 @@ def _build_pdf_css(style_config: dict, *, document_type: str, style: str) -> str
       }}
 
       .style-standard_cn h2.section-heading {{
-        border-bottom: 1.2pt solid #333333;
+        color: #1a4480;
+        border-bottom: 1.2pt solid #1a4480;
         padding-bottom: 2pt;
       }}
 
