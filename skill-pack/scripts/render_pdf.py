@@ -4,7 +4,9 @@
 from __future__ import annotations
 
 import argparse
+import os
 import re
+import sys
 import warnings
 from dataclasses import dataclass
 from html import escape
@@ -97,19 +99,7 @@ def render_markdown_to_pdf(
         photo_path=photo_path,
     )
 
-    try:
-        _render_html_to_pdf_with_playwright(html, target_path)
-    except Exception as exc:
-        warnings.warn(
-            f"Browser PDF rendering failed; falling back to ReportLab. Reason: {exc}",
-            stacklevel=2,
-        )
-        _render_markdown_to_pdf_with_reportlab(
-            markdown_text,
-            target_path,
-            document_type=document_type,
-            style=style,
-        )
+    _render_html_to_pdf_with_playwright(html, target_path)
 
     return target_path
 
@@ -583,13 +573,62 @@ def _style_config_to_css_tokens(style_config: dict, *, document_type: str, style
     return tokens
 
 
+def _ensure_playwright_browsers_path() -> None:
+    """Ensure PLAYWRIGHT_BROWSERS_PATH points to an existing Chromium installation.
+
+    Some IDE sandboxes override this env var to a temp directory that may not
+    contain the browser binaries.  When that happens, fall back to the
+    platform-default cache location if it already has a usable Chromium, then
+    try auto-installing as a last resort.
+    """
+    env_key = "PLAYWRIGHT_BROWSERS_PATH"
+    current = os.environ.get(env_key, "")
+
+    # Platform-default cache location used by `playwright install`
+    default_cache = Path.home() / "Library" / "Caches" / "ms-playwright"
+
+    if current and not _chromium_exists_in(current):
+        if default_cache.exists() and _chromium_exists_in(str(default_cache)):
+            os.environ[env_key] = str(default_cache)
+            return
+        # Neither location has Chromium — auto-install into the default cache
+        os.environ.pop(env_key, None)
+        import subprocess
+        print("Chromium not found, installing...", file=sys.stderr)
+        subprocess.run(
+            [sys.executable, "-m", "playwright", "install", "chromium"],
+            check=True,
+        )
+        return
+
+    if not current and default_cache.exists() and _chromium_exists_in(str(default_cache)):
+        return
+
+    if not current:
+        import subprocess
+        print("Chromium not found, installing...", file=sys.stderr)
+        subprocess.run(
+            [sys.executable, "-m", "playwright", "install", "chromium"],
+            check=True,
+        )
+
+
+def _chromium_exists_in(base: str) -> bool:
+    """Check whether a Chromium binary directory exists under *base*."""
+    base_path = Path(base)
+    return any(base_path.glob("chromium-*/chrome-*"))
+
+
 def _render_html_to_pdf_with_playwright(html: str, output_path: Path) -> None:
     try:
         from playwright.sync_api import sync_playwright
-    except ImportError as exc:
+    except ImportError:
         raise RuntimeError(
-            "Playwright is not installed. Install dependencies and run 'playwright install chromium'."
-        ) from exc
+            "Playwright is required for PDF rendering.\n"
+            "  pip install playwright && playwright install chromium"
+        )
+
+    _ensure_playwright_browsers_path()
 
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch()
