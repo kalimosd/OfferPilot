@@ -1,6 +1,6 @@
 ---
 name: offerpilot-cursor-adapter
-description: Use the OfferPilot skill pack for resume optimization, China-first JD fit diagnosis, job-targeted resume rewrites, and cover letters in Cursor or other repository-local coding agents. Use when the user asks to improve resumes, analyze fit to a job description, tailor resumes to a job description, or create cover letters from local files.
+description: Use the OfferPilot skill pack for resume optimization, China-first JD fit diagnosis, job-targeted resume rewrites, and cover letters in Cursor or other repository-local coding agents. Trigger on short intents like "按照 offerpilot 优化简历", "用 offerpilot 做 JD 匹配", or "/offerpilot ...".
 ---
 
 # Cursor Adapter
@@ -23,6 +23,17 @@ This adapter is a thin wrapper over the platform-agnostic OfferPilot skill pack.
 - targeted resume rewriting
 - cover letter generation
 - multilingual application material cleanup
+
+## Short Triggers
+
+Treat these as direct triggers for this skill:
+
+- `按照 offerpilot 优化简历`
+- `用 offerpilot 做 JD 匹配`
+- `/offerpilot 优化简历`
+- `/offerpilot 根据我简历推荐岗位`
+
+When these short triggers appear, do not ask for a long setup prompt first. Start from the read order, then request only missing required inputs.
 
 ## Cursor-Specific Notes
 
