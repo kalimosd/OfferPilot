@@ -103,6 +103,27 @@ These outputs are meant to be directly usable with minimal editing.
 
 ## Advanced Usage
 
+Optional helper command entry (skill-pack remains primary):
+
+```bash
+# Show all commands
+offerpilot
+
+# Extract source text
+offerpilot extract "resume.pdf" --output "resume.txt"
+
+# Render PDF
+offerpilot pdf "resume.md" "resume.pdf" --style classic
+
+# Scan job portals
+offerpilot scan --cn-only
+
+# Minimal pipeline: validate input + render resume PDF
+offerpilot run "resume.md" "outputs/resume.pdf" --style ats
+```
+
+Direct script usage:
+
 Extract text from PDF or DOCX:
 
 ```bash

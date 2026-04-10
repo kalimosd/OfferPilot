@@ -101,6 +101,27 @@ OfferPilot 只关注结果：更清晰的定位、更强的材料、更高的面
 
 ## 进阶用法
 
+可选命令入口（`skill-pack` 仍是主入口）：
+
+```bash
+# 查看全部命令
+offerpilot
+
+# 提取源文件文本
+offerpilot extract "resume.pdf" --output "resume.txt"
+
+# 导出 PDF
+offerpilot pdf "resume.md" "resume.pdf" --style classic
+
+# 扫描岗位
+offerpilot scan --cn-only
+
+# 最小流程：校验输入 + 导出简历 PDF
+offerpilot run "resume.md" "outputs/resume.pdf" --style ats
+```
+
+直接脚本调用：
+
 从 PDF 或 DOCX 提取文本：
 
 ```bash

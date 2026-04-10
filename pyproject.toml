@@ -12,6 +12,9 @@ dependencies = [
     "reportlab",
 ]
 
+[project.scripts]
+offerpilot = "offerpilot.cli:main"
+
 [build-system]
 requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
