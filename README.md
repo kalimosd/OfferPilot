@@ -11,185 +11,166 @@
 [![Codex](https://img.shields.io/badge/Codex-412991?style=flat&logo=openai&logoColor=white)](https://openai.com)
 [![Kiro](https://img.shields.io/badge/Kiro-FF9900?style=flat&logo=amazon&logoColor=white)](https://kiro.dev)
 
-**AI 求职助手，把弱申请变成面试敲门砖。**
+**AI job assistant that turns weak applications into interview-ready ones.**
 
-简历写得像岗位描述的复制粘贴？<br>
-求职信换个名字就能给任何人用？<br>
-最硬核的项目经历被埋在第二页？<br>
-活是你干的，但纸上看不出来？
+Your resume reads like a job description copy-paste?<br>
+Your cover letter could belong to literally anyone?<br>
+Your strongest projects are buried on page two?<br>
+You did the work — but the paper doesn't show it?
 
-别再低估自己了。让 AI 把你真实的经历打磨得更锋利。
+Stop underselling yourself. Let AI sharpen what's already true.
 
-丢进简历和 JD，<br>
-拿回一份更强的简历、一份定向改写、一份 JD 匹配度分析、或一封求职信 —<br>
-基于你的真实经历，不编不造。
+Feed in your resume and a job description,<br>
+get back a stronger resume, a tailored rewrite, a JD-fit analysis, or a cover letter —<br>
+grounded in your real experience, not hallucinated fluff.
 
-[功能](#功能) · [快速开始](#快速开始) · [效果示例](#效果示例) · [进阶用法](#进阶用法) · [路线图](#路线图) · [参与贡献](#参与贡献)
+[Features](#features) · [Quick Start](#quick-start) · [Example](#example-output) · [Advanced Usage](#advanced-usage) · [Roadmap](#roadmap) · [Contributing](#contributing--feedback)
 
-[English](./README_en.md)
+[中文](./README_zh.md)
 
 </div>
 
 ---
 
-## 为什么做这个项目
+## Why This Project
 
-很多留学生和职场新人明明做了很好的工作，但简历写得太泛、求职信千篇一律、最相关的经历反而被埋没。
+Many international students and early-career candidates do strong work but present it weakly. Their resumes are too generic, their cover letters feel interchangeable, and their most relevant experience gets buried.
 
-OfferPilot 只关注结果：更清晰的定位、更强的材料、更高的面试概率。
+OfferPilot focuses on outcomes: clearer positioning, stronger materials, and better odds of getting interviews.
 
-## 功能
+## Features
 
-| 功能 | 说明 |
-|------|------|
-| **简历优化** | 精炼措辞、去除水分、强化 bullet point — 不编造事实 |
-| **定向简历改写** | 围绕目标 JD 重写和重排内容 |
-| **JD 匹配度分析** | 识别匹配信号、差距和改写优先级 |
-| **求职信生成** | 基于真实经历生成简洁、有针对性的求职信 |
-| **Profile 素材库** | 从结构化 YAML 素材库中选取最相关的经历 |
-| **职位发现** | 自动扫描招聘网站和搜索引擎，发现匹配岗位 |
-| **PDF 导出** | 将 Markdown 草稿渲染为带样式的 PDF，支持嵌入照片 |
+| Feature | Description |
+|---------|-------------|
+| **Resume optimization** | Tightens wording, removes filler, strengthens bullet points — without inventing facts |
+| **Job-targeted rewriting** | Rewrites and reorders content around a specific job description |
+| **JD fit analysis** | Identifies match signals, gaps, and rewrite priorities |
+| **Cover letter generation** | Produces concise, tailored letters grounded in real experience |
+| **Profile datastore** | Pulls the most relevant experience from a structured YAML data source |
+| **Job discovery** | Scans career portals and search engines to find relevant openings automatically |
+| **PDF export** | Renders Markdown drafts to styled PDFs with photo embedding support |
 
-## 快速开始（Skills 优先）
+## Quick Start
 
-1. 准备 `resume.md`（或 `resume.pdf`）
-2. 准备 `job.md`（目标岗位的 JD）
-3. 打开 `skill-pack/README.md` 并按 read order 执行
-4. 在 agent 里使用短触发语，例如：
-   - `按照 offerpilot 优化简历`
-   - `用 offerpilot 做 JD 匹配`
-   - `/offerpilot 根据我简历推荐10个岗位`
-5. 审阅生成的 Markdown 输出，满意后导出
+1. Prepare `resume.md` (or `resume.pdf`)
+2. Prepare `job.md` for the target role
+3. Open `skill-pack/README.md` and follow the read order
+4. Use short triggers in your agent, e.g.:
+   - `optimize my resume with offerpilot`
+   - `run JD fit analysis with offerpilot`
+   - `/offerpilot recommend 10 jobs based on my resume`
+5. Review the generated Markdown output, then export when ready
 
+## Example Output
 
-## 效果示例
-
-**优化前**
-
-```text
-- 负责 Android 开发，和不同团队合作。
-- 帮忙修 bug，提升 app 性能。
-```
-
-**优化后**
+**Before**
 
 ```text
-- 使用 Perfetto 和 Systrace 诊断渲染、内存和 ANR 问题，推动跨平台团队修复，
-  提升 Android 系统稳定性和性能。
-- 负责最近任务功能的交付，协调工程干系人按期上线，加速跨团队问题闭环。
+- Responsible for Android development and worked with different teams.
+- Helped fix bugs and improve app performance.
 ```
 
-生成的内容可以直接使用，几乎不需要额外编辑。
+**After**
 
-## 技术栈
+```text
+- Improved Android system stability and performance by diagnosing rendering,
+  memory, and ANR issues with Perfetto and Systrace, then driving fixes
+  across platform teams.
+- Owned delivery for recent-tasks features, coordinating engineering
+  stakeholders to ship on schedule and close cross-team issues faster.
+```
 
-- Python · LLM 驱动的改写与分析
-- 模块化 skill-pack 架构
-- YAML 格式的 profile 素材库
-- 基于 Playwright 的 PDF 导出和招聘网站扫描
+These outputs are meant to be directly usable with minimal editing.
 
-## 项目结构
+## Tech Stack
+
+- Python · LLM-powered rewriting and analysis
+- Modular skill-pack architecture
+- YAML-based profile datastore
+- Playwright-based PDF export and portal scanning
+
+## Project Structure
 
 ```text
 .
-├── README.md               # 中文（主页）
-├── README_en.md            # English
-├── profile_store.yaml      # 个人素材库（不入 git）
+├── README.md               # English (default)
+├── README_zh.md            # 中文
+├── profile_store.yaml      # your personal material library (gitignored)
 ├── portals_cn.yml
 ├── skill-pack/
-│   ├── README.md           # skill pack 入口
-│   ├── WORKFLOW.md         # 任务流程和检查点
-│   ├── DATASTORE.md        # 素材库规范
-│   ├── JD_MATCHING.md      # 中国市场 JD 匹配
+│   ├── README.md           # skill pack entry point
+│   ├── WORKFLOW.md         # task flow and checkpoints
+│   ├── DATASTORE.md        # profile datastore spec
+│   ├── JD_MATCHING.md      # China-first JD matching
 │   ├── INPUTS.md / OUTPUTS.md / PROMPTS.md
-│   ├── adapters/           # Claude Code、Codex、Cursor 适配器
-│   ├── examples/           # 示例输出
-│   ├── data/               # 技能别名映射
-│   └── scripts/            # 提取、渲染、扫描、校验
-├── jds/                    # （不入 git）扫描保存的 JD
-├── data/                   # （不入 git）扫描历史
+│   ├── adapters/           # Claude Code, Codex, Cursor wrappers
+│   ├── examples/           # sample outputs
+│   ├── data/               # skill alias mappings
+│   └── scripts/            # extract, render, scan, validate
+├── jds/                    # (gitignored) saved JDs from scans
+├── data/                   # (gitignored) scan history
 └── tests/
 ```
 
-## 可选辅助命令（CLI）
+## Advanced Usage
 
-`skill-pack` 是主入口，CLI 只是可选执行器：
+Optional CLI (skill-pack is the primary entry point):
 
 ```bash
-# 查看全部命令
+# See all commands
 offerpilot
 
-# 提取源文件文本
+# Extract source file text
 offerpilot extract "resume.pdf" --output "resume.txt"
 
-# 导出 PDF
+# Export PDF
 offerpilot pdf "resume.md" "resume.pdf" --style classic
 
-# 扫描岗位
+# Scan job portals
 offerpilot scan --cn-only
 
-# 最小流程：校验输入 + 导出简历 PDF
+# Minimal flow: validate input + export resume PDF
 offerpilot run "resume.md" "outputs/resume.pdf" --style ats
 
-# 端到端岗位流水线：扫描 + 排序 + TopN 推荐
+# End-to-end pipeline: scan + rank + top-N recommendations
 offerpilot pipeline --days 7 --top-n 10 --cn-focus
 ```
 
-直接脚本调用（同样是可选项）：
-
-从 PDF 或 DOCX 提取文本：
+Direct script calls:
 
 ```bash
+# Extract text from PDF or DOCX
 python3 skill-pack/scripts/extract_text.py "resume.pdf" --output "resume.txt"
-```
 
-将审阅后的草稿导出为 PDF：
-
-```bash
+# Export reviewed draft to PDF
 python3 skill-pack/scripts/render_pdf.py "resume.md" "resume.pdf" --document-type resume --style classic
-```
 
-导出时嵌入照片：
-
-```bash
+# Export with photo embedded in header
 python3 skill-pack/scripts/render_pdf.py "resume.md" "resume.pdf" --style standard_cn --photo "photo.jpg"
+
+# Scan career portals
+python3 skill-pack/scripts/scan_portals.py              # full scan
+python3 skill-pack/scripts/scan_portals.py --cn-only     # CN APIs only
+python3 skill-pack/scripts/scan_portals.py --greenhouse-only  # international
+python3 skill-pack/scripts/scan_portals.py --search-only # web search only
+python3 skill-pack/scripts/scan_portals.py --dry-run     # preview
 ```
 
-扫描招聘网站寻找匹配岗位：
+Matched jobs are saved to `jds/` with full JD content and application links. Scan history is tracked in `data/scan-history.tsv` for deduplication.
 
-```bash
-# 全量扫描（国内 API + Greenhouse + 搜索引擎）
-python3 skill-pack/scripts/scan_portals.py
+## Roadmap
 
-# 仅国内公司 API（美团、快手、滴滴）
-python3 skill-pack/scripts/scan_portals.py --cn-only
+- RAG-based job search and resume knowledge system
+- Interview simulation and feedback
+- Better datastore retrieval and ranking
+- Agent-driven application workflows
+- Resume versioning and targeting automation
 
-# 仅 Greenhouse API（海外公司）
-python3 skill-pack/scripts/scan_portals.py --greenhouse-only
+## Contributing / Feedback
 
-# 仅搜索引擎（DuckDuckGo，覆盖 20+ 公司）
-python3 skill-pack/scripts/scan_portals.py --search-only
+Feedback, issues, and pull requests are welcome.
 
-# 预览模式，不写入文件
-python3 skill-pack/scripts/scan_portals.py --dry-run
-```
-
-匹配到的岗位会保存到 `jds/`，包含完整 JD 内容和投递链接。扫描历史记录在 `data/scan-history.tsv` 中用于去重。
-
-## 路线图
-
-- 基于 RAG 的职位搜索和简历知识系统
-- 模拟面试与反馈
-- 更好的素材库检索和排序
-- Agent 驱动的自动投递工作流
-- 简历版本管理和定向自动化
-
-## 参与贡献
-
-欢迎反馈、提 issue 和 PR。
-
-如果你想改进工作流、测试输出质量、或者提产品方向建议 — 开个 issue 或发起讨论。
-
+If you want to improve the workflow, test the output quality, or suggest product directions — open an issue or start a discussion.
 
 ---
 

@@ -80,7 +80,7 @@ OfferPilot 只关注结果：更清晰的定位、更强的材料、更高的面
 
 ```text
 .
-├── README.md               # English
+├── README.md               # English（默认）
 ├── README_zh.md            # 中文
 ├── profile_store.yaml      # 个人素材库（不入 git）
 ├── portals_cn.yml
