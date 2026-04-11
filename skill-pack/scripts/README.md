@@ -20,6 +20,15 @@ python3 skill-pack/scripts/extract_text.py "resume.pdf" --output "resume.txt"
 
 Use when the workflow already produced a reviewed Markdown-like deliverable and you want a local PDF export.
 
+**Prerequisites**: PDF 导出**只走 Playwright（Chromium）**，不再降级到 ReportLab。若未安装浏览器，脚本会尝试自动执行 `python -m playwright install chromium`；若仍失败会直接报错。
+
+```bash
+pip install playwright
+python -m playwright install chromium
+```
+
+若 IDE 注入了空的 `PLAYWRIGHT_BROWSERS_PATH`，脚本会尽量改用本机默认缓存目录（macOS 为 `~/Library/Caches/ms-playwright`）。
+
 Example:
 
 ```bash
@@ -44,6 +53,21 @@ Example:
 
 ```bash
 python3 skill-pack/scripts/validate_outputs.py "targeted_resume.md" --english-name "GivenName FamilyName"
+```
+
+### `run_pipeline.py`
+
+Use when you want an end-to-end recommendation cycle in one command:
+
+1. scan portals (optional)
+2. read recent added jobs from history
+3. score and rank jobs
+4. output a Top-N recommendation report
+
+Example:
+
+```bash
+python3 skill-pack/scripts/run_pipeline.py --days 7 --top-n 10 --cn-focus
 ```
 
 ## Usage Rules

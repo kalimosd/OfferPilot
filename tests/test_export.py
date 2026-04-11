@@ -104,47 +104,29 @@ class ExportTests(unittest.TestCase):
             browser_renderer.assert_called_once()
             fallback_renderer.assert_not_called()
 
-    def test_render_markdown_to_pdf_falls_back_when_browser_render_fails(self) -> None:
+    def test_render_markdown_to_pdf_raises_when_browser_render_fails(self) -> None:
         markdown = "# Candidate Example\nPhone: 123\n\n## Experience\n- Built tooling\n"
 
         with tempfile.TemporaryDirectory() as temp_dir:
             output_path = Path(temp_dir) / "resume.pdf"
 
-            def fake_fallback_renderer(
-                markdown_text: str,
-                target_path: Path,
-                *,
-                document_type: str,
-                style: str,
-            ) -> None:
-                self.assertEqual(document_type, "cover_letter")
-                self.assertEqual(style, "ats")
-                self.assertIn("Candidate Example", markdown_text)
-                _write_fake_pdf(target_path, marker=b"%PDF-fallback\n")
-
-            with warnings.catch_warnings(record=True) as caught:
-                warnings.simplefilter("always")
-                with patch(
-                    "offerpilot_render_pdf._render_html_to_pdf_with_playwright",
-                    side_effect=RuntimeError("Chromium missing"),
-                ) as browser_renderer, patch(
-                    "offerpilot_render_pdf._render_markdown_to_pdf_with_reportlab",
-                    side_effect=fake_fallback_renderer,
-                ) as fallback_renderer:
-                    saved_path = render_pdf.render_markdown_to_pdf(
+            with patch(
+                "offerpilot_render_pdf._render_html_to_pdf_with_playwright",
+                side_effect=RuntimeError("Chromium missing"),
+            ) as browser_renderer, patch(
+                "offerpilot_render_pdf._render_markdown_to_pdf_with_reportlab"
+            ) as fallback_renderer:
+                with self.assertRaises(RuntimeError) as ctx:
+                    render_pdf.render_markdown_to_pdf(
                         markdown,
                         str(output_path),
                         document_type="cover_letter",
                         style="ats",
                     )
 
-            self.assertTrue(saved_path.exists())
-            self.assertIn(b"%PDF-fallback", saved_path.read_bytes())
+            self.assertIn("Chromium missing", str(ctx.exception))
             browser_renderer.assert_called_once()
-            fallback_renderer.assert_called_once()
-            self.assertTrue(
-                any("falling back to ReportLab" in str(warning.message) for warning in caught)
-            )
+            fallback_renderer.assert_not_called()
 
 
 if __name__ == "__main__":

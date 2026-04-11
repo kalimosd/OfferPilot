@@ -175,6 +175,18 @@ search_queries:
   - name: 京东 — AI
     query: '京东 AI 算法 社招 zhaopin.jd.com'
     enabled: true
+  - name: 华为 — AI
+    query: '华为 AI 大模型 社招 career.huawei.com'
+    enabled: true
+  - name: 小米 — AI
+    query: '小米 AI 算法 社招 hr.xiaomi.com'
+    enabled: true
+  - name: OPPO — AI
+    query: 'OPPO AI 算法 社招 join.oppo.com'
+    enabled: true
+  - name: vivo — AI
+    query: 'vivo AI 算法 社招 careers.vivo.com'
+    enabled: true
 
   # 新兴 AI 公司
   - name: 月之暗面 — 全部
@@ -215,6 +227,21 @@ search_queries:
   - name: AI工程师 社招
     query: 'AI工程师 OR AI应用工程师 社招 招聘 上海 OR 杭州 OR 深圳'
     enabled: true
+  - name: Boss直聘 — AI
+    query: 'site:zhipin.com AI 工程师 社招'
+    enabled: true
+  - name: 猎聘 — AI
+    query: 'site:liepin.com AI 算法 工程师 社招'
+    enabled: true
+  - name: 拉勾 — AI
+    query: 'site:lagou.com AI 算法 工程师 社招'
+    enabled: true
+  - name: Boss直聘 — Android
+    query: 'site:zhipin.com Android 工程师 社招'
+    enabled: true
+  - name: 猎聘 — Android
+    query: 'site:liepin.com Android 工程师 社招'
+    enabled: true
 
 # 地区过滤（可选，留空则不过滤）
 location_filter:
@@ -228,5 +255,11 @@ location_filter:
   - "Shenzhen"
   - "广州"
   - "Guangzhou"
+  - "北京"
+  - "Beijing"
+  - "成都"
+  - "Chengdu"
+  - "苏州"
+  - "Suzhou"
   - "Remote"
   - "远程"

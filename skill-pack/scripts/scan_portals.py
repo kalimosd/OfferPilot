@@ -35,12 +35,26 @@ def load_config(path: str) -> dict:
 # Title filter
 # ---------------------------------------------------------------------------
 
-def matches_title(title: str, tf: dict) -> str | None:
-    """Return 'added' if title passes filter, or skip reason."""
-    t = title.lower()
-    if any(neg.lower() in t for neg in tf.get("negative", [])):
+def matches_job(job: dict, tf: dict) -> str | None:
+    """Return 'added' if a job passes title/content filters, or None."""
+    title = (job.get("title") or "").lower()
+    content_blob = " ".join(
+        [
+            job.get("title", ""),
+            job.get("department", ""),
+            job.get("category", ""),
+            job.get("jd", ""),
+            job.get("highlight", ""),
+        ]
+    ).lower()
+    if any(neg.lower() in content_blob for neg in tf.get("negative", [])):
         return None
-    if any(pos.lower() in t for pos in tf.get("positive", [])):
+    positives = tf.get("positive", [])
+    if not positives:
+        return "added"
+    if any(pos.lower() in title for pos in positives):
+        return "added"
+    if any(pos.lower() in content_blob for pos in positives):
         return "added"
     return None
 
@@ -566,7 +580,7 @@ def main():
                 continue
 
         # Title filter
-        result = matches_title(job["title"], tf)
+        result = matches_job(job, tf)
         if result is None:
             stats["skipped_title"] += 1
             history_rows.append({

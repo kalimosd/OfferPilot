@@ -8,9 +8,13 @@ dependencies = [
     "openai",
     "playwright",
     "pypdf",
+    "PyYAML",
     "python-docx",
     "reportlab",
 ]
+
+[project.scripts]
+offerpilot = "offerpilot.cli:main"
 
 [build-system]
 requires = ["setuptools>=61"]

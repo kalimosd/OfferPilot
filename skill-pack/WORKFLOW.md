@@ -10,6 +10,7 @@ Choose one of:
 - job-targeted resume rewrite
 - jd-fit diagnosis
 - cover letter generation
+- job discovery and recommendation
 
 ## 2. Collect Inputs
 
@@ -25,6 +26,7 @@ Additional inputs when needed:
 - job description for cover letters
 - user-provided preferred romanization of the candidate name
 - profile datastore (`profile_store.yaml`) for selection-based assembly (see `DATASTORE.md`)
+- discovery constraints (city, role direction, seniority, remote/on-site preference) for job recommendation tasks
 
 Input handling rules:
 
@@ -79,6 +81,14 @@ For cover letters:
 - stay specific
 - keep the tone concise and credible
 
+For job discovery and recommendation:
+
+- discover jobs using `python3 skill-pack/scripts/scan_portals.py` when fresh listings are needed
+- prioritize China-first relevance when user preference indicates domestic targeting
+- rank opportunities by role fit signal, level signal, and source reliability
+- return a compact shortlist (for example top 10) with clear reasons and links
+- if results are too sparse, relax non-critical filters first (location > title strictness) and report what changed
+
 ## 5. Review the Draft
 
 Check:
@@ -94,6 +104,7 @@ Check:
 - language consistency
 - whether the fit conclusion is supported by evidence from both the JD and the resume
 - whether rewrite suggestions are specific enough to act on
+- for recommendation tasks, whether ranking reasons are explicit and auditable
 
 If the draft is in English and the source name is Chinese:
 
@@ -125,3 +136,4 @@ Preferred order:
 - [ ] private files kept out of git unless explicitly requested
 - [ ] English name ordering checked when relevant
 - [ ] final output matches the user's requested language and purpose
+- [ ] for recommendation tasks, shortlist includes actionable links and concise reasons

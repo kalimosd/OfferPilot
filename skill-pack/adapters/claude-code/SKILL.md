@@ -1,6 +1,6 @@
 ---
 name: offerpilot-claude-code-adapter
-description: Use the OfferPilot skill pack for resume optimization, China-first JD fit diagnosis, targeted resumes, and cover letters in Claude Code style repository agents. Use when the user wants structured job-application outputs or JD fit analysis from local resume and job-description files.
+description: Use the OfferPilot skill pack for resume optimization, China-first JD fit diagnosis, targeted resumes, and cover letters in Claude Code style repository agents. Trigger on short intents like "按照 offerpilot 优化简历", "用 offerpilot 做 JD 匹配", or "/offerpilot ...".
 ---
 
 # Claude Code Adapter
@@ -23,3 +23,14 @@ This adapter provides the minimum platform-specific bridge to the shared OfferPi
 - ask for missing job descriptions only when task type requires them
 - if a `.pdf` or `.docx` source cannot be read reliably, run `python3 skill-pack/scripts/extract_text.py "path/to/file"` first
 - use validation scripts only when the extra check adds value
+
+## Short Triggers
+
+Treat these as direct triggers for this skill:
+
+- `按照 offerpilot 优化简历`
+- `用 offerpilot 做 JD 匹配`
+- `/offerpilot 优化简历`
+- `/offerpilot 根据我简历推荐岗位`
+
+When these short triggers appear, do not ask for a long setup prompt first. Start from the read order, then request only missing required inputs.
