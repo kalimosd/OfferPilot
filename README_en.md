@@ -182,3 +182,17 @@ Matched jobs are saved to `jds/` with full JD content and application links. Sca
 Feedback, issues, and pull requests are welcome.
 
 If you want to improve the workflow, test the output quality, or suggest product directions — open an issue or start a discussion.
+
+## Last Words
+
+Work matters. After school ends, it quietly takes over most of your waking hours — that's just how it is.
+
+But work isn't everything. You weren't put on this earth to optimize bullet points.
+
+You did real things. You solved real problems. You stayed late, shipped on time, cleaned up someone else's mess, and nobody wrote it down properly — least of all you.
+
+This project won't change your life. But if it helps one person stop underselling themselves, stop copy-pasting the same generic resume into the void, and actually land an interview they deserve —
+
+that's enough.
+
+Go get the offer. Then close the laptop and live.
