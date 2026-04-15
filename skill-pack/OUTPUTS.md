@@ -19,6 +19,12 @@ OfferPilot supports three main output types:
 - Format: `XX 岁` for Chinese outputs, `Age XX` for English outputs
 - If `birth_year` is not provided, omit the age line
 
+## Education Line Format
+
+- 学历 emphasis 行使用 `|` 分隔学校、专业和学位，格式为：`**学校名 | 专业 | 学位**`
+- 示例：`**墨尔本大学 | 数据科学 | 硕士**`
+- 英文示例：`**University of Melbourne | Data Science | Master**`
+
 ## Default Section Ordering
 
 Use this order for resume outputs unless the user requests otherwise:
