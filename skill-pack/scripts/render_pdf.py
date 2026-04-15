@@ -67,8 +67,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--style",
         choices=["classic", "ats", "compact", "standard_cn"],
-        default="classic",
-        help="PDF style to use. Default: classic.",
+        default="standard_cn",
+        help="PDF style to use. Default: standard_cn.",
     )
     parser.add_argument(
         "--photo",
@@ -123,6 +123,10 @@ def _parse_markdown_blocks(markdown_text: str) -> list[MarkdownBlock]:
 
         if stripped == "---":
             blocks.append(MarkdownBlock("divider"))
+            continue
+
+        if stripped == "===":
+            blocks.append(MarkdownBlock("pagebreak"))
             continue
 
         heading_text = _extract_heading_text(stripped)
@@ -202,6 +206,10 @@ def _render_blocks_to_html(
 
         if block.kind == "divider":
             body_parts.append('<div class="section-break" aria-hidden="true"></div>')
+            continue
+
+        if block.kind == "pagebreak":
+            body_parts.append('<div style="page-break-after: always;"></div>')
             continue
 
         if block.kind == "heading":
@@ -686,6 +694,10 @@ def _render_markdown_to_pdf_with_reportlab(
             continue
 
         if block.kind == "divider":
+            story.append(Spacer(1, style_config["section_break_spacer"]))
+            continue
+
+        if block.kind == "pagebreak":
             story.append(Spacer(1, style_config["section_break_spacer"]))
             continue
 

@@ -11,6 +11,7 @@ Choose one of:
 - jd-fit diagnosis
 - cover letter generation
 - job discovery and recommendation
+- mock interview
 
 ## 2. Collect Inputs
 
@@ -27,6 +28,7 @@ Additional inputs when needed:
 - user-provided preferred romanization of the candidate name
 - profile datastore (`profile_store.yaml`) for selection-based assembly (see `DATASTORE.md`)
 - discovery constraints (city, role direction, seniority, remote/on-site preference) for job recommendation tasks
+- for mock interview: job description + profile datastore (both required)
 
 Input handling rules:
 
@@ -103,6 +105,12 @@ For job discovery and recommendation:
 - return a compact shortlist (for example top 10) with clear reasons and links
 - if results are too sparse, relax non-critical filters first (location > title strictness) and report what changed
 
+For mock interview:
+
+- read `MOCK_INTERVIEW.md` before generating any content
+- follow the two-phase workflow: question generation then live simulation
+- both JD and profile datastore are required inputs
+
 ## 5. Review the Draft
 
 Check:
@@ -162,3 +170,5 @@ Preferred order:
 - [ ] PDF uses `standard_cn` style unless user specified otherwise or output is English
 - [ ] Markdown and PDF filenames are aligned (only extension differs)
 - [ ] for recommendation tasks, shortlist includes actionable links and concise reasons
+- [ ] for mock interview, question sheet saved before starting simulation
+- [ ] for mock interview, evaluation report and review checklist saved after simulation

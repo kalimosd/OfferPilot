@@ -1,0 +1,223 @@
+# 岗位扫描配置（AI Agent 专项）
+# 用法: python3 skill-pack/scripts/scan_portals.py --config portals_agent.yml
+
+title_filter:
+  positive:
+    - "Agent"
+    - "agent"
+    - "Agentic"
+    - "AI应用"
+    - "AI工程"
+    - "AI平台"
+    - "大模型应用"
+    - "LLM应用"
+    - "Copilot"
+    - "AI Native"
+    - "Prompt"
+    - "RAG"
+    - "AI产品"
+    - "AI开发"
+  negative:
+    - "实习"
+    - "Intern"
+    - "算法研究员"
+    - "搜广推"
+    - "推荐算法"
+    - "搜索算法"
+    - "广告算法"
+    - "后训练"
+    - "预训练"
+    - "强化学习"
+    - "CV算法"
+    - "图像算法"
+    - "语音算法"
+    - "自动驾驶"
+    - "风控算法"
+    - "10年以上"
+    - "8年以上"
+    - "七年"
+    - "十年"
+    # 排除城市
+    - "北京"
+    - "Beijing"
+    - "西安"
+    - "长沙"
+    - "武汉"
+  seniority_boost:
+    - "高级"
+    - "资深"
+    - "Senior"
+    - "Staff"
+    - "Lead"
+
+# 不用美团等有API的国内大厂
+greenhouse_companies:
+  - name: Anthropic
+    slug: anthropic
+    enabled: true
+  - name: Vercel
+    slug: vercel
+    enabled: true
+  - name: Glean
+    slug: gleanwork
+    enabled: true
+  - name: Arize AI
+    slug: arizeai
+    enabled: true
+  - name: Intercom
+    slug: intercom
+    enabled: true
+  - name: LangChain
+    slug: langchain
+    enabled: true
+  - name: Cohere
+    slug: cohere
+    enabled: true
+  - name: Weights & Biases
+    slug: wandb
+    enabled: true
+  - name: Hugging Face
+    slug: huggingface
+    enabled: true
+
+cn_api_companies: []
+
+playwright_companies: []
+
+search_queries:
+  # === 国内大厂 AI Agent ===
+  - name: 字节跳动 — Agent
+    query: '字节跳动 AI Agent 工程师 OR 产品 社招'
+    enabled: true
+  - name: 腾讯 — Agent
+    query: '腾讯 AI Agent 工程师 OR 产品 社招'
+    enabled: true
+  - name: 阿里巴巴 — Agent
+    query: '阿里巴巴 AI Agent OR 大模型应用 工程师 OR 产品 社招'
+    enabled: true
+  - name: 百度 — Agent
+    query: '百度 AI Agent OR 大模型应用 工程师 OR 产品 社招'
+    enabled: true
+  - name: 华为 — Agent
+    query: '华为 AI Agent OR 大模型应用 工程师 社招'
+    enabled: true
+  - name: 小米 — Agent
+    query: '小米 AI Agent OR AI应用 工程师 社招'
+    enabled: true
+  - name: 快手 — Agent
+    query: '快手 AI Agent OR 大模型应用 工程师 社招'
+    enabled: true
+  - name: 滴滴 — Agent
+    query: '滴滴 AI Agent OR 大模型应用 工程师 社招'
+    enabled: true
+  - name: B站 — Agent
+    query: 'bilibili AI Agent OR 大模型应用 工程师 社招'
+    enabled: true
+  - name: 拼多多 — Agent
+    query: '拼多多 AI Agent OR 大模型应用 工程师 社招'
+    enabled: true
+
+  # === 中型互联网 ===
+  - name: 小红书 — Agent
+    query: '小红书 AI Agent OR 大模型应用 工程师 OR 产品 社招'
+    enabled: true
+  - name: 携程 — Agent
+    query: '携程 AI Agent OR 大模型应用 工程师 社招'
+    enabled: true
+  - name: 得物 — Agent
+    query: '得物 AI Agent OR 大模型应用 工程师 社招'
+    enabled: true
+  - name: 蚂蚁集团 — Agent
+    query: '蚂蚁集团 AI Agent OR 大模型应用 工程师 社招'
+    enabled: true
+  - name: 网易 — Agent
+    query: '网易 AI Agent OR 大模型应用 工程师 社招'
+    enabled: true
+  - name: 京东 — Agent
+    query: '京东 AI Agent OR 大模型应用 工程师 社招'
+    enabled: true
+  - name: SHEIN — Agent
+    query: 'SHEIN AI Agent OR AI应用 engineer 社招'
+    enabled: true
+  - name: 米哈游 — Agent
+    query: '米哈游 AI Agent OR AI工程 社招'
+    enabled: true
+
+  # === 新兴 AI 公司 ===
+  - name: 月之暗面 — Agent
+    query: '月之暗面 Moonshot Agent OR 工程师 社招 招聘'
+    enabled: true
+  - name: 智谱AI — Agent
+    query: '智谱AI Agent OR 工程师 OR 产品 社招 招聘'
+    enabled: true
+  - name: MiniMax — Agent
+    query: 'MiniMax Agent OR 工程师 OR 产品 社招 招聘'
+    enabled: true
+  - name: 百川智能 — Agent
+    query: '百川智能 Agent OR 工程师 OR 产品 社招'
+    enabled: true
+  - name: 深度求索 — Agent
+    query: 'DeepSeek 深度求索 Agent OR 工程师 社招'
+    enabled: true
+  - name: 阶跃星辰 — Agent
+    query: '阶跃星辰 StepFun Agent OR 工程师 社招'
+    enabled: true
+  - name: 零一万物 — Agent
+    query: '零一万物 01.AI Agent OR 工程师 社招'
+    enabled: true
+  - name: 面壁智能 — Agent
+    query: '面壁智能 MiniCPM Agent OR 工程师 社招'
+    enabled: true
+  - name: 昆仑万维 — Agent
+    query: '昆仑万维 天工 AI Agent OR 工程师 社招'
+    enabled: true
+  - name: 商汤科技 — Agent
+    query: '商汤科技 AI Agent OR 大模型应用 工程师 社招'
+    enabled: true
+
+  # === 垂直/企服 AI 公司 ===
+  - name: 钉钉 — Agent
+    query: '钉钉 AI Agent OR AI助理 工程师 OR 产品 社招'
+    enabled: true
+  - name: 飞书 — Agent
+    query: '飞书 Lark AI Agent OR AI应用 工程师 OR 产品 社招'
+    enabled: true
+  - name: 有赞 — Agent
+    query: '有赞 AI Agent OR 大模型应用 工程师 社招'
+    enabled: true
+  - name: 金山办公 — Agent
+    query: '金山办公 WPS AI Agent OR AI应用 工程师 社招'
+    enabled: true
+  - name: 用友 — Agent
+    query: '用友 AI Agent OR 大模型应用 工程师 社招'
+    enabled: true
+
+  # === 平台聚合搜索 ===
+  - name: AI Agent 工程师 — 综合
+    query: 'AI Agent 工程师 社招 招聘 上海 OR 杭州 OR 深圳 OR 广州 OR 南京 OR 苏州 OR 成都 OR 远程'
+    enabled: true
+  - name: AI Agent 产品经理 — 综合
+    query: 'AI Agent 产品经理 OR 产品 社招 招聘 上海 OR 杭州 OR 深圳'
+    enabled: true
+  - name: 大模型应用工程师 — 综合
+    query: '大模型应用 工程师 OR 开发 社招 招聘 上海 OR 杭州 OR 南京'
+    enabled: true
+  - name: LLM应用 — 综合
+    query: 'LLM应用 OR RAG OR Prompt工程 工程师 社招 招聘'
+    enabled: true
+  - name: Agentic AI — 综合
+    query: 'Agentic AI OR AI Agent 开发 招聘 中国 社招'
+    enabled: true
+  - name: Boss直聘 — Agent
+    query: 'site:zhipin.com AI Agent 工程师 社招'
+    enabled: true
+  - name: 猎聘 — Agent
+    query: 'site:liepin.com AI Agent 工程师 社招'
+    enabled: true
+  - name: V2EX — Agent
+    query: 'site:v2ex.com AI Agent OR LLM 工程师 招聘 社招'
+    enabled: true
+
+# 地区过滤 — 排除北京/西安/长沙/武汉，其余都可以
+# 留空表示不过滤（在 negative 里已排除不想去的城市）
+location_filter: []

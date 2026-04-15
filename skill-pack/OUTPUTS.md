@@ -9,6 +9,8 @@ OfferPilot supports three main output types:
 - job-targeted resume
 - jd-fit diagnosis
 - cover letter
+- mock interview question sheet
+- mock interview evaluation report
 
 ## Age Display
 
@@ -120,6 +122,21 @@ If the user explicitly requests anonymized sample files, replace `姓名` with a
 - stays grounded in the candidate's real background
 - avoids generic filler
 - keeps the tone professional and direct
+
+## Mock Interview Question Sheet Expectations
+
+- 8-12 questions by default unless the user specifies otherwise
+- ~60% strong-point deep-dive, ~40% weakness probing
+- each question includes: tag, difficulty, topic, examination points, reference answer key points
+- reference answers are concise key points, not full essays
+- naming: `姓名_公司_岗位_面试题单_v1.md`
+
+## Mock Interview Evaluation Report Expectations
+
+- per-question scoring (1-5 stars) with highlights, gaps, and improvement suggestions
+- overall summary in 2-3 sentences
+- review checklist with priority levels (高/中/低) and concrete learning recommendations
+- naming: `姓名_公司_岗位_面试评估_v1.md`
 
 ## English Name Check
 
