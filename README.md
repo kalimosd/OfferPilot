@@ -47,6 +47,7 @@ OfferPilot 只关注结果：更清晰的定位、更强的材料、更高的面
 | **Profile 素材库** | 从结构化 YAML 素材库中选取最相关的经历 |
 | **职位发现** | 自动扫描招聘网站和搜索引擎，发现匹配岗位 |
 | **模拟面试** | 基于 JD 和个人经历生成技术面试题单，对话模拟并输出评估报告 |
+| **产品研究** | 根据 JD 调研目标产品，输出产品介绍、竞品分析、面试预测和准备清单 |
 | **PDF 导出** | 将 Markdown 草稿渲染为带样式的 PDF，支持嵌入照片 |
 
 ## 快速开始（Skills 优先）
@@ -59,6 +60,7 @@ OfferPilot 只关注结果：更清晰的定位、更强的材料、更高的面
    - `用 offerpilot 做 JD 匹配`
    - `/offerpilot 根据我简历推荐10个岗位`
    - `用 offerpilot 模拟面试这个岗位`
+   - `用 offerpilot 研究一下这个产品`
 5. 审阅生成的 Markdown 输出，满意后导出
 
 
@@ -99,6 +101,7 @@ OfferPilot 只关注结果：更清晰的定位、更强的材料、更高的面
 ├── skill-pack/
 │   ├── README.md           # skill pack 入口
 │   ├── WORKFLOW.md         # 任务流程和检查点
+│   ├── PRODUCT_RESEARCH.md # 产品研究流程
 │   ├── DATASTORE.md        # 素材库规范
 │   ├── JD_MATCHING.md      # 中国市场 JD 匹配
 │   ├── INPUTS.md / OUTPUTS.md / PROMPTS.md

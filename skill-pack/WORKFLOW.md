@@ -12,6 +12,7 @@ Choose one of:
 - cover letter generation
 - job discovery and recommendation
 - mock interview
+- product research
 
 ## 2. Collect Inputs
 
@@ -29,6 +30,7 @@ Additional inputs when needed:
 - profile datastore (`profile_store.yaml`) for selection-based assembly (see `DATASTORE.md`)
 - discovery constraints (city, role direction, seniority, remote/on-site preference) for job recommendation tasks
 - for mock interview: job description + profile datastore (both required)
+- for product research: job description (required) + profile datastore (optional)
 
 Input handling rules:
 
@@ -111,6 +113,12 @@ For mock interview:
 - follow the two-phase workflow: question generation then live simulation
 - both JD and profile datastore are required inputs
 
+For product research:
+
+- read `PRODUCT_RESEARCH.md` before generating any content
+- follow the six-step execution flow: JD parsing, research, product intro, interview prediction, profile analysis, save
+- JD is required; profile datastore is optional but enhances output
+
 ## 5. Review the Draft
 
 Check:
@@ -127,6 +135,8 @@ Check:
 - whether the fit conclusion is supported by evidence from both the JD and the resume
 - whether rewrite suggestions are specific enough to act on
 - for recommendation tasks, whether ranking reasons are explicit and auditable
+- for product research, whether product information is sourced from search results (not fabricated)
+- for product research, whether interview questions are specific and answerable
 
 If the draft is in English and the source name is Chinese:
 
@@ -172,3 +182,5 @@ Preferred order:
 - [ ] for recommendation tasks, shortlist includes actionable links and concise reasons
 - [ ] for mock interview, question sheet saved before starting simulation
 - [ ] for mock interview, evaluation report and review checklist saved after simulation
+- [ ] for product research, output saved as Markdown only (no PDF)
+- [ ] for product research, profile_store sections included/skipped correctly based on availability
