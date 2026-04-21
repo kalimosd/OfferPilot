@@ -15,6 +15,10 @@ dependencies = [
 
 [project.scripts]
 offerpilot = "offerpilot.cli:main"
+offerpilot-agent = "offerpilot.agent:main"
+
+[project.optional-dependencies]
+agent = ["python-dotenv>=1.0.0"]
 
 [build-system]
 requires = ["setuptools>=61"]
