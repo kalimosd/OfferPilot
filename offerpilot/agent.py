@@ -242,6 +242,9 @@ def main() -> None:
         except (EOFError, KeyboardInterrupt):
             print("\n👋 再见")
             break
+        except UnicodeDecodeError:
+            print("⚠️ 输入编码错误，请重新输入")
+            continue
         if not user_input:
             continue
         if user_input.lower() in ("exit", "quit", "q"):
