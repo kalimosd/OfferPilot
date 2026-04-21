@@ -48,6 +48,7 @@ OfferPilot 只关注结果：更清晰的定位、更强的材料、更高的面
 | **职位发现** | 自动扫描招聘网站和搜索引擎，发现匹配岗位 |
 | **模拟面试** | 基于 JD 和个人经历生成技术面试题单，对话模拟并输出评估报告 |
 | **产品研究** | 根据 JD 调研目标产品，输出产品介绍、竞品分析、面试预测和准备清单 |
+| **Agent 模式** | 独立运行的 CLI Agent，自然语言输入，自动分类任务、调用工具、生成输出 |
 | **PDF 导出** | 将 Markdown 草稿渲染为带样式的 PDF，支持嵌入照片 |
 
 ## 快速开始（Skills 优先）
@@ -62,6 +63,20 @@ OfferPilot 只关注结果：更清晰的定位、更强的材料、更高的面
    - `用 offerpilot 模拟面试这个岗位`
    - `用 offerpilot 研究一下这个产品`
 5. 审阅生成的 Markdown 输出，满意后导出
+
+### Agent 模式（独立运行，无需 AI 编辑器）
+
+```bash
+# 配置 .env
+OFFERPILOT_API_KEY=your-api-key
+OFFERPILOT_BASE_URL=https://api.deepseek.com  # 可选，支持任何 OpenAI 兼容 API
+OFFERPILOT_MODEL=deepseek-chat                  # 可选，默认 gpt-4o-mini
+
+# 运行
+python -m offerpilot.agent "帮我分析这个JD和简历的匹配度，JD在jds/xxx.md，简历在profile_store.yaml"
+```
+
+Agent 会自动理解任务、调用工具（读文件、写文件、提取文本、导出 PDF）、生成输出。
 
 
 ## 效果示例
@@ -111,6 +126,9 @@ OfferPilot 只关注结果：更清晰的定位、更强的材料、更高的面
 │   └── scripts/            # 提取、渲染、扫描、校验
 ├── jds/                    # （不入 git）扫描保存的 JD
 ├── data/                   # （不入 git）扫描历史
+├── offerpilot/
+│   ├── agent.py            # 独立 Agent（ReAct + Tool Calling）
+│   └── cli.py              # 可选 CLI 辅助入口
 └── tests/
 ```
 
