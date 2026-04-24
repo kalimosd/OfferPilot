@@ -57,7 +57,10 @@ Tracker 状态流转：discovered → applied → interviewing → offer / rejec
 - 不要生成"工作亮点"等额外总结性 section，除非用户明确要求
 - 联系信息行格式：电话（微信同） | 邮箱 | XX 岁（从 birth_year 计算：当前年份 - birth_year）
 - 教育行格式：**学校名 | 专业 | 学位**（例：**墨尔本大学 | 数据科学 | 硕士**）
-- 技能表格列：类别 | 技能 | 熟练度 | 年限（四列，年限单独一列，不要混在熟练度里）
+- 技能用分类列表格式，不要用表格。每行一个类别，冒号后列出该类别下的技能，用顿号分隔。示例：
+  - Android 开发：Java / Kotlin、Launcher 架构、Dock 状态机
+  - AI 工程：AI Agent 工作流设计与开发、Prompt Engineering
+  - 语言能力：英语流畅办公（五年澳洲留学及实习经历）
 - 中文简历 PDF 默认使用 --style standard_cn
 - 文件命名：姓名_公司_岗位_v1（或 姓名_岗位_v1）
 - 简历类任务必须同时输出 Markdown 和 PDF 两个文件
