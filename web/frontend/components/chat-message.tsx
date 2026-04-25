@@ -30,7 +30,7 @@ export function ChatMessage({ msg }: { msg: Message }) {
   return (
     <div className="flex justify-start mb-4">
       <div className="bg-zinc-100 rounded-2xl rounded-bl-md px-4 py-2.5 max-w-[75%] text-sm prose prose-sm prose-zinc prose-table:text-xs overflow-y-auto max-h-[60vh]">
-        <ReactMarkdown>{msg.content}</ReactMarkdown>
+        <ReactMarkdown components={{ a: ({ href, children }) => <a href={href} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{children}</a> }}>{msg.content}</ReactMarkdown>
       </div>
     </div>
   );

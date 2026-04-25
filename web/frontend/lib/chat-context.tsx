@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 export interface Message {
   role: "user" | "assistant" | "tool";
@@ -15,8 +15,21 @@ interface ChatContextType {
 
 const ChatContext = createContext<ChatContextType>({ messages: [], setMessages: () => {} });
 
+const STORAGE_KEY = "offerpilot-chat-history";
+
 export function ChatProvider({ children }: { children: ReactNode }) {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>(() => {
+    if (typeof window === "undefined") return [];
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return saved ? JSON.parse(saved) : [];
+    } catch { return []; }
+  });
+
+  useEffect(() => {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(messages)); } catch {}
+  }, [messages]);
+
   return <ChatContext.Provider value={{ messages, setMessages }}>{children}</ChatContext.Provider>;
 }
 
