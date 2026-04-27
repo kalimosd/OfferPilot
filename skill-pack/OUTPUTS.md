@@ -1,5 +1,23 @@
 # Outputs
 
+## Output Directory Structure
+
+All outputs are saved under `outputs/` with the following subdirectories:
+
+| Subdirectory | Content |
+|---|---|
+| `outputs/resumes/` | 简历优化、定向改写、JD 匹配度分析 |
+| `outputs/research/` | 产品研究 |
+| `outputs/interview/` | 面试题单、面试评估、面试准备整合 |
+| `outputs/pipeline/` | 扫描推荐、pipeline 报告 |
+| `outputs/misc/` | 其他（项目讲解、设计方案等） |
+
+Rules:
+
+- 所有输出必须保存到对应子目录，不允许直接保存到 `outputs/` 根目录
+- 子目录会自动创建
+- 分类依据是任务类型，不是文件格式
+
 ## Output Categories
 
 OfferPilot supports three main output types:
@@ -77,6 +95,13 @@ The `render_pdf.py` script supports multiple styles via `--style`:
 - `compact` — tighter margins and spacing for dense content
 - `standard_cn` — centered name and contact info, section headings with solid underline, sub-headings with light dashed underline, dates right-aligned
 
+**照片嵌入规则：**
+
+- 照片放在 `assets/photo.jpg`（或 `assets/photo.png`）
+- 导出 PDF 时如果照片存在，自动嵌入到简历头部
+- 照片不存在则不嵌入
+- `assets/` 目录不入 git，每个用户放自己的照片
+
 **默认选择规则：**
 
 - 中文简历 → `standard_cn`
@@ -102,8 +127,8 @@ Use scheme `B` by default for locally saved resume deliverables:
 
 Examples:
 
-- `候选人A_安卓开发工程师_v1.md`
-- `候选人A_小米_安卓开发工程师_v1.md`
+- `outputs/resumes/候选人A_安卓开发工程师_v1.md`
+- `outputs/resumes/候选人A_小米_安卓开发工程师_v1.md`
 - `候选人A_小米_安卓开发工程师_v2.pdf`
 
 If the user explicitly requests anonymized sample files, replace `姓名` with an obvious example name rather than a real person.
