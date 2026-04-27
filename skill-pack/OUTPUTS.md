@@ -15,7 +15,7 @@ All outputs are saved under `outputs/` with the following subdirectories:
 Rules:
 
 - 所有输出必须保存到对应子目录，不允许直接保存到 `outputs/` 根目录
-- 子目录会自动创建
+- 子目录会自动创建（agent 的 write_file 工具会 mkdir -p）
 - 分类依据是任务类型，不是文件格式
 
 ## Output Categories
@@ -27,6 +27,8 @@ OfferPilot supports three main output types:
 - job-targeted resume
 - jd-fit diagnosis
 - cover letter
+- mock interview question sheet
+- mock interview evaluation report
 
 ## Age Display
 
@@ -34,6 +36,12 @@ OfferPilot supports three main output types:
 - Calculate age from the `birth_year` field in the profile datastore: `current_year - birth_year`
 - Format: `XX 岁` for Chinese outputs, `Age XX` for English outputs
 - If `birth_year` is not provided, omit the age line
+
+## Education Line Format
+
+- 学历 emphasis 行使用 `|` 分隔学校、专业和学位，格式为：`**学校名 | 专业 | 学位**`
+- 示例：`**墨尔本大学 | 数据科学 | 硕士**`
+- 英文示例：`**University of Melbourne | Data Science | Master**`
 
 ## Default Section Ordering
 
@@ -95,13 +103,6 @@ The `render_pdf.py` script supports multiple styles via `--style`:
 - `compact` — tighter margins and spacing for dense content
 - `standard_cn` — centered name and contact info, section headings with solid underline, sub-headings with light dashed underline, dates right-aligned
 
-**照片嵌入规则：**
-
-- 照片放在 `assets/photo.jpg`（或 `assets/photo.png`）
-- 导出 PDF 时如果照片存在，自动嵌入到简历头部
-- 照片不存在则不嵌入
-- `assets/` 目录不入 git，每个用户放自己的照片
-
 **默认选择规则：**
 
 - 中文简历 → `standard_cn`
@@ -129,7 +130,7 @@ Examples:
 
 - `outputs/resumes/候选人A_安卓开发工程师_v1.md`
 - `outputs/resumes/候选人A_小米_安卓开发工程师_v1.md`
-- `候选人A_小米_安卓开发工程师_v2.pdf`
+- `outputs/resumes/候选人A_小米_安卓开发工程师_v2.pdf`
 
 If the user explicitly requests anonymized sample files, replace `姓名` with an obvious example name rather than a real person.
 
@@ -145,6 +146,21 @@ If the user explicitly requests anonymized sample files, replace `姓名` with a
 - stays grounded in the candidate's real background
 - avoids generic filler
 - keeps the tone professional and direct
+
+## Mock Interview Question Sheet Expectations
+
+- 8-12 questions by default unless the user specifies otherwise
+- ~60% strong-point deep-dive, ~40% weakness probing
+- each question includes: tag, difficulty, topic, examination points, reference answer key points
+- reference answers are concise key points, not full essays
+- naming: `outputs/interview/姓名_公司_岗位_面试题单_v1.md`
+
+## Mock Interview Evaluation Report Expectations
+
+- per-question scoring (1-5 stars) with highlights, gaps, and improvement suggestions
+- overall summary in 2-3 sentences
+- review checklist with priority levels (高/中/低) and concrete learning recommendations
+- naming: `outputs/interview/姓名_公司_岗位_面试评估_v1.md`
 
 ## English Name Check
 

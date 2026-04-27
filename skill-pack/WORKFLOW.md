@@ -11,6 +11,8 @@ Choose one of:
 - jd-fit diagnosis
 - cover letter generation
 - job discovery and recommendation
+- mock interview
+- product research
 
 ## 2. Collect Inputs
 
@@ -27,6 +29,8 @@ Additional inputs when needed:
 - user-provided preferred romanization of the candidate name
 - profile datastore (`profile_store.yaml`) for selection-based assembly (see `DATASTORE.md`)
 - discovery constraints (city, role direction, seniority, remote/on-site preference) for job recommendation tasks
+- for mock interview: job description + profile datastore (both required)
+- for product research: job description (required) + profile datastore (optional)
 
 Input handling rules:
 
@@ -103,6 +107,20 @@ For job discovery and recommendation:
 - return a compact shortlist (for example top 10) with clear reasons and links
 - if results are too sparse, relax non-critical filters first (location > title strictness) and report what changed
 
+For mock interview:
+
+- read `MOCK_INTERVIEW.md` before generating any content
+- follow the two-phase workflow: question generation then live simulation
+- both JD and profile datastore are required inputs
+- save outputs to `outputs/interview/`
+
+For product research:
+
+- read `PRODUCT_RESEARCH.md` before generating any content
+- follow the six-step execution flow: JD parsing, research, product intro, interview prediction, profile analysis, save
+- JD is required; profile datastore is optional but enhances output
+- save outputs to `outputs/research/`
+
 ## 5. Review the Draft
 
 Check:
@@ -119,6 +137,8 @@ Check:
 - whether the fit conclusion is supported by evidence from both the JD and the resume
 - whether rewrite suggestions are specific enough to act on
 - for recommendation tasks, whether ranking reasons are explicit and auditable
+- for product research, whether product information is sourced from search results (not fabricated)
+- for product research, whether interview questions are specific and answerable
 
 If the draft is in English and the source name is Chinese:
 
@@ -135,8 +155,16 @@ Preferred order:
 
 1. review Markdown-like content first
 2. revise content if needed
-3. save the final Markdown file
+3. save the final Markdown file to the correct `outputs/` subdirectory
 4. export PDF from the saved Markdown
+
+**输出目录规则（不可跳过）：**
+
+- `outputs/resumes/` — 简历优化、定向改写、JD 匹配度分析
+- `outputs/research/` — 产品研究
+- `outputs/interview/` — 面试题单、面试评估、面试准备
+- `outputs/pipeline/` — 扫描推荐、pipeline 报告
+- `outputs/misc/` — 其他
 
 **交付规则（不可跳过）：**
 
@@ -162,3 +190,7 @@ Preferred order:
 - [ ] PDF uses `standard_cn` style unless user specified otherwise or output is English
 - [ ] Markdown and PDF filenames are aligned (only extension differs)
 - [ ] for recommendation tasks, shortlist includes actionable links and concise reasons
+- [ ] for mock interview, question sheet saved before starting simulation
+- [ ] for mock interview, evaluation report and review checklist saved after simulation
+- [ ] for product research, output saved as Markdown only (no PDF)
+- [ ] for product research, profile_store sections included/skipped correctly based on availability

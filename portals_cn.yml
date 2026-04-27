@@ -4,7 +4,7 @@
 # 标题过滤规则
 title_filter:
   positive:
-    # Android / 客户端
+    # Android / 客户端（核心方向）
     - "Android"
     - "安卓"
     - "Launcher"
@@ -18,27 +18,21 @@ title_filter:
     - "性能优化"
     - "基础体验"
     - "稳定性"
-    # AI
-    - "AI"
-    - "大模型"
-    - "LLM"
-    - "Agent"
-    - "算法"
-    - "机器学习"
-    - "深度学习"
-    - "NLP"
-    - "数据挖掘"
-    # AI + 工程结合
+    # AI 工程 / 应用（非算法研究）
     - "AI工程"
     - "AI应用"
+    - "AI Agent"
     - "AI Native"
-    - "端侧"
+    - "AI平台"
+    - "端侧AI"
     - "on-device"
     - "MLOps"
+    - "大模型应用"
     # 通用开发
     - "软件开发"
     - "后端"
     - "全栈"
+    - "数据开发"
   negative:
     - "实习"
     - "Intern"
@@ -54,6 +48,26 @@ title_filter:
     - "8年以上"
     - "七年"
     - "十年"
+    # 纯算法研究方向（不匹配工程背景）
+    - "算法研究员"
+    - "算法专家"
+    - "搜广推"
+    - "推荐算法"
+    - "搜索算法"
+    - "广告算法"
+    - "后训练"
+    - "预训练"
+    - "强化学习"
+    - "多模态研究"
+    - "CV算法"
+    - "图像算法"
+    - "语音算法"
+    - "自动驾驶算法"
+    - "风控算法"
+    - "产品经理"
+    - "产品运营"
+    - "运营专家"
+    - "产品专家"
   seniority_boost:
     - "高级"
     - "资深"
@@ -95,7 +109,7 @@ cn_api_companies:
   - name: 美团
     type: meituan
     api_url: https://zhaopin.meituan.com/api/official/job/getJobList
-    keywords: "AI"
+    keywords: "Android"
     enabled: true
   - name: 快手
     type: kuaishou
@@ -130,117 +144,126 @@ playwright_companies:
 # 搜索引擎查询（第三层：广撒网发现岗位）
 # 通过 Google/Bing site: 搜索发现各公司招聘页上的岗位
 search_queries:
-  # 国内互联网大厂
-  - name: 字节跳动 — AI
-    query: '字节跳动 AI 算法 社招 jobs.bytedance.com'
+  # === Android / 客户端方向 ===
+  - name: 字节跳动 — Android
+    query: '字节跳动 Android 客户端 开发 社招 jobs.bytedance.com'
     enabled: true
-  - name: 腾讯 — AI
-    query: '腾讯 AI 算法 社招 careers.tencent.com'
+  - name: 腾讯 — Android
+    query: '腾讯 Android 客户端 开发 社招 careers.tencent.com'
     enabled: true
-  - name: 阿里巴巴 — AI
-    query: '阿里巴巴 AI 算法 社招 talent.alibaba.com'
+  - name: 阿里巴巴 — Android
+    query: '阿里巴巴 Android 客户端 开发 社招 talent.alibaba.com'
     enabled: true
-  - name: 百度 — AI
-    query: '百度 AI 大模型 社招 talent.baidu.com'
+  - name: 小红书 — Android
+    query: '小红书 Android 客户端 开发 社招'
     enabled: true
-  - name: B站 — AI
-    query: 'bilibili AI 算法 社招 jobs.bilibili.com'
+  - name: 携程 — Android
+    query: '携程 Android 客户端 开发 社招'
     enabled: true
-  - name: 拼多多 — AI
-    query: '拼多多 AI 算法 社招 careers.pinduoduo.com'
+  - name: 米哈游 — Android
+    query: '米哈游 Android 客户端 开发 社招'
     enabled: true
-
-  # 中型互联网
-  - name: 小红书 — AI
-    query: '小红书 AI 算法 社招 job.xiaohongshu.com'
+  - name: 得物 — Android
+    query: '得物 Android 客户端 开发 社招'
     enabled: true
-  - name: 携程 — AI
-    query: '携程 AI 算法 社招 careers.trip.com'
+  - name: B站 — Android
+    query: 'bilibili Android 客户端 开发 社招'
     enabled: true
-  - name: 米哈游 — AI
-    query: '米哈游 AI 算法 社招 join.mihoyo.com'
+  - name: 拼多多 — Android
+    query: '拼多多 Android 客户端 开发 社招'
     enabled: true
-  - name: 得物 — AI
-    query: '得物 AI 算法 社招 招聘'
+  - name: 网易 — Android
+    query: '网易 Android 客户端 开发 社招'
     enabled: true
-  - name: SHEIN — AI
-    query: 'SHEIN AI algorithm engineer careers.shein.com'
+  - name: 京东 — Android
+    query: '京东 Android 客户端 开发 社招'
     enabled: true
-  - name: 蚂蚁集团 — AI
-    query: '蚂蚁集团 AI 大模型 社招 talent.antgroup.com'
-    enabled: true
-  - name: 网易 — AI
-    query: '网易 AI 算法 社招 hr.163.com'
-    enabled: true
-  - name: 京东 — AI
-    query: '京东 AI 算法 社招 zhaopin.jd.com'
-    enabled: true
-  - name: 华为 — AI
-    query: '华为 AI 大模型 社招 career.huawei.com'
-    enabled: true
-  - name: 小米 — AI
-    query: '小米 AI 算法 社招 hr.xiaomi.com'
-    enabled: true
-  - name: OPPO — AI
-    query: 'OPPO AI 算法 社招 join.oppo.com'
-    enabled: true
-  - name: vivo — AI
-    query: 'vivo AI 算法 社招 careers.vivo.com'
+  - name: 蚂蚁集团 — Android
+    query: '蚂蚁集团 Android 客户端 开发 社招'
     enabled: true
 
-  # 新兴 AI 公司
-  - name: 月之暗面 — 全部
-    query: '月之暗面 Moonshot AI 招聘 社招'
+  # === AI 工程 / Agent 应用方向 ===
+  - name: 字节跳动 — AI工程
+    query: '字节跳动 AI工程师 OR AI应用 OR AI Agent 社招'
     enabled: true
-  - name: 智谱AI — 全部
-    query: '智谱AI zhipuai 招聘 社招'
+  - name: 腾讯 — AI工程
+    query: '腾讯 AI工程师 OR AI应用 OR AI平台 社招'
     enabled: true
-  - name: MiniMax — 全部
-    query: 'MiniMax AI 招聘 社招'
+  - name: 阿里巴巴 — AI工程
+    query: '阿里巴巴 AI工程师 OR AI应用 社招'
     enabled: true
-  - name: 百川智能 — 全部
-    query: '百川智能 Baichuan 招聘 社招'
+  - name: 百度 — AI工程
+    query: '百度 AI工程师 OR AI应用 OR 大模型应用 社招'
     enabled: true
-  - name: 零一万物 — 全部
-    query: '零一万物 01.AI 招聘 社招'
+  - name: 华为 — AI工程
+    query: '华为 AI工程师 OR AI应用 社招 career.huawei.com'
     enabled: true
-  - name: 阶跃星辰 — 全部
-    query: '阶跃星辰 StepFun 招聘 社招'
+  - name: 小米 — AI工程
+    query: '小米 AI工程师 OR AI应用 社招 hr.xiaomi.com'
     enabled: true
-  - name: 深度求索 — 全部
-    query: 'DeepSeek 深度求索 招聘 社招'
+  - name: OPPO — 客户端
+    query: 'OPPO Android OR 客户端 OR AI应用 社招'
+    enabled: true
+  - name: vivo — 客户端
+    query: 'vivo Android OR 客户端 OR AI应用 社招'
     enabled: true
 
-  # 客户端 + AI 结合方向
+  # === 新兴 AI 公司（偏工程岗） ===
+  - name: 月之暗面 — 工程
+    query: '月之暗面 Moonshot 工程师 社招 招聘'
+    enabled: true
+  - name: 智谱AI — 工程
+    query: '智谱AI 工程师 开发 社招 招聘'
+    enabled: true
+  - name: MiniMax — 工程
+    query: 'MiniMax 工程师 开发 社招 招聘'
+    enabled: true
+  - name: 百川智能 — 工程
+    query: '百川智能 工程师 开发 社招 招聘'
+    enabled: true
+  - name: 深度求索 — 工程
+    query: 'DeepSeek 深度求索 工程师 开发 社招'
+    enabled: true
+  - name: 阶跃星辰 — 工程
+    query: '阶跃星辰 StepFun 工程师 社招'
+    enabled: true
+
+  # === 细分方向搜索 ===
+  - name: Android 社招 — 南京上海
+    query: 'Android 开发工程师 社招 南京 OR 上海 OR 苏州 OR 杭州 2026'
+    enabled: true
+  - name: 客户端性能优化
+    query: '客户端 性能优化 工程师 社招 招聘'
+    enabled: true
   - name: Flutter 社招
     query: 'Flutter 工程师 社招 招聘 2026'
     enabled: true
   - name: Rust 社招
     query: 'Rust 工程师 社招 招聘 互联网 2026'
     enabled: true
-  - name: 客户端性能优化
-    query: '客户端 性能优化 工程师 社招 招聘'
-    enabled: true
   - name: 端侧AI
     query: '端侧AI OR on-device AI 工程师 社招 招聘'
     enabled: true
-  - name: AI工程师 社招
-    query: 'AI工程师 OR AI应用工程师 社招 招聘 上海 OR 杭州 OR 深圳'
+  - name: AI Agent工程师
+    query: 'AI Agent 工程师 社招 招聘 上海 OR 杭州 OR 南京'
     enabled: true
-  - name: Boss直聘 — AI
-    query: 'site:zhipin.com AI 工程师 社招'
+  - name: AI应用工程师
+    query: 'AI应用工程师 OR 大模型应用工程师 社招 招聘'
     enabled: true
-  - name: 猎聘 — AI
-    query: 'site:liepin.com AI 算法 工程师 社招'
-    enabled: true
-  - name: 拉勾 — AI
-    query: 'site:lagou.com AI 算法 工程师 社招'
+  - name: MLOps工程师
+    query: 'MLOps OR AI平台 工程师 社招 招聘'
     enabled: true
   - name: Boss直聘 — Android
     query: 'site:zhipin.com Android 工程师 社招'
     enabled: true
+  - name: Boss直聘 — AI工程
+    query: 'site:zhipin.com AI工程师 OR AI应用 社招'
+    enabled: true
   - name: 猎聘 — Android
     query: 'site:liepin.com Android 工程师 社招'
+    enabled: true
+  - name: 猎聘 — AI工程
+    query: 'site:liepin.com AI工程师 OR AI应用 社招'
     enabled: true
 
 # 地区过滤（可选，留空则不过滤）
@@ -249,17 +272,7 @@ location_filter:
   - "Nanjing"
   - "上海"
   - "Shanghai"
-  - "杭州"
-  - "Hangzhou"
-  - "深圳"
-  - "Shenzhen"
-  - "广州"
-  - "Guangzhou"
-  - "北京"
-  - "Beijing"
-  - "成都"
-  - "Chengdu"
   - "苏州"
   - "Suzhou"
-  - "Remote"
-  - "远程"
+  - "杭州"
+  - "Hangzhou"

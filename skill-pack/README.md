@@ -9,15 +9,25 @@ Use it when you want to diagnose resumes, analyze JD fit, optimize resumes, tail
 1. Read `WORKFLOW.md`
 2. Check `INPUTS.md`
 3. If the task is China-first JD matching, read `JD_MATCHING.md`
-4. Use `PROMPTS.md` for generation guidance
-5. Validate against `OUTPUTS.md`
-6. Pick an adapter from `adapters/` if your agent supports repository-local skills
-7. Check `scripts/README.md` when local helper scripts are needed
+4. If the task is mock interview, read `MOCK_INTERVIEW.md`
+5. If the task is product research, read `PRODUCT_RESEARCH.md`
+6. If the task is structured evaluation, read `EVALUATION.md`
+7. If the task is application tracking, read `TRACKER.md`
+8. If the task is LinkedIn outreach, read `OUTREACH.md`
+9. Use `PROMPTS.md` for generation guidance
+10. Validate against `OUTPUTS.md`
+11. Pick an adapter from `adapters/` if your agent supports repository-local skills
+12. Check `scripts/README.md` when local helper scripts are needed
 
 ## What Is Inside
 
 - `WORKFLOW.md`: task flow and checkpoints
 - `JD_MATCHING.md`: China-first JD matching method and output expectations
+- `MOCK_INTERVIEW.md`: mock interview question generation and live simulation
+- `PRODUCT_RESEARCH.md`: pre-interview product research workflow
+- `EVALUATION.md`: 10-dimension structured job fit evaluation (A-F grading)
+- `TRACKER.md`: application status tracking and follow-up reminders
+- `OUTREACH.md`: LinkedIn outreach message generation
 - `INPUTS.md`: source selection and privacy rules
 - `OUTPUTS.md`: expected output shapes and quality checks
 - `PROMPTS.md`: reusable prompt patterns and constraints

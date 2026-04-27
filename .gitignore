@@ -10,4 +10,5 @@ offerpilot.egg-info/
 outputs/
 jds/
 data/
-assets/
+assets/web/frontend/.next/
+web/frontend/node_modules/

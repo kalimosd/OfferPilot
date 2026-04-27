@@ -3,38 +3,21 @@
 # OfferPilot AI
 
 [![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)](https://python.org)
+[![LangGraph](https://img.shields.io/badge/LangGraph-1C3C3C?style=flat&logo=langchain&logoColor=white)](https://langchain-ai.github.io/langgraph/)
 [![Playwright](https://img.shields.io/badge/Playwright-2EAD33?style=flat&logo=playwright&logoColor=white)](https://playwright.dev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 
-[![Claude Code](https://img.shields.io/badge/Claude_Code-000?style=flat&logo=anthropic&logoColor=white)](https://claude.ai)
-[![Cursor](https://img.shields.io/badge/Cursor-000?style=flat&logo=cursor&logoColor=white)](https://cursor.com)
-[![Codex](https://img.shields.io/badge/Codex-412991?style=flat&logo=openai&logoColor=white)](https://openai.com)
-[![Kiro](https://img.shields.io/badge/Kiro-FF9900?style=flat&logo=amazon&logoColor=white)](https://kiro.dev)
-
 **AI 求职助手，把弱申请变成面试敲门砖。**
 
-简历写得像岗位描述的复制粘贴？<br>
-求职信换个名字就能给任何人用？<br>
-最硬核的项目经历被埋在第二页？<br>
-活是你干的，但纸上看不出来？
+丢进简历和 JD，拿回一份更强的简历、一份定向改写、一份匹配度分析、或一封求职信 — 基于你的真实经历，不编不造。
 
-别再低估自己了。让 AI 把你真实的经历打磨得更锋利。
-
-[功能](#功能) · [快速开始](#快速开始) · [效果示例](#效果示例) · [进阶用法](#进阶用法) · [路线图](#路线图) · [参与贡献](#参与贡献)
+[功能](#功能) · [快速开始](#快速开始) · [Agent 模式](#agent-模式) · [效果示例](#效果示例) · [项目结构](#项目结构) · [路线图](#路线图)
 
 [English](./README_en.md)
-
-丢进简历和 JD，拿回一份更强的简历、一份定向改写、一份 JD 匹配度分析、或一封求职信 — 基于你的真实经历，不编不造。
 
 </div>
 
 ---
-
-## 为什么做这个项目
-
-很多留学生和职场新人明明做了很好的工作，但简历写得太泛、求职信千篇一律、最相关的经历反而被埋没。
-
-OfferPilot 只关注结果：更清晰的定位、更强的材料、更高的面试概率。
 
 ## 功能
 
@@ -43,22 +26,104 @@ OfferPilot 只关注结果：更清晰的定位、更强的材料、更高的面
 | **简历优化** | 精炼措辞、去除水分、强化 bullet point — 不编造事实 |
 | **定向简历改写** | 围绕目标 JD 重写和重排内容 |
 | **JD 匹配度分析** | 识别匹配信号、差距和改写优先级 |
+| **结构化评估** | 10 维度打分 + A-F 等级，量化岗位匹配度 |
 | **求职信生成** | 基于真实经历生成简洁、有针对性的求职信 |
-| **Profile 素材库** | 从结构化 YAML 素材库中选取最相关的经历 |
-| **职位发现** | 自动扫描招聘网站和搜索引擎，发现匹配岗位 |
-| **PDF 导出** | 将 Markdown 草稿渲染为带样式的 PDF，支持嵌入照片 |
+| **Profile 素材库** | 从结构化 YAML 素材库中选取最相关的经历组装简历 |
+| **职位发现** | 自动扫描招聘网站（美团/快手/滴滴 + Greenhouse + DuckDuckGo），发现匹配岗位 |
+| **申请追踪** | 管理申请状态（discovered → applied → interviewing → offer/rejected），自动提醒跟进 |
+| **批量评估** | 一次评估多个 JD，快速筛选值得投递的岗位 |
+| **模拟面试** | 基于 JD 和个人经历生成面试题单，对话模拟并输出评估报告 |
+| **产品研究** | 调研目标产品，输出产品介绍、竞品分析、面试预测和准备清单 |
+| **LinkedIn 外联** | 生成针对目标公司的 LinkedIn outreach 消息 |
+| **PDF 导出** | Markdown → 带样式 PDF，支持嵌入照片 |
 
-## 快速开始（Skills 优先）
+## 快速开始
 
-1. 准备 `resume.md`（或 `resume.pdf`）
-2. 准备 `job.md`（目标岗位的 JD）
-3. 打开 `skill-pack/README.md` 并按 read order 执行
-4. 在 agent 里使用短触发语，例如：
+```bash
+# 1. 克隆并安装
+git clone https://github.com/kalimosd/offerpilot-ai.git
+cd offerpilot-ai
+python -m venv .venv && source .venv/bin/activate
+pip install -e .
+
+# 2. 配置 LLM（支持 DeepSeek / Claude / Gemini / OpenAI）
+cp .env.example .env
+# 编辑 .env，填入 API key
+
+# 3. 运行 Agent
+python -m offerpilot.agent "帮我优化简历，简历在 profile_store.yaml"
+```
+
+## Agent 模式
+
+OfferPilot Agent 基于 **LangGraph** 构建，支持自然语言输入，自动分类任务、调用工具、生成输出。
+
+### 支持的 LLM
+
+通过环境变量切换，无需改代码：
+
+```bash
+# DeepSeek（默认）
+OFFERPILOT_MODEL=deepseek-chat
+OFFERPILOT_API_KEY=your-key
+OFFERPILOT_BASE_URL=https://api.deepseek.com
+
+# Claude
+OFFERPILOT_MODEL=claude-sonnet-4-20250514
+ANTHROPIC_API_KEY=your-key
+
+# Gemini
+OFFERPILOT_MODEL=gemini-2.0-flash
+GOOGLE_API_KEY=your-key
+
+# OpenAI
+OFFERPILOT_MODEL=gpt-4o-mini
+OPENAI_API_KEY=your-key
+```
+
+### 使用示例
+
+```bash
+# 单次模式 — 跑完即退出
+python -m offerpilot.agent "帮我分析 jds/美团-AI_Agent工程师.md 和 profile_store.yaml 的匹配度"
+python -m offerpilot.agent "批量评估 jds 目录下所有美团的 JD"
+python -m offerpilot.agent "运行 pipeline，扫描最近 7 天的岗位，推荐 Top 10"
+python -m offerpilot.agent "查看我的申请状态，有哪些需要跟进"
+python -m offerpilot.agent "帮我写一封给 Anthropic 的 LinkedIn 外联消息"
+
+# 多轮交互模式
+python -m offerpilot.agent
+> 帮我优化简历
+> 再针对这个 JD 做定向改写
+> 导出 PDF
+> exit
+```
+
+### Agent 工具链（12 个工具）
+
+| 工具 | 说明 |
+|------|------|
+| `read_file` / `write_file` | 读写文件 |
+| `extract_text` | 从 PDF/DOCX 提取文本 |
+| `render_pdf` | Markdown → PDF |
+| `list_files` | 列出目录 |
+| `scan_portals` | 扫描招聘网站 |
+| `run_pipeline` | 端到端 pipeline（扫描→排序→推荐） |
+| `tracker_add` / `tracker_update` / `tracker_query` | 申请状态追踪 |
+| `check_followups` | 跟进提醒（applied>7天 / interviewing>5天） |
+| `batch_evaluate` | 批量评估多个 JD |
+
+Agent 通过 LangGraph ReAct 循环自动调度这些工具，不需要手动指定。
+
+## Skill Pack 模式
+
+除了独立 Agent，OfferPilot 也可以作为 AI 编辑器的 skill pack 使用：
+
+1. 打开 `skill-pack/README.md` 按 read order 执行
+2. 在 Claude Code / Cursor / Codex / Kiro 中使用触发语：
    - `按照 offerpilot 优化简历`
    - `用 offerpilot 做 JD 匹配`
-   - `/offerpilot 根据我简历推荐10个岗位`
-5. 审阅生成的 Markdown 输出，满意后导出
-
+   - `用 offerpilot 模拟面试这个岗位`
 
 ## 效果示例
 
@@ -77,116 +142,56 @@ OfferPilot 只关注结果：更清晰的定位、更强的材料、更高的面
 - 负责最近任务功能的交付，协调工程干系人按期上线，加速跨团队问题闭环。
 ```
 
-生成的内容可以直接使用，几乎不需要额外编辑。
-
 ## 技术栈
 
-- Python · LLM 驱动的改写与分析
-- 模块化 skill-pack 架构
-- YAML 格式的 profile 素材库
-- 基于 Playwright 的 PDF 导出和招聘网站扫描
+- **Agent 框架**：LangGraph（状态图 + ReAct）+ LangChain（tool calling、多 provider 适配）
+- **LLM**：DeepSeek / Claude / Gemini / OpenAI（环境变量切换）
+- **PDF 导出 & 网页扫描**：Playwright
+- **数据格式**：YAML（profile 素材库）、TSV（tracker、扫描历史）
+- **Skill Pack**：模块化 Markdown 文档，适配多种 AI 编辑器
 
 ## 项目结构
 
 ```text
 .
-├── README.md               # 中文（主页）
-├── README_en.md            # English
-├── profile_store.yaml      # 个人素材库（不入 git）
-├── portals_cn.yml
+├── offerpilot/
+│   ├── agent.py            # CLI 入口（单次 + 多轮交互）
+│   ├── graph.py            # LangGraph 图定义 + system prompt
+│   ├── tools.py            # 12 个 agent 工具
+│   ├── llm.py              # 多 provider LLM 初始化
+│   ├── state.py            # 图状态定义
+│   └── cli.py              # 可选 CLI 辅助命令
 ├── skill-pack/
-│   ├── README.md           # skill pack 入口
-│   ├── WORKFLOW.md         # 任务流程和检查点
-│   ├── DATASTORE.md        # 素材库规范
-│   ├── JD_MATCHING.md      # 中国市场 JD 匹配
-│   ├── INPUTS.md / OUTPUTS.md / PROMPTS.md
-│   ├── adapters/           # Claude Code、Codex、Cursor 适配器
-│   ├── examples/           # 示例输出
-│   ├── data/               # 技能别名映射
-│   └── scripts/            # 提取、渲染、扫描、校验
-├── jds/                    # （不入 git）扫描保存的 JD
-├── data/                   # （不入 git）扫描历史
+│   ├── WORKFLOW.md          # 任务流程和检查点
+│   ├── DATASTORE.md         # 素材库规范
+│   ├── JD_MATCHING.md       # JD 匹配分析规范
+│   ├── MOCK_INTERVIEW.md    # 模拟面试流程
+│   ├── PRODUCT_RESEARCH.md  # 产品研究流程
+│   ├── OUTPUTS.md / PROMPTS.md / INPUTS.md
+│   ├── scripts/             # 提取、渲染、扫描、校验脚本
+│   └── adapters/            # Claude Code / Codex / Cursor 适配器
+├── outputs/
+│   ├── resumes/             # 简历、定向改写、JD 匹配分析
+│   ├── research/            # 产品研究
+│   ├── interview/           # 面试题单、面试评估
+│   ├── pipeline/            # 扫描推荐报告
+│   └── misc/                # 其他
+├── profile_store.yaml       # 个人素材库（不入 git）
+├── jds/                     # 扫描保存的 JD（不入 git）
+├── data/                    # 扫描历史、tracker（不入 git）
 └── tests/
 ```
 
-## 可选辅助命令（CLI）
-
-`skill-pack` 是主入口，CLI 只是可选执行器：
-
-```bash
-# 查看全部命令
-offerpilot
-
-# 提取源文件文本
-offerpilot extract "resume.pdf" --output "resume.txt"
-
-# 导出 PDF
-offerpilot pdf "resume.md" "resume.pdf" --style classic
-
-# 扫描岗位
-offerpilot scan --cn-only
-
-# 最小流程：校验输入 + 导出简历 PDF
-offerpilot run "resume.md" "outputs/resume.pdf" --style ats
-
-# 端到端岗位流水线：扫描 + 排序 + TopN 推荐
-offerpilot pipeline --days 7 --top-n 10 --cn-focus
-```
-
-直接脚本调用（同样是可选项）：
-
-从 PDF 或 DOCX 提取文本：
-
-```bash
-python3 skill-pack/scripts/extract_text.py "resume.pdf" --output "resume.txt"
-```
-
-将审阅后的草稿导出为 PDF：
-
-```bash
-python3 skill-pack/scripts/render_pdf.py "resume.md" "resume.pdf" --document-type resume --style classic
-```
-
-导出时嵌入照片：
-
-```bash
-python3 skill-pack/scripts/render_pdf.py "resume.md" "resume.pdf" --style standard_cn --photo "photo.jpg"
-```
-
-扫描招聘网站寻找匹配岗位：
-
-```bash
-# 全量扫描（国内 API + Greenhouse + 搜索引擎）
-python3 skill-pack/scripts/scan_portals.py
-
-# 仅国内公司 API（美团、快手、滴滴）
-python3 skill-pack/scripts/scan_portals.py --cn-only
-
-# 仅 Greenhouse API（海外公司）
-python3 skill-pack/scripts/scan_portals.py --greenhouse-only
-
-# 仅搜索引擎（DuckDuckGo，覆盖 20+ 公司）
-python3 skill-pack/scripts/scan_portals.py --search-only
-
-# 预览模式，不写入文件
-python3 skill-pack/scripts/scan_portals.py --dry-run
-```
-
-匹配到的岗位会保存到 `jds/`，包含完整 JD 内容和投递链接。扫描历史记录在 `data/scan-history.tsv` 中用于去重。
-
 ## 路线图
 
-- 基于 RAG 的职位搜索和简历知识系统
-- 模拟面试与反馈
-- 更好的素材库检索和排序
-- Agent 驱动的自动投递工作流
-- 简历版本管理和定向自动化
+- [ ] 基于 RAG 的简历知识系统
+- [ ] Agent 驱动的自动投递工作流
+- [ ] 简历版本管理和 A/B 测试
+- [ ] Web UI
 
 ## 参与贡献
 
 欢迎反馈、提 issue 和 PR。
-
-如果你想改进工作流、测试输出质量、或者提产品方向建议 — 开个 issue 或发起讨论。
 
 ## 写在最后
 

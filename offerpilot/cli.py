@@ -98,7 +98,7 @@ def _build_parser() -> argparse.ArgumentParser:
     pipeline.add_argument("--top-n", type=int, default=10, help="Number of recommendations.")
     pipeline.add_argument(
         "--output",
-        default="outputs/pipeline_recommendations.md",
+        default="outputs/pipeline/pipeline_recommendations.md",
         help="Recommendation markdown output path.",
     )
     pipeline.add_argument("--cn-focus", action="store_true", help="Boost China-focused roles.")
