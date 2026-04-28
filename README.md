@@ -11,6 +11,8 @@
 
 Feed it your resume and a JD — get back a stronger resume, a targeted rewrite, a fit analysis, or a cover letter. Based on your real experience, no fabrication.
 
+![OfferPilot Web UI](docs/web-ui-screenshot.png)
+
 [Features](#features) · [Quick Start](#quick-start) · [Agent Mode](#agent-mode) · [Web UI](#web-ui) · [Project Structure](#project-structure)
 
 [中文](./README_zh.md)
