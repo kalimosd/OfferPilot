@@ -206,6 +206,8 @@ The pipeline is for job discovery and recommendation:
 
 Use `skill-pack/` when you want a portable workflow for an AI coding agent rather than the built-in OfferPilot agent.
 
+If you only want the standalone Skill Pack rule layer, switch to the [`offerpilot-skill`](https://github.com/kalimosd/OfferPilot/tree/offerpilot-skill) branch.
+
 Recommended reading order:
 
 1. `skill-pack/WORKFLOW.md`

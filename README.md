@@ -255,6 +255,8 @@ python -m offerpilot.agent "运行 pipeline，扫描最近 14 天，推荐前 20
 
 如果你不是直接跑 OfferPilot Agent，而是想让 Cursor、Claude Code、Codex 这类工具按照一套文档流程工作，就使用 `skill-pack/`。
 
+如果你只想使用纯 Skill Pack 规则层，可以切到 [`offerpilot-skill`](https://github.com/kalimosd/OfferPilot/tree/offerpilot-skill) 分支。
+
 建议阅读顺序：
 
 1. `skill-pack/WORKFLOW.md`
