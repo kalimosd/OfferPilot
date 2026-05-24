@@ -63,9 +63,9 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--style",
-        choices=["classic", "ats", "compact"],
-        default="classic",
-        help="PDF style to use. Default: classic.",
+        choices=["classic", "ats", "compact", "standard_cn"],
+        default="standard_cn",
+        help="PDF style to use. Default: standard_cn.",
     )
     parser.add_argument(
         "--photo",
@@ -465,11 +465,11 @@ def _build_pdf_css(style_config: dict, *, document_type: str, style: str) -> str
         font-family: {MONOSPACE_FONT_STACK};
       }}
 
-      .style-classic h1.name {{
+      .style-standard_cn h1.name {{
         text-align: center;
       }}
 
-      .style-classic p.meta {{
+      .style-standard_cn p.meta {{
         text-align: center;
       }}
 
@@ -497,19 +497,19 @@ def _build_pdf_css(style_config: dict, *, document_type: str, style: str) -> str
         flex-shrink: 0;
       }}
 
-      .style-classic h2.section-heading {{
+      .style-standard_cn h2.section-heading {{
         color: #1a4480;
         border-bottom: 1.2pt solid #1a4480;
         padding-bottom: 2pt;
       }}
 
-      .style-classic p.emphasis {{
+      .style-standard_cn p.emphasis {{
         color: #222222;
         border-bottom: 0.6pt dashed #cccccc;
         padding-bottom: 1.5pt;
       }}
 
-      .style-classic .bullet-list li {{
+      .style-standard_cn .bullet-list li {{
         color: #333333;
       }}
 
@@ -523,7 +523,7 @@ def _build_pdf_css(style_config: dict, *, document_type: str, style: str) -> str
         page-break-after: avoid;
       }}
 
-      .style-classic h3.sub-heading {{
+      .style-standard_cn h3.sub-heading {{
         border-bottom: 0.6pt dashed #cccccc;
         padding-bottom: 1.5pt;
       }}
@@ -675,29 +675,29 @@ def _strip_markdown_inline(text: str) -> str:
 
 def _get_style_config(style: str, document_type: str) -> dict:
     base = {
-        "header_alignment": 1,
-        "margin_x": 0.7,
-        "margin_top": 0.45,
-        "margin_bottom": 0.45,
-        "name_font_size": 20,
-        "name_leading": 23,
-        "name_space_after": 2,
-        "meta_font_size": 9.5,
-        "meta_leading": 12.5,
-        "meta_space_after": 5,
+        "header_alignment": HEADER_ALIGNMENT_LEFT,
+        "margin_x": 0.72,
+        "margin_top": 0.62,
+        "margin_bottom": 0.62,
+        "name_font_size": 17,
+        "name_leading": 21,
+        "name_space_after": 6,
+        "meta_font_size": 10,
+        "meta_leading": 13,
+        "meta_space_after": 8,
         "section_font_size": 11.5,
-        "section_leading": 14,
-        "section_space_before": 12,
-        "section_space_after": 5,
-        "emphasis_font_size": 10,
-        "emphasis_leading": 13,
-        "emphasis_space_after": 1.5,
-        "body_font_size": 9.5,
-        "body_leading": 13,
+        "section_leading": 15,
+        "section_space_before": 7,
+        "section_space_after": 4,
+        "emphasis_font_size": 10.3,
+        "emphasis_leading": 13.5,
+        "emphasis_space_after": 2,
+        "body_font_size": 10.2,
+        "body_leading": 13.5,
         "bullet_space_after": 1.5,
-        "paragraph_space_after": 2.5,
-        "blank_spacer": 0.03,
-        "section_break_spacer": 0.03,
+        "paragraph_space_after": 3,
+        "blank_spacer": 0.04,
+        "section_break_spacer": 0.06,
     }
 
     if style == "ats":
@@ -735,6 +735,35 @@ def _get_style_config(style: str, document_type: str) -> dict:
                 "section_break_spacer": 0.045,
             }
         )
+    elif style == "standard_cn":
+        base.update(
+            {
+                "header_alignment": 1,  # centered
+                "margin_x": 0.7,
+                "margin_top": 0.45,
+                "margin_bottom": 0.45,
+                "name_font_size": 20,
+                "name_leading": 23,
+                "name_space_after": 2,
+                "meta_font_size": 9.5,
+                "meta_leading": 12.5,
+                "meta_space_after": 5,
+                "section_font_size": 11.5,
+                "section_leading": 14,
+                "section_space_before": 12,
+                "section_space_after": 5,
+                "emphasis_font_size": 10,
+                "emphasis_leading": 13,
+                "emphasis_space_after": 1.5,
+                "body_font_size": 9.5,
+                "body_leading": 13,
+                "bullet_space_after": 1.5,
+                "paragraph_space_after": 2.5,
+                "blank_spacer": 0.03,
+                "section_break_spacer": 0.03,
+            }
+        )
+
     if document_type == "cover_letter":
         base.update(
             {

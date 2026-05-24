@@ -31,6 +31,7 @@
   "deep learning": ["dl", "深度学习", "神经网络"],
   "nlp": ["natural language processing", "自然语言处理"],
   "llm": ["large language model", "大语言模型", "生成式ai", "生成式 AI"],
+  "ai agent": ["agent", "ai智能体", "ai 智能体", "智能体", "agentic workflow", "agent workflow"],
   "computer vision": ["cv", "视觉算法", "图像识别"],
   "pytorch": ["torch", "pytorch框架"],
   "tensorflow": ["tf", "tensorflow框架"],

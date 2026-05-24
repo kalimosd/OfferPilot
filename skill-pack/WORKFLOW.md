@@ -66,7 +66,7 @@ Input handling rules:
 - section 顺序：教育背景 → 工作经历 → 强相关项目 → 实习经历 → 其他项目 → 技能
 - 实习经历和工作经历**必须分开**，不能合并
 - 实习经历和项目经历**必须分开**，不能合并
-- PDF 默认使用 `--style classic`，中文和英文输出保持同一套主版式
+- PDF 中文简历默认使用 `--style standard_cn`，英文输出默认使用 `classic`
 - 文件命名：`姓名_公司_岗位_v1`
 
 For jd-fit diagnosis:
@@ -194,7 +194,7 @@ Preferred order:
 **交付规则（不可跳过）：**
 
 - 简历类任务必须同时输出 Markdown 和 PDF 两个文件
-- PDF 使用 `render_pdf.py` 生成，默认 style 为 `classic`
+- PDF 使用 `render_pdf.py` 生成，中文默认 style 为 `standard_cn`，英文默认 style 为 `classic`
 - 仅当用户明确指定其他 style 或输出语言为英文时，才使用其他 style
 - 两个文件的文件名必须一致（仅扩展名不同）
 
@@ -212,7 +212,7 @@ Preferred order:
 - [ ] English name ordering checked when relevant
 - [ ] final output matches the user's requested language and purpose
 - [ ] for resume tasks, both Markdown and PDF files are saved
-- [ ] PDF uses `classic` style unless the user specified another style
+- [ ] PDF uses `standard_cn` for Chinese resumes and `classic` for English resumes unless the user specified another style
 - [ ] Markdown and PDF filenames are aligned (only extension differs)
 - [ ] for recommendation tasks, shortlist includes actionable links and concise reasons
 - [ ] for mock interview, question sheet saved before starting simulation

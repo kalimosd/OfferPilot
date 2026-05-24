@@ -103,13 +103,14 @@ Rules:
 
 The `render_pdf.py` script supports multiple styles via `--style`:
 
-- `classic` — default for Chinese and English outputs; centered name/contact line, section dividers, and right-aligned dates
+- `standard_cn` — default for Chinese resume outputs; centered name/contact line, section dividers, and right-aligned dates
+- `classic` — default for English outputs; centered name/contact line, section dividers, and right-aligned dates
 - `ats` — optimized for ATS parsing, slightly smaller text
 - `compact` — tighter margins and spacing for dense content
 
 **默认选择规则：**
 
-- 中文简历 → `classic`
+- 中文简历 → `standard_cn`
 - 英文简历 → `classic`
 - 除非用户明确指定其他 style
 

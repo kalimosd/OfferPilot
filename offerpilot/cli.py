@@ -54,9 +54,9 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     pdf.add_argument(
         "--style",
-        choices=["classic", "ats", "compact"],
+        choices=["classic", "ats", "compact", "standard_cn"],
         default="classic",
-        help="PDF style. Default: classic.",
+        help="PDF style.",
     )
     pdf.add_argument("--photo", default=None, help="Optional photo path for header.")
 
@@ -105,9 +105,9 @@ def _build_parser() -> argparse.ArgumentParser:
     run.add_argument("pdf_output", help="Output PDF path.")
     run.add_argument(
         "--style",
-        choices=["classic", "ats", "compact"],
+        choices=["classic", "ats", "compact", "standard_cn"],
         default="classic",
-        help="PDF style. Default: classic.",
+        help="PDF style.",
     )
 
     pipeline = subparsers.add_parser(
