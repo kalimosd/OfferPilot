@@ -94,15 +94,12 @@ class ExportTests(unittest.TestCase):
             with patch(
                 "offerpilot_render_pdf._render_html_to_pdf_with_playwright",
                 side_effect=fake_browser_renderer,
-            ) as browser_renderer, patch(
-                "offerpilot_render_pdf._render_markdown_to_pdf_with_reportlab"
-            ) as fallback_renderer:
+            ) as browser_renderer:
                 saved_path = render_pdf.render_markdown_to_pdf(markdown, str(output_path))
 
             self.assertTrue(saved_path.exists())
             self.assertIn(b"%PDF-browser", saved_path.read_bytes())
             browser_renderer.assert_called_once()
-            fallback_renderer.assert_not_called()
 
     def test_render_markdown_to_pdf_raises_when_browser_render_fails(self) -> None:
         markdown = "# Candidate Example\nPhone: 123\n\n## Experience\n- Built tooling\n"
@@ -113,9 +110,7 @@ class ExportTests(unittest.TestCase):
             with patch(
                 "offerpilot_render_pdf._render_html_to_pdf_with_playwright",
                 side_effect=RuntimeError("Chromium missing"),
-            ) as browser_renderer, patch(
-                "offerpilot_render_pdf._render_markdown_to_pdf_with_reportlab"
-            ) as fallback_renderer:
+            ) as browser_renderer:
                 with self.assertRaises(RuntimeError) as ctx:
                     render_pdf.render_markdown_to_pdf(
                         markdown,
@@ -126,7 +121,6 @@ class ExportTests(unittest.TestCase):
 
             self.assertIn("Chromium missing", str(ctx.exception))
             browser_renderer.assert_called_once()
-            fallback_renderer.assert_not_called()
 
 
 if __name__ == "__main__":
