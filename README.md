@@ -6,9 +6,9 @@
 
 OfferPilot 是一套面向求职场景的 AI 工作流 Skill Pack，用来帮助候选人基于真实经历完成简历优化、JD 匹配、定向改写、结构化评估、面试准备、产品研究、申请追踪和外联消息生成。
 
-这个分支是 `offerpilot-skill`。主入口是 `skill-pack/`，适合在 Cursor、Claude Code、Codex 等 AI 编程工具中使用。
+这个分支是 [offerpilot-skill](https://github.com/kalimosd/OfferPilot/tree/offerpilot-skill)。主入口是 `skill-pack/`，适合在 Cursor、Claude Code、Codex 等 AI 编程工具中使用。
 
-如果你想运行 LangGraph Agent、CLI 或 Web UI，请切换到 `offerpilot-agent` 分支。
+如果你想运行 LangGraph Agent、CLI 或 Web UI，请切换到 [offerpilot-agent](https://github.com/kalimosd/OfferPilot/tree/offerpilot-agent) 分支。
 
 [English](./README_en.md)
 
@@ -154,8 +154,8 @@ OfferPilot 有两种形态：
 
 | 分支 | 定位 |
 |---|---|
-| `offerpilot-skill` | Skill Pack，负责规则、流程、模板、脚本和方法论 |
-| `offerpilot-agent` | Runnable Agent，负责 LangGraph runtime、CLI、Web UI 和自动化执行 |
+| [offerpilot-skill](https://github.com/kalimosd/OfferPilot/tree/offerpilot-skill) | Skill Pack，负责规则、流程、模板、脚本和方法论 |
+| [offerpilot-agent](https://github.com/kalimosd/OfferPilot/tree/offerpilot-agent) | Runnable Agent，负责 LangGraph runtime、CLI、Web UI 和自动化执行 |
 
 建议理解为：
 
@@ -170,7 +170,7 @@ agent      = skill-pack + runtime + tools + UI
 
 ## 维护建议
 
-对 Skill Pack 的改动应优先进入 `offerpilot-skill`：
+对 Skill Pack 的改动应优先进入 [offerpilot-skill](https://github.com/kalimosd/OfferPilot/tree/offerpilot-skill)：
 
 - workflow 文档
 - 输出规范
@@ -180,7 +180,7 @@ agent      = skill-pack + runtime + tools + UI
 - scripts
 - adapters
 
-Agent runtime、Web UI、API、LangGraph 状态图等改动应进入 `offerpilot-agent`。
+Agent runtime、Web UI、API、LangGraph 状态图等改动应进入 [offerpilot-agent](https://github.com/kalimosd/OfferPilot/tree/offerpilot-agent)。
 
 ## 写在最后
 

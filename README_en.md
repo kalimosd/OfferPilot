@@ -6,9 +6,9 @@
 
 OfferPilot is an AI career workflow Skill Pack for resume optimization, JD matching, targeted rewrites, structured evaluation, interview preparation, product research, application tracking, and outreach message generation.
 
-This branch is `offerpilot-skill`. The primary entry point is `skill-pack/`, designed for AI coding agents such as Cursor, Claude Code, and Codex.
+This branch is [offerpilot-skill](https://github.com/kalimosd/OfferPilot/tree/offerpilot-skill). The primary entry point is `skill-pack/`, designed for AI coding agents such as Cursor, Claude Code, and Codex.
 
-If you want the runnable LangGraph Agent, CLI, or Web UI, use the `offerpilot-agent` branch instead.
+If you want the runnable LangGraph Agent, CLI, or Web UI, use the [offerpilot-agent](https://github.com/kalimosd/OfferPilot/tree/offerpilot-agent) branch instead.
 
 [中文](./README.md)
 
@@ -149,8 +149,8 @@ OfferPilot ships in two forms:
 
 | Branch | Role |
 |---|---|
-| `offerpilot-skill` | Skill Pack: rules, workflows, templates, scripts, and methodology |
-| `offerpilot-agent` | Runnable Agent: LangGraph runtime, CLI, Web UI, and automation |
+| [offerpilot-skill](https://github.com/kalimosd/OfferPilot/tree/offerpilot-skill) | Skill Pack: rules, workflows, templates, scripts, and methodology |
+| [offerpilot-agent](https://github.com/kalimosd/OfferPilot/tree/offerpilot-agent) | Runnable Agent: LangGraph runtime, CLI, Web UI, and automation |
 
 Think of it as:
 
@@ -165,7 +165,7 @@ This branch may still contain some historical runtime files, but they are not th
 
 ## Maintenance Notes
 
-Changes to the Skill Pack should generally start in `offerpilot-skill`:
+Changes to the Skill Pack should generally start in [offerpilot-skill](https://github.com/kalimosd/OfferPilot/tree/offerpilot-skill):
 
 - workflow documents
 - output rules
@@ -175,7 +175,7 @@ Changes to the Skill Pack should generally start in `offerpilot-skill`:
 - scripts
 - adapters
 
-Agent runtime, Web UI, API, and LangGraph state changes belong in `offerpilot-agent`.
+Agent runtime, Web UI, API, and LangGraph state changes belong in [offerpilot-agent](https://github.com/kalimosd/OfferPilot/tree/offerpilot-agent).
 
 ## License
 
