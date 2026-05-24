@@ -10,6 +10,7 @@ The profile datastore is a structured personal material library. Instead of only
 - Default location: project root or any path the user specifies
 - Default filename: `profile_store.yaml`
 - Template: `skill-pack/templates/profile_store.yaml`
+- JSON Schema: `skill-pack/schemas/profile_store.schema.json`
 
 ## Structure Overview
 
@@ -27,13 +28,14 @@ achievements:   # awards, recognitions, notable outcomes
 
 ### meta
 
-| Field      | Required | Description                              |
-|------------|----------|------------------------------------------|
-| name       | yes      | candidate display name                   |
-| name_en    | no       | English name in `Given Name Family Name` |
-| email      | no       | contact email                            |
-| phone      | no       | contact phone                            |
-| updated    | no       | last update date                         |
+| Field      | Required | Description                                      |
+|------------|----------|--------------------------------------------------|
+| name       | yes      | candidate display name                           |
+| name_en    | no       | English name in `Given Name Family Name`         |
+| birth_year | no       | four-digit birth year, used only for age display |
+| email      | no       | contact email                                    |
+| phone      | no       | contact phone                                    |
+| updated    | no       | last update date                                 |
 
 ### experience[]
 
@@ -160,6 +162,7 @@ When multiple bullets match a JD requirement equally well, prefer:
 
 - Use lowercase tags
 - Prefer tags that align with keys in `data/skill_aliases.zh-en.json`
+- Use spaces instead of hyphens for multi-word canonical tags, for example `system design` instead of `system-design`
 - A bullet can have multiple tags
 - Tags enable the JD matching step; bullets without tags are deprioritized during selection
 

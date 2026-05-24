@@ -47,13 +47,38 @@ python3 skill-pack/scripts/validate_inputs.py "resume.md" "job.md"
 
 ### `validate_outputs.py`
 
-Use for lightweight output checks after generation, such as filename plausibility or optional English name formatting checks.
+Use for output checks after generation, such as output subdirectory placement, filename plausibility, unresolved placeholders, section ordering, Markdown/PDF pairing, or optional English name formatting checks.
 
 Example:
 
 ```bash
 python3 skill-pack/scripts/validate_outputs.py "targeted_resume.md" --english-name "GivenName FamilyName"
 ```
+
+### `validate_profile_store.py`
+
+Use before datastore-based resume assembly, evaluation, outreach, or interview preparation. It checks required YAML fields, `birth_year`, bullet tags, `impact` values, skill levels, and whether tags align with `data/skill_aliases.zh-en.json`.
+
+Example:
+
+```bash
+python3 skill-pack/scripts/validate_profile_store.py "profile_store.yaml"
+```
+
+### `validate_aliases.py`
+
+Use after editing `skill-pack/data/skill_aliases.zh-en.json`. It checks JSON shape, lowercase canonical keys, empty aliases, and duplicate alias terms.
+
+Example:
+
+```bash
+python3 skill-pack/scripts/validate_aliases.py
+```
+
+## Schemas
+
+- `skill-pack/schemas/profile_store.schema.json`: machine-readable structure for `profile_store.yaml`
+- `skill-pack/schemas/skill_aliases.schema.json`: machine-readable structure for the alias JSON mapping
 
 ### `run_pipeline.py`
 
@@ -75,4 +100,5 @@ python3 skill-pack/scripts/run_pipeline.py --days 7 --top-n 10 --cn-focus
 - Prefer direct file reading when the agent can handle the source natively
 - Use these scripts only when they add reliability or convenience
 - Review Markdown-like output before exporting to PDF
+- Validate `profile_store.yaml` before workflows that depend on bullet selection or structured evaluation
 - Keep new helper logic in `skill-pack/scripts/` rather than introducing a parallel product layer

@@ -19,7 +19,7 @@ class SkillPackAssetTests(unittest.TestCase):
         aliases = json.loads(aliases_path.read_text(encoding="utf-8"))
 
         self.assertIn("ai agent", aliases)
-        self.assertIn("llm", aliases["ai agent"])
+        self.assertIn("agentic workflow", aliases["ai agent"])
 
     def test_profile_store_template_exists_and_is_valid_yaml(self) -> None:
         template_path = REPO_ROOT / "skill-pack" / "templates" / "profile_store.yaml"
@@ -47,6 +47,8 @@ class SkillPackToolTests(unittest.TestCase):
 
         self.assertIn("validate_inputs", tool_names)
         self.assertIn("validate_outputs", tool_names)
+        self.assertIn("validate_profile", tool_names)
+        self.assertIn("validate_aliases", tool_names)
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { getOutputs, getFileUrl, deleteFile } from "@/lib/api";
 import ReactMarkdown from "react-markdown";
@@ -38,8 +38,12 @@ export default function OutputsPage() {
 
   useEffect(() => {
     getOutputs(tab).then((res) => setFiles(res.files || []));
-    setPreview(null);
   }, [tab]);
+
+  function handleTabChange(value: string) {
+    setPreview(null);
+    setTab(value);
+  }
 
   async function handlePreview(name: string) {
     if (name.endsWith(".md")) {
@@ -65,7 +69,7 @@ export default function OutputsPage() {
         <h1 className="text-sm font-semibold">Outputs</h1>
       </div>
 
-      <Tabs value={tab} onValueChange={setTab} className="flex-1 flex flex-col overflow-hidden">
+      <Tabs value={tab} onValueChange={handleTabChange} className="flex-1 flex flex-col overflow-hidden">
         <TabsList className="mx-6 mt-3 w-fit">
           {TABS.map((t) => (
             <TabsTrigger key={t.value} value={t.value} className="text-xs">{t.label}</TabsTrigger>

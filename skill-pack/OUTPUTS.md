@@ -6,11 +6,11 @@ All outputs are saved under `outputs/` with the following subdirectories:
 
 | Subdirectory | Content |
 |---|---|
-| `outputs/resumes/` | 简历优化、定向改写、JD 匹配度分析 |
+| `outputs/resumes/` | 简历优化、定向改写、JD 匹配度分析、结构化评估、批量评估 |
 | `outputs/research/` | 产品研究 |
 | `outputs/interview/` | 面试题单、面试评估、面试准备整合 |
 | `outputs/pipeline/` | 扫描推荐、pipeline 报告 |
-| `outputs/misc/` | 其他（项目讲解、设计方案等） |
+| `outputs/misc/` | LinkedIn 外联消息、项目讲解、设计方案等其他材料 |
 
 Rules:
 
@@ -20,15 +20,20 @@ Rules:
 
 ## Output Categories
 
-OfferPilot supports three main output types:
+OfferPilot supports these output types:
 
 - resume diagnosis
 - optimized resume
 - job-targeted resume
 - jd-fit diagnosis
 - cover letter
+- structured evaluation report
+- batch evaluation ranking
 - mock interview question sheet
 - mock interview evaluation report
+- product research report
+- LinkedIn outreach message
+- pipeline recommendation report
 
 ## Age Display
 
@@ -98,10 +103,10 @@ Rules:
 
 The `render_pdf.py` script supports multiple styles via `--style`:
 
-- `classic` — default, left-aligned, clean layout
+- `standard_cn` — default for Chinese resume outputs; centered name/contact line, section dividers, and right-aligned dates
+- `classic` — default for English outputs; centered name/contact line, section dividers, and right-aligned dates
 - `ats` — optimized for ATS parsing, slightly smaller text
 - `compact` — tighter margins and spacing for dense content
-- `standard_cn` — centered name and contact info, section headings with solid underline, sub-headings with light dashed underline, dates right-aligned
 
 **默认选择规则：**
 
@@ -161,6 +166,19 @@ If the user explicitly requests anonymized sample files, replace `姓名` with a
 - overall summary in 2-3 sentences
 - review checklist with priority levels (高/中/低) and concrete learning recommendations
 - naming: `outputs/interview/姓名_公司_岗位_面试评估_v1.md`
+
+## Structured Evaluation Expectations
+
+- single evaluation naming: `outputs/resumes/姓名_公司_岗位_评估_v1.md`
+- batch ranking naming: `outputs/resumes/姓名_批量评估汇总排名.md`
+- each scored dimension includes a concrete reason grounded in the JD and profile
+- total score and grade are supporting context, not a replacement for the application recommendation
+
+## LinkedIn Outreach Expectations
+
+- save to `outputs/misc/姓名_公司_LinkedIn外联消息.md`
+- keep the message concise and specific to the target company or role
+- mention only experiences supported by the resume or profile datastore
 
 ## English Name Check
 

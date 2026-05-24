@@ -157,6 +157,38 @@ def validate_outputs(paths: list[str], english_name: str = "") -> str:
 
 
 @tool
+def validate_profile(path: str, aliases: str = "skill-pack/data/skill_aliases.zh-en.json") -> str:
+    """校验 profile_store.yaml 的结构、bullet tags、impact、技能等级和别名覆盖。"""
+    script = SCRIPTS_DIR / "validate_profile_store.py"
+    result = subprocess.run(
+        [sys.executable, str(script), path, "--aliases", aliases],
+        capture_output=True,
+        text=True,
+        cwd=str(REPO_ROOT),
+    )
+    output = result.stdout + (f"\n{result.stderr}" if result.stderr else "")
+    if result.returncode != 0:
+        return f"错误：profile 校验失败 (exit code {result.returncode})\n{output.strip()}"
+    return output
+
+
+@tool
+def validate_aliases(path: str = "skill-pack/data/skill_aliases.zh-en.json") -> str:
+    """校验技能别名 JSON 映射，包括 key 格式、空值和重复 alias。"""
+    script = SCRIPTS_DIR / "validate_aliases.py"
+    result = subprocess.run(
+        [sys.executable, str(script), path],
+        capture_output=True,
+        text=True,
+        cwd=str(REPO_ROOT),
+    )
+    output = result.stdout + (f"\n{result.stderr}" if result.stderr else "")
+    if result.returncode != 0:
+        return f"错误：alias 校验失败 (exit code {result.returncode})\n{output.strip()}"
+    return output
+
+
+@tool
 def tracker_add(url: str, company: str, title: str,
                 status: str = "discovered", notes: str = "") -> str:
     """添加一条申请记录到 tracker。status: discovered/applied/interviewing/offer/rejected/ghosted。"""
@@ -279,6 +311,7 @@ def batch_evaluate(jd_paths: list[str], profile_path: str = "profile_store.yaml"
 ALL_TOOLS = [
     read_file, write_file, extract_text, render_pdf, list_files,
     scan_portals, run_pipeline, validate_inputs, validate_outputs,
+    validate_profile, validate_aliases,
     tracker_add, tracker_update, tracker_query, check_followups,
     batch_evaluate,
 ]

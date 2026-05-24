@@ -75,6 +75,28 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Optional English name in GivenName FamilyName format.",
     )
 
+    v_profile = subparsers.add_parser(
+        "validate-profile",
+        help="Validate a profile_store.yaml datastore.",
+    )
+    v_profile.add_argument("path", help="Profile datastore YAML path.")
+    v_profile.add_argument(
+        "--aliases",
+        default="skill-pack/data/skill_aliases.zh-en.json",
+        help="Alias JSON file used to check canonical tags.",
+    )
+
+    v_aliases = subparsers.add_parser(
+        "validate-aliases",
+        help="Validate the skill alias mapping file.",
+    )
+    v_aliases.add_argument(
+        "path",
+        nargs="?",
+        default="skill-pack/data/skill_aliases.zh-en.json",
+        help="Alias JSON file to validate.",
+    )
+
     run = subparsers.add_parser(
         "run",
         help="Run a minimal pipeline: validate-inputs then render PDF.",
@@ -148,6 +170,12 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "validate-outputs":
         forwarded = [*args.paths, *(["--english-name", args.english_name] if args.english_name else [])]
         return _run_script("validate_outputs.py", forwarded)
+
+    if args.command == "validate-profile":
+        return _run_script("validate_profile_store.py", [args.path, "--aliases", args.aliases])
+
+    if args.command == "validate-aliases":
+        return _run_script("validate_aliases.py", [args.path])
 
     if args.command == "run":
         validation_code = _run_script("validate_inputs.py", [args.resume])

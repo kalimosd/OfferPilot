@@ -51,7 +51,7 @@ Use it when you want to diagnose resumes, analyze JD fit, optimize resumes, tail
 - Use the extracted text as the working source for prompting, review, and validation
 - Use `python3 skill-pack/scripts/render_pdf.py "input.md" "output.pdf"` when a local PDF export step is needed
 - Use `data/skill_aliases.zh-en.json` as a small China-first seed mapping for bilingual skill normalization
-- `validate_inputs.py` and `validate_outputs.py` remain optional checks; `extract_text.py` is the required helper when native file reading is unavailable
+- `validate_inputs.py`, `validate_outputs.py`, `validate_profile_store.py`, and `validate_aliases.py` remain optional checks; `extract_text.py` is the required helper when native file reading is unavailable
 
 ## Recommended Flow
 

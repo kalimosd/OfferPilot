@@ -6,6 +6,7 @@
 meta:
   name: "候选人A"
   name_en: "Zhiming Wang"
+  birth_year: 1999
   email: "example@example.com"
   phone: "+86-100-0000-0000"
   updated: "2026-04-05"
@@ -17,10 +18,10 @@ experience:
     end: "present"
     bullets:
       - text: "设计并实现订单系统分库分表方案，支撑日均 500 万订单处理"
-        tags: [system-design, distributed-systems, sql]
+        tags: [system design, distributed systems, sql]
         impact: quantified
       - text: "主导单体应用向微服务架构迁移，拆分为 12 个独立服务"
-        tags: [microservices, system-design, leadership]
+        tags: [microservices, system design, leadership]
         impact: quantified
         variants:
           management: "规划并推动微服务拆分路线图，协调 3 个团队完成 12 个服务的平稳迁移"
@@ -38,10 +39,10 @@ experience:
           management: "建立新人培养体系和 onboarding 流程，团队上手周期缩短 50%"
           technical: "编写 starter kit 和开发环境自动化脚本，降低新人环境搭建成本"
       - text: "负责每周 code review，推动团队代码规范落地"
-        tags: [code-review, leadership]
+        tags: [code review, leadership]
         impact: qualitative
       - text: "参与年度技术规划，输出后端架构演进路线图"
-        tags: [system-design, planning]
+        tags: [system design, planning]
         impact: context-only
 
   - company: "某互联网公司"
@@ -59,7 +60,7 @@ experience:
         tags: [testing, python, automation]
         impact: quantified
       - text: "配合产品经理完成 3 个版本的需求评审和排期"
-        tags: [communication, project-management]
+        tags: [communication, project management]
         impact: context-only
 
 projects:
@@ -67,20 +68,20 @@ projects:
     context: "公司内部工具，服务 200+ 运营人员，替代多个 Excel 手工流程"
     bullets:
       - text: "从 0 到 1 搭建运营后台，替代 5 个 Excel 流程，人效提升约 40%"
-        tags: [react, node.js, product, full-stack]
+        tags: [react, node.js, product management, full stack]
         impact: quantified
       - text: "设计权限管理模块，支持 RBAC 和部门级数据隔离"
-        tags: [backend, security, system-design]
+        tags: [backend, security, system design]
         impact: qualitative
 
   - name: "开源贡献 - 某 CLI 工具"
     context: "个人开源项目，GitHub 300+ stars"
     bullets:
       - text: "独立开发命令行工具，简化 K8s 多集群配置切换"
-        tags: [kubernetes, go, open-source]
+        tags: [kubernetes, go, open source]
         impact: quantified
       - text: "编写完整文档和 CI 流水线，合并外部贡献者 PR 15 个"
-        tags: [ci/cd, documentation, open-source]
+        tags: [ci/cd, documentation, open source]
         impact: quantified
 
 skills:

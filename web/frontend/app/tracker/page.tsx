@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { getTracker, addTracker, updateTracker, getFollowups, editTracker } from "@/lib/api";
@@ -42,15 +41,19 @@ export default function TrackerPage() {
   const [form, setForm] = useState({ url: "", company: "", title: "", status: "discovered", notes: "" });
   const [editForm, setEditForm] = useState({ original_url: "", url: "", company: "", title: "", status: "", notes: "" });
 
-  const load = useCallback(async () => {
+  async function load() {
     const status = filterStatus === "all" ? "" : filterStatus;
     const res = await getTracker(status, filterCompany);
     setRows(parseTrackerResult(res.result));
     const f = await getFollowups();
     setFollowups(f.result);
-  }, [filterStatus, filterCompany]);
+  }
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    const status = filterStatus === "all" ? "" : filterStatus;
+    getTracker(status, filterCompany).then((res) => setRows(parseTrackerResult(res.result)));
+    getFollowups().then((res) => setFollowups(res.result));
+  }, [filterStatus, filterCompany]);
 
   async function handleAdd() {
     await addTracker(form);

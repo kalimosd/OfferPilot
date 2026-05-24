@@ -9,10 +9,14 @@ Choose one of:
 - general resume optimization
 - job-targeted resume rewrite
 - jd-fit diagnosis
+- structured evaluation
+- batch evaluation
 - cover letter generation
 - job discovery and recommendation
 - mock interview
 - product research
+- application tracking
+- LinkedIn outreach
 
 ## 2. Collect Inputs
 
@@ -31,6 +35,8 @@ Additional inputs when needed:
 - discovery constraints (city, role direction, seniority, remote/on-site preference) for job recommendation tasks
 - for mock interview: job description + profile datastore (both required)
 - for product research: job description (required) + profile datastore (optional)
+- for structured evaluation: job description + profile datastore
+- for LinkedIn outreach: target company/role + profile datastore
 
 Input handling rules:
 
@@ -60,7 +66,7 @@ Input handling rules:
 - section 顺序：教育背景 → 工作经历 → 强相关项目 → 实习经历 → 其他项目 → 技能
 - 实习经历和工作经历**必须分开**，不能合并
 - 实习经历和项目经历**必须分开**，不能合并
-- PDF 中文简历默认使用 `--style standard_cn`
+- PDF 中文简历默认使用 `--style standard_cn`，英文输出默认使用 `classic`
 - 文件命名：`姓名_公司_岗位_v1`
 
 For jd-fit diagnosis:
@@ -70,6 +76,7 @@ For jd-fit diagnosis:
 - separate matched, partial, and missing signals
 - explain the biggest fit gaps in practical language
 - prioritize concrete rewrite suggestions
+- use the experience-level rule in `JD_MATCHING.md` when a JD specifies years of experience
 
 For resume optimization:
 
@@ -121,6 +128,24 @@ For product research:
 - JD is required; profile datastore is optional but enhances output
 - save outputs to `outputs/research/`
 
+For structured evaluation:
+
+- read `EVALUATION.md` before scoring
+- use the 10-dimension rubric and A-F grade mapping
+- save single and batch evaluation outputs to `outputs/resumes/`
+
+For application tracking:
+
+- read `TRACKER.md`
+- update or query `data/tracker.tsv`
+- return tracker operation results in chat; do not save them to `outputs/`
+
+For LinkedIn outreach:
+
+- read `OUTREACH.md`
+- use only profile-backed details
+- save the generated message to `outputs/misc/`
+
 ## 5. Review the Draft
 
 Check:
@@ -160,7 +185,7 @@ Preferred order:
 
 **输出目录规则（不可跳过）：**
 
-- `outputs/resumes/` — 简历优化、定向改写、JD 匹配度分析
+- `outputs/resumes/` — 简历优化、定向改写、JD 匹配度分析、结构化评估、批量评估
 - `outputs/research/` — 产品研究
 - `outputs/interview/` — 面试题单、面试评估、面试准备
 - `outputs/pipeline/` — 扫描推荐、pipeline 报告
@@ -169,7 +194,7 @@ Preferred order:
 **交付规则（不可跳过）：**
 
 - 简历类任务必须同时输出 Markdown 和 PDF 两个文件
-- PDF 使用 `render_pdf.py` 生成，默认 style 为 `standard_cn`
+- PDF 使用 `render_pdf.py` 生成，中文默认 style 为 `standard_cn`，英文默认 style 为 `classic`
 - 仅当用户明确指定其他 style 或输出语言为英文时，才使用其他 style
 - 两个文件的文件名必须一致（仅扩展名不同）
 
@@ -187,10 +212,12 @@ Preferred order:
 - [ ] English name ordering checked when relevant
 - [ ] final output matches the user's requested language and purpose
 - [ ] for resume tasks, both Markdown and PDF files are saved
-- [ ] PDF uses `standard_cn` style unless user specified otherwise or output is English
+- [ ] PDF uses `standard_cn` for Chinese resumes and `classic` for English resumes unless the user specified another style
 - [ ] Markdown and PDF filenames are aligned (only extension differs)
 - [ ] for recommendation tasks, shortlist includes actionable links and concise reasons
 - [ ] for mock interview, question sheet saved before starting simulation
 - [ ] for mock interview, evaluation report and review checklist saved after simulation
 - [ ] for product research, output saved as Markdown only (no PDF)
 - [ ] for product research, profile_store sections included/skipped correctly based on availability
+- [ ] for structured evaluation, scores follow `EVALUATION.md` weights and grade mapping
+- [ ] for LinkedIn outreach, message is saved to `outputs/misc/` and remains under 300 words
