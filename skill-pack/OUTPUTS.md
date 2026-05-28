@@ -95,6 +95,7 @@ Rules:
 - no fabricated facts
 - no inflated metrics
 - compact, interview-ready tone
+- do not add standalone target-intention lines such as `求职方向` / `求职意向` unless the user explicitly requests them
 - preserves real source contact details in the final deliverable unless the user explicitly requested anonymization
 - does not leave placeholder fields such as `<name>`, `<phone number>`, or `<email>` in application-ready outputs
 - does not add guessed or fabricated contact details that are missing from the source
@@ -104,7 +105,7 @@ Rules:
 The `render_pdf.py` script supports multiple styles via `--style`:
 
 - `standard_cn` — default for Chinese resume outputs; centered name/contact line, section dividers, and right-aligned dates
-- `classic` — default for English outputs; centered name/contact line, section dividers, and right-aligned dates
+- `classic` — default for English outputs; clean left-aligned layout with right-aligned dates
 - `ats` — optimized for ATS parsing, slightly smaller text
 - `compact` — tighter margins and spacing for dense content
 
