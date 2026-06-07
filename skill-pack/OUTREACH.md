@@ -29,3 +29,8 @@ Optional:
 ## Output
 
 保存到 `outputs/misc/姓名_公司_LinkedIn外联消息.md`
+
+## Error Recovery
+
+- **profile_store 缺失**：外联消息必须基于真实经历，没有 profile 则不生成。提示用户提供 profile_store.yaml 或手动描述 1-2 个想突出的项目经历
+- **公司/岗位信息模糊**：根据已知信息生成一个偏通用的版本，标注「信息有限」并建议用户补充具体方向后重新生成

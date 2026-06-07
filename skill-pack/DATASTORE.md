@@ -228,6 +228,13 @@ Different JDs produce different bullet selections from the same datastore.
 
 If the user does not provide a profile datastore, the workflow falls back to the existing behavior: rewrite and optimize the source resume directly. No datastore is required.
 
+## Error Recovery
+
+- **profile_store 文件不存在**：如果用户说「用 profile 生成」但文件不存在，提示用户先运行 `cp skill-pack/templates/profile_store.yaml profile_store.yaml` 创建模板，或直接使用原始简历
+- **所有 bullet 都缺少 tags**：降级为关键词匹配（直接搜索 JD 关键词在 bullet text 中的出现），同时提醒用户补充 tags 可以明显提高匹配准确度
+- **没有匹配到任何 bullet**：不要强行填充无关 bullet。明确告知用户「当前 profile 中未找到与该 JD 匹配的经历」，建议手动选择或直接走简历优化路径
+- **skill_aliases.json 文件缺失**：跳过 alias 归一化步骤，直接用原始 JD 关键词匹配 tags
+
 ## Privacy
 
 - The profile datastore contains personal career details; treat it as private by default

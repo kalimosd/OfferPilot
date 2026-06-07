@@ -68,6 +68,8 @@ Rules:
 
 ## Resume Diagnosis Expectations
 
+See `RESUME_DIAGNOSIS.md` for the full diagnosis workflow. Key output expectations:
+
 - identifies strengths that are already supported by the source
 - identifies gaps relative to either general job-readiness or a target job
 - calls out risks without inventing problems

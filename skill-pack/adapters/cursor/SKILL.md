@@ -16,6 +16,7 @@ This adapter is a thin wrapper over the platform-agnostic OfferPilot skill pack.
 5. `../../PROMPTS.md`
 6. task-specific document:
    - China-first JD matching: `../../JD_MATCHING.md`
+   - resume diagnosis: `../../RESUME_DIAGNOSIS.md`
    - profile datastore assembly: `../../DATASTORE.md`
    - structured or batch evaluation: `../../EVALUATION.md`
    - mock interview: `../../MOCK_INTERVIEW.md`
@@ -26,6 +27,7 @@ This adapter is a thin wrapper over the platform-agnostic OfferPilot skill pack.
 
 ## When To Use
 
+- resume diagnosis
 - resume optimization
 - China-first JD fit diagnosis
 - targeted resume rewriting
@@ -50,6 +52,10 @@ Treat these as direct triggers for this skill:
 - `/offerpilot 模拟面试`
 - `/offerpilot 产品研究`
 - `/offerpilot 外联消息`
+- `/offerpilot 简历诊断`
+- `/offerpilot 求职信`
+- `/offerpilot 申请追踪`
+- `/offerpilot 批量评估`
 
 When these short triggers appear, do not ask for a long setup prompt first. Start from the read order, then request only missing required inputs.
 

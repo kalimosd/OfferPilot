@@ -139,3 +139,10 @@ Use labels like:
 - `低匹配`
 
 Use the numeric score as supporting context only when it improves prioritization.
+
+## Error Recovery
+
+- **JD 无法解析**（加密 PDF、图片扫描件、格式损坏）：提示用户用 `extract_text.py` 尝试提取；如仍失败，建议用户提供纯文本 JD
+- **提取的关键词太少**（JD 过于简短或模糊）：用岗位名称和公司信息补充搜索，在报告中标注「JD 信息有限，分析仅供参考」
+- **experience level 无法计算**（没有 profile_store 或缺乏日期信息）：跳过 experience+1 规则，仅对比 JD 要求年限与简历中可识别的全职工作年份
+- **简历完全不匹配 JD**：如实输出低匹配结论，不要为了「好看」而编造匹配点。给出明确的转方向建议或需要补充的能力清单

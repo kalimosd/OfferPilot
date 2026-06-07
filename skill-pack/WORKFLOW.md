@@ -6,6 +6,7 @@ Use this workflow for all OfferPilot tasks.
 
 Choose one of:
 
+- resume diagnosis
 - general resume optimization
 - job-targeted resume rewrite
 - jd-fit diagnosis
@@ -57,17 +58,11 @@ Input handling rules:
 
 **⚠ 必须在生成任何内容之前完成以下读取，不可跳过：**
 
-1. 读取 `OUTPUTS.md` — 确认 section 顺序、分离规则、PDF style
+1. 读取 `OUTPUTS.md` — 确认 section 顺序、分离规则、输出目录、PDF style、文件命名
 2. 读取 `PROMPTS.md` — 确认写作约束和联系方式处理规则
 3. 如果使用 profile datastore，读取 `DATASTORE.md` — 确认选取和组装逻辑
 
-**关键规则速查（不可违反）：**
-
-- section 顺序：教育背景 → 工作经历 → 强相关项目 → 实习经历 → 其他项目 → 技能
-- 实习经历和工作经历**必须分开**，不能合并
-- 实习经历和项目经历**必须分开**，不能合并
-- PDF 中文简历默认使用 `--style standard_cn`，英文输出默认使用 `classic`
-- 文件命名：`姓名_公司_岗位_v1`
+> 格式和约束规则以 `OUTPUTS.md` 和 `PROMPTS.md` 为唯一依据，此处不再重复。以下 task 专属规则仅补充文档未覆盖的执行细节。
 
 For jd-fit diagnosis:
 
@@ -77,6 +72,10 @@ For jd-fit diagnosis:
 - explain the biggest fit gaps in practical language
 - prioritize concrete rewrite suggestions
 - use the experience-level rule in `JD_MATCHING.md` when a JD specifies years of experience
+
+For resume diagnosis:
+
+- read `RESUME_DIAGNOSIS.md` before generating any content
 
 For resume optimization:
 
@@ -115,36 +114,19 @@ For job discovery and recommendation:
 - if results are too sparse, relax non-critical filters first (location > title strictness) and report what changed
 
 For mock interview:
-
 - read `MOCK_INTERVIEW.md` before generating any content
-- follow the two-phase workflow: question generation then live simulation
-- both JD and profile datastore are required inputs
-- save outputs to `outputs/interview/`
 
 For product research:
-
 - read `PRODUCT_RESEARCH.md` before generating any content
-- follow the six-step execution flow: JD parsing, research, product intro, interview prediction, profile analysis, save
-- JD is required; profile datastore is optional but enhances output
-- save outputs to `outputs/research/`
 
 For structured evaluation:
-
 - read `EVALUATION.md` before scoring
-- use the 10-dimension rubric and A-F grade mapping
-- save single and batch evaluation outputs to `outputs/resumes/`
 
 For application tracking:
-
 - read `TRACKER.md`
-- update or query `data/tracker.tsv`
-- return tracker operation results in chat; do not save them to `outputs/`
 
 For LinkedIn outreach:
-
 - read `OUTREACH.md`
-- use only profile-backed details
-- save the generated message to `outputs/misc/`
 
 ## 5. Review the Draft
 
@@ -173,6 +155,16 @@ If the draft is in English and the source name is Chinese:
 Example:
 
 - `中文名` -> `<Given Name> <Family Name>`
+
+## 5b. Iterating on Feedback
+
+用户 review 后提出修改意见时：
+
+- **优先局部修改** — 只改用户指出的部分，不要重新生成整个文档
+- **保持未修改内容** — 用户未提及的 section 保持原样（包括措辞和顺序）
+- **版本号递增** — 修改后文件名版本号 +1（v1 → v2），保留旧版本文件不覆盖
+- **重新触发条件** — 仅当用户明确说「重新生成」或「推翻重来」时，才走完整生成流程
+- **迭代后验证** — 修改完成后重新运行 Section 6（Finalize），包括 PDF 重新导出
 
 ## 6. Finalize the Deliverable
 
