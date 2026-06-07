@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from functools import lru_cache
 from pathlib import Path
 
 from langchain_core.messages import SystemMessage, AIMessage, HumanMessage
@@ -246,6 +247,7 @@ def _parse_score_and_reason(eval_line: str) -> tuple[float, str]:
 
 # === Main graph ===
 
+@lru_cache(maxsize=1)
 def build_graph():
     """Build and compile the agent graph with intent routing and specialized subgraphs.
 
