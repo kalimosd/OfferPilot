@@ -8,21 +8,23 @@ Use it when you want to diagnose resumes, analyze JD fit, optimize resumes, tail
 
 1. Read `WORKFLOW.md`
 2. Check `INPUTS.md`
-3. If the task is China-first JD matching, read `JD_MATCHING.md`
-4. If the task is mock interview, read `MOCK_INTERVIEW.md`
-5. If the task is product research, read `PRODUCT_RESEARCH.md`
-6. If the task is structured evaluation, read `EVALUATION.md`
-7. If the task is application tracking, read `TRACKER.md`
-8. If the task is LinkedIn outreach, read `OUTREACH.md`
-9. Use `PROMPTS.md` for generation guidance
-10. Validate against `OUTPUTS.md`
-11. Pick an adapter from `adapters/` if your agent supports repository-local skills
-12. Check `scripts/README.md` when local helper scripts are needed
+3. If the task is resume diagnosis (no JD), read `RESUME_DIAGNOSIS.md`
+4. If the task is China-first JD matching, read `JD_MATCHING.md`
+5. If the task is mock interview, read `MOCK_INTERVIEW.md`
+6. If the task is product research, read `PRODUCT_RESEARCH.md`
+7. If the task is structured evaluation, read `EVALUATION.md`
+8. If the task is application tracking, read `TRACKER.md`
+9. If the task is LinkedIn outreach, read `OUTREACH.md`
+10. Use `PROMPTS.md` for generation guidance
+11. Validate against `OUTPUTS.md`
+12. Pick an adapter from `adapters/` if your agent supports repository-local skills
+13. Check `scripts/README.md` when local helper scripts are needed
 
 ## What Is Inside
 
 - `WORKFLOW.md`: task flow and checkpoints
 - `JD_MATCHING.md`: China-first JD matching method and output expectations
+- `RESUME_DIAGNOSIS.md`: resume quality diagnosis without a target JD
 - `MOCK_INTERVIEW.md`: mock interview question generation and live simulation
 - `PRODUCT_RESEARCH.md`: pre-interview product research workflow
 - `EVALUATION.md`: 10-dimension structured job fit evaluation (A-F grading)

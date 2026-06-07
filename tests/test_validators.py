@@ -123,6 +123,7 @@ class ValidatorTests(unittest.TestCase):
     def test_adapters_share_task_documents_and_triggers(self) -> None:
         required_docs = [
             "../../JD_MATCHING.md",
+            "../../RESUME_DIAGNOSIS.md",
             "../../DATASTORE.md",
             "../../EVALUATION.md",
             "../../MOCK_INTERVIEW.md",
@@ -135,6 +136,10 @@ class ValidatorTests(unittest.TestCase):
             "/offerpilot 模拟面试",
             "/offerpilot 产品研究",
             "/offerpilot 外联消息",
+            "/offerpilot 简历诊断",
+            "/offerpilot 求职信",
+            "/offerpilot 申请追踪",
+            "/offerpilot 批量评估",
         ]
 
         for adapter in (ROOT / "skill-pack" / "adapters").glob("*/SKILL.md"):

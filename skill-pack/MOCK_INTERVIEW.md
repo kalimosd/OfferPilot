@@ -161,6 +161,13 @@ Per question, score 1-5:
 - **2**: partially correct, significant gaps or misconceptions
 - **1**: unable to answer or fundamentally wrong
 
+## Error Recovery
+
+- **JD 或 profile_store 缺失**（两个都是必要输入）：不强行生成题单。明确列出缺失的输入，等待用户提供
+- **JD 过于宽泛无法生成技术问题**（如仅有岗位名称无详细职责）：基于岗位名称推断常见技术栈和面试题，但在题单开头标注「JD 信息有限，问题基于岗位常见考察点生成」
+- **gap analysis 发现 profile 与 JD 几乎完全匹配**：调整深挖/弱点比例为 80/20（极少弱点可挖），并将弱点题集中在行为面或系统设计等通用维度
+- **用户提前结束模拟**：直接生成评估报告，标注「未完成题数」，仅对已完成的题目评分
+
 ## Task Checklist
 
 - [ ] JD and profile_store both loaded before generating questions
