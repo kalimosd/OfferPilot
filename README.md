@@ -13,13 +13,14 @@ OfferPilot 是一个本地优先的 AI 求职助手，用来把真实经历整�
 
 ![OfferPilot Web UI](docs/web-ui-screenshot.png)
 
-## 这个项目是什么
+## 当前分支定位
 
-OfferPilot 是一个完整项目，不只是一个分支实验。它有三种使用形态：
+这个分支是 `offerpilot-agent`。它是可运行产品分支，包含：
 
 - **Agent CLI**：主入口。用自然语言描述任务，LangGraph Agent 自动判断流程并调用工具。
 - **Web UI**：本地可视化界面，包含 Chat、Tracker、Outputs。
 - **Skill Pack**：可移植规则层，给 Cursor、Claude Code、Codex 等 AI 编程工具使用。
+- **Helper CLI**：`offerpilot` 命令，直接调用提取、渲染、校验、扫描和 pipeline 脚本。
 
 可以这样理解：
 
@@ -28,40 +29,33 @@ skill-pack = 规则层 / 方法论 / 可移植工作流
 agent      = skill-pack + runtime + tools + UI
 ```
 
-当前 Agent 会先做意图路由：
+如果你只想使用纯 Skill Pack 规则层，请看 [`offerpilot-skill`](https://github.com/kalimosd/OfferPilot/tree/offerpilot-skill) 分支。两个分支共享规则和脚本，但职责不同：skill 分支维护方法论，agent 分支维护可运行体验。
 
-- 普通求职任务走 ReAct 工具循环。
-- pipeline 任务走固定的扫描、排序、报告流程。
-- 批量 JD 评估走专门的批处理流程，用低温度 LLM 保持评分稳定。
+## 能力和实现方式
 
-## 能做什么
-
-| 能力 | 说明 |
+| 能力 | 当前实现 |
 |---|---|
-| 简历优化 | 精炼措辞、强化 bullet point、提升可读性 |
-| 定向改写 | 围绕目标 JD 重排和改写经历 |
-| JD 匹配分析 | 识别匹配点、差距、关键词和改写优先级 |
-| 结构化评估 | 10 维度打分，输出 A-F 等级和投递建议 |
-| 批量评估 | 对多个 JD 做排序，快速筛选值得投递的岗位 |
-| 岗位扫描 | 扫描招聘网站并生成推荐报告 |
-| 申请追踪 | 管理申请状态和 follow-up 提醒 |
-| 求职信 | 基于真实经历生成针对性 cover letter |
-| LinkedIn 外联 | 生成简洁、个性化的 outreach 消息 |
-| 模拟面试 | 生成题单、模拟问答并输出评估报告 |
-| 产品研究 | 针对目标公司/产品做面试前研究 |
-| PDF 导出 | 将 Markdown 输出渲染成 PDF |
+| 简历诊断、简历优化、定向改写、JD 匹配、求职信 | 通用 Agent + Skill Pack 规则 + 文件/PDF 工具 |
+| 结构化评估 | 通用 Agent 按 10 维评分规则生成；批量评估有专门流程 |
+| 批量 JD 评估 | LangGraph 专门分支，低温度 LLM 逐个评分并排序 |
+| 岗位扫描和推荐 | LangGraph pipeline 分支，调用 `skill-pack/scripts/run_pipeline.py` |
+| 申请追踪和 follow-up | Agent 工具和 Web Tracker 读写 `data/tracker.tsv` |
+| 外联消息、模拟面试、产品研究 | Skill Pack 规则驱动的通用 Agent 工作流 |
+| PDF 导出 | Playwright Chromium 渲染 Markdown 到 PDF |
+
+注意：当前 Agent 没有内置通用联网搜索工具。岗位扫描使用已有脚本；产品研究等任务如果需要最新网页信息，应提供来源材料，或在支持联网/浏览器能力的外部 agent 中使用 Skill Pack。
 
 ## 环境要求
 
 - Python 3.10+
 - Node.js 18+，仅 Web UI 需要
 - 至少一个 LLM API key，例如 DeepSeek、Claude、Gemini 或 OpenAI
-- 推荐安装 Playwright Chromium，用于 PDF 渲染和部分网页扫描能力
+- Playwright Chromium，用于 PDF 渲染和部分网页扫描能力
 
 ## 安装
 
 ```bash
-git clone https://github.com/kalimosd/offerpilot-ai.git
+git clone -b offerpilot-agent https://github.com/kalimosd/OfferPilot.git offerpilot-ai
 cd offerpilot-ai
 
 python -m venv .venv
@@ -86,6 +80,16 @@ touch .env
 ```
 
 然后按你使用的模型填写其中一种配置。
+
+| 变量 | 说明 |
+|---|---|
+| `OFFERPILOT_MODEL` | 模型名，默认 `deepseek-chat` |
+| `OFFERPILOT_API_KEY` | OpenAI-compatible provider 的 API key，例如 DeepSeek |
+| `OFFERPILOT_BASE_URL` | OpenAI-compatible provider 的 base URL |
+| `OFFERPILOT_TEMPERATURE` | 可选，覆盖默认温度 |
+| `ANTHROPIC_API_KEY` | Claude 原生 provider 使用 |
+| `GOOGLE_API_KEY` | Gemini 原生 provider 使用 |
+| `OPENAI_API_KEY` | OpenAI 原生 provider 使用 |
 
 ### DeepSeek
 
@@ -116,13 +120,7 @@ OFFERPILOT_MODEL=gpt-4o-mini
 OPENAI_API_KEY=your-openai-key
 ```
 
-可选：覆盖默认温度。
-
-```bash
-OFFERPILOT_TEMPERATURE=0.3
-```
-
-代码里也有任务默认值：普通 Agent 任务 `0.3`，JD/简历评估类精确任务 `0.1`，创意写作类任务 `0.7`。
+当前 runtime 显式使用两档温度：普通 Agent 任务默认 `0.3`，批量 JD 评估使用 `0.1`。代码中保留了 `CREATIVE_TEMPERATURE = 0.7` 常量，但当前图不会按任务自动切换到这档温度。
 
 ## 准备个人资料和 JD
 
@@ -138,7 +136,7 @@ cp skill-pack/templates/profile_store.yaml profile_store.yaml
 
 | 字段 | 说明 |
 |---|---|
-| `meta` | 姓名、邮箱、电话、更新时间 |
+| `meta` | 姓名、英文名、出生年份、邮箱、电话、更新时间 |
 | `experience` | 工作经历，每段经历包含多个 bullet |
 | `projects` | 项目经历、开源、比赛、校园项目等 |
 | `skills` | 技能、熟练度、使用年限、证据 |
@@ -194,6 +192,22 @@ exit
 offerpilot-agent "批量评估 jds/ 目录下所有 JD"
 ```
 
+## Helper CLI
+
+`offerpilot-agent` 是自然语言 Agent；`offerpilot` 是脚本型 helper CLI。后者适合直接做确定性操作：
+
+```bash
+offerpilot --help
+offerpilot extract sample_resume.docx --output sample_resume.txt
+offerpilot pdf outputs/resumes/resume.md outputs/resumes/resume.pdf --style standard_cn
+offerpilot validate-inputs profile_store.yaml jds/example.md
+offerpilot validate-profile profile_store.yaml
+offerpilot validate-aliases
+offerpilot pipeline --days 7 --top-n 10 --cn-focus
+```
+
+`python -m offerpilot` 等价于 helper CLI；自然语言 Agent 请使用 `python -m offerpilot.agent` 或 `offerpilot-agent`。
+
 ## Web UI
 
 Web UI 使用 FastAPI 后端和 Next.js 前端。
@@ -233,6 +247,26 @@ cd web/frontend
 npm run dev -- --port 3000
 ```
 
+## API 概览
+
+Web 后端暴露这些本地 API：
+
+| Endpoint | 说明 |
+|---|---|
+| `GET /api/health` | 健康检查 |
+| `POST /api/chat` | SSE 形式流式返回 Agent 消息、工具调用和工具结果 |
+| `POST /api/files/upload` | 上传文件到项目根目录或 `jds/` |
+| `GET /api/files/outputs` | 列出 `outputs/` 或指定子目录 |
+| `GET /api/files/outputs/{subdir}/{filename}` | 下载或预览输出文件 |
+| `DELETE /api/files/outputs/{subdir}/{filename}` | 删除输出文件 |
+| `GET /api/tracker` | 查询申请记录 |
+| `POST /api/tracker` | 新增申请记录 |
+| `PATCH /api/tracker` | 更新申请状态 |
+| `PUT /api/tracker` | 编辑 tracker 行 |
+| `GET /api/tracker/followups` | 查询需要跟进的申请 |
+
+这些 API 默认只为本地 Web UI 使用，CORS 只允许 `http://localhost:3000`。
+
 ## Pipeline 是什么
 
 这里的 pipeline 指岗位扫描和推荐流程，不是泛泛的数据管道。
@@ -255,18 +289,19 @@ python -m offerpilot.agent "运行 pipeline，扫描最近 14 天，推荐前 20
 
 如果你不是直接跑 OfferPilot Agent，而是想让 Cursor、Claude Code、Codex 这类工具按照一套文档流程工作，就使用 `skill-pack/`。
 
-如果你只想使用纯 Skill Pack 规则层，可以切到 [`offerpilot-skill`](https://github.com/kalimosd/OfferPilot/tree/offerpilot-skill) 分支。
-
 建议阅读顺序：
 
 1. `skill-pack/WORKFLOW.md`
 2. `skill-pack/INPUTS.md`
-3. 国内岗位匹配任务阅读 `skill-pack/JD_MATCHING.md`
-4. 结构化评估阅读 `skill-pack/EVALUATION.md`
-5. 申请追踪阅读 `skill-pack/TRACKER.md`
-6. 外联消息阅读 `skill-pack/OUTREACH.md`
-7. 需要本地脚本时阅读 `skill-pack/scripts/README.md`
-8. 需要平台适配时阅读 `skill-pack/adapters/`
+3. 简历诊断阅读 `skill-pack/RESUME_DIAGNOSIS.md`
+4. 国内岗位匹配任务阅读 `skill-pack/JD_MATCHING.md`
+5. 结构化评估阅读 `skill-pack/EVALUATION.md`
+6. 模拟面试阅读 `skill-pack/MOCK_INTERVIEW.md`
+7. 产品研究阅读 `skill-pack/PRODUCT_RESEARCH.md`
+8. 申请追踪阅读 `skill-pack/TRACKER.md`
+9. 外联消息阅读 `skill-pack/OUTREACH.md`
+10. 需要本地脚本时阅读 `skill-pack/scripts/README.md`
+11. 需要平台适配时阅读 `skill-pack/adapters/`
 
 常用脚本：
 
@@ -275,17 +310,19 @@ python skill-pack/scripts/validate_inputs.py profile_store.yaml jds/example.md
 python skill-pack/scripts/extract_text.py resume.pdf
 python skill-pack/scripts/render_pdf.py outputs/resumes/resume.md outputs/resumes/resume.pdf
 python skill-pack/scripts/validate_outputs.py outputs/resumes/resume.md
+python skill-pack/scripts/validate_profile_store.py profile_store.yaml
+python skill-pack/scripts/validate_aliases.py skill-pack/data/skill_aliases.zh-en.json
 ```
 
-Agent 里也已经接入 `validate_inputs` 和 `validate_outputs`，可以在对话流程里自动调用。
+Agent 里也已经接入这些校验工具，可以在对话流程里自动调用。
 
 ## 输出目录约定
 
 | 目录 | 内容 |
 |---|---|
-| `outputs/resumes/` | 简历优化、定向改写、JD 匹配、结构化评估 |
+| `outputs/resumes/` | 简历诊断、简历优化、定向改写、JD 匹配、结构化评估、批量评估 |
 | `outputs/research/` | 产品研究 |
-| `outputs/interview/` | 面试题单、面试评估 |
+| `outputs/interview/` | 面试题单、面试评估、面试准备 |
 | `outputs/pipeline/` | 岗位扫描和推荐报告 |
 | `outputs/misc/` | 外联消息、项目讲解、其他材料 |
 
@@ -321,28 +358,48 @@ PY
 CompiledStateGraph
 ```
 
+## Troubleshooting
+
+| 问题 | 处理 |
+|---|---|
+| `ModuleNotFoundError: langchain_core` | 先执行 `source .venv/bin/activate`，再 `pip install -e ".[dev]"` |
+| `pytest` 找不到 | 确认已安装 dev 依赖：`pip install -e ".[dev]"` |
+| `./start.sh` 找不到 `uvicorn` | `start.sh` 默认使用 `.venv/bin/uvicorn`，请先按安装步骤创建并安装 `.venv` |
+| PDF 渲染失败 | 执行 `python -m playwright install chromium` |
+| Agent 调用模型失败 | 检查 `.env` 中模型名、API key、base URL 是否匹配 |
+| Web 前端无法连接后端 | 确认 API 在 `http://localhost:8000`，前端在 `http://localhost:3000` |
+| 产品研究缺少事实来源 | 提供公司/产品材料、JD、网页摘录，或在支持联网能力的 agent 中使用 Skill Pack |
+
 ## 项目结构
 
 ```text
 .
 ├── offerpilot/
-│   ├── agent.py            # CLI 入口
+│   ├── agent.py            # 自然语言 Agent CLI 入口
+│   ├── cli.py              # helper CLI 入口
 │   ├── graph.py            # LangGraph 路由和工作流
 │   ├── intent.py           # 意图识别
 │   ├── llm.py              # 多 provider LLM 初始化
-│   ├── script_loader.py    # legacy script 加载器
+│   ├── script_loader.py    # skill-pack 脚本加载器
 │   ├── state.py            # 图状态
 │   └── tools.py            # Agent tools
-├── skill-pack/             # 工作流文档、适配器、脚本和数据
+├── skill-pack/             # 工作流文档、适配器、脚本、schema 和数据
 ├── web/
 │   ├── api/                # FastAPI 后端
 │   └── frontend/           # Next.js 前端
 ├── tests/                  # 测试
-├── outputs/                # 本地生成结果
-├── jds/                    # 本地 JD
-├── data/                   # tracker 和扫描历史
-└── profile_store.yaml      # 本地个人素材库
+├── outputs/                # 本地生成结果，不入 git
+├── jds/                    # 本地 JD，不入 git
+├── data/                   # tracker 和扫描历史，不入 git
+└── profile_store.yaml      # 本地个人素材库，不入 git
 ```
+
+## 分支维护建议
+
+- 规则、prompt、输出格式、schema、模板、脚本和 adapter 优先进入 `offerpilot-skill`。
+- LangGraph runtime、Agent 工具、Web API、前端和可运行体验进入 `offerpilot-agent`。
+- 从 skill 分支同步到 agent 分支后，检查 `docs/AGENT_SYNC_CHECKLIST.md`，确认 `offerpilot/graph.py` 的 `SYSTEM_PROMPT` 是否需要更新。
+- `docs/migration.md` 是历史迁移笔记，不能代表当前 agent 分支的产品形态。
 
 ## 写在最后
 
