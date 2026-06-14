@@ -4,13 +4,29 @@
 [![Playwright](https://img.shields.io/badge/Playwright-2EAD33?style=flat&logo=playwright&logoColor=white)](https://playwright.dev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 
-OfferPilot is an AI career workflow Skill Pack for resume optimization, JD matching, targeted rewrites, structured evaluation, interview preparation, product research, application tracking, and outreach message generation.
+OfferPilot Skill Pack is an AI career workflow rule layer for resume diagnosis, resume optimization, JD matching, targeted rewrites, structured evaluation, interview preparation, product research, application tracking, and outreach message generation.
 
-This branch is [offerpilot-skill](https://github.com/kalimosd/OfferPilot/tree/offerpilot-skill). The primary entry point is `skill-pack/`, designed for AI coding agents such as Cursor, Claude Code, and Codex.
-
-If you want the runnable LangGraph Agent, CLI, or Web UI, use the [offerpilot-agent](https://github.com/kalimosd/OfferPilot/tree/offerpilot-agent) branch instead.
+Its core rule is simple: **use the candidate's real experience only. No invented projects, fake metrics, or made-up contact details.**
 
 [中文](./README.md)
+
+## Branch Role
+
+This is the [`offerpilot-skill`](https://github.com/kalimosd/OfferPilot/tree/offerpilot-skill) branch. The primary entry point is `skill-pack/`, designed for AI coding agents such as Cursor, Claude Code, and Codex as a repo-local skill or workflow reference.
+
+This is not the runnable Agent product branch:
+
+- It does not provide the `offerpilot-agent` natural-language entry point.
+- It does not include the LangGraph runtime.
+- It does not include the FastAPI/Next.js Web UI.
+- It keeps the `offerpilot` helper CLI for deterministic scripts under `skill-pack/scripts/`.
+
+If you want the runnable LangGraph Agent, Web UI, or natural-language CLI, use the [`offerpilot-agent`](https://github.com/kalimosd/OfferPilot/tree/offerpilot-agent) branch.
+
+```text
+skill-pack = rule layer / methodology / portable workflow
+agent      = skill-pack + runtime + tools + UI
+```
 
 ## Core Principles
 
@@ -21,38 +37,63 @@ If you want the runnable LangGraph Agent, CLI, or Web UI, use the [offerpilot-ag
 
 ## What It Can Do
 
-| Capability | Description |
+| Capability | Skill Pack source |
 |---|---|
-| Resume diagnosis | Identify resume gaps, weak phrasing, and missing evidence |
-| Resume optimization | Tighten wording and strengthen bullet points |
-| Targeted rewrite | Reorder and rewrite experience around a specific JD |
-| JD fit analysis | Find match signals, gaps, keywords, and rewrite priorities |
-| Structured evaluation | Score a job across 10 dimensions with an A-F recommendation |
-| Batch evaluation | Rank multiple JDs to find roles worth applying to |
-| Cover letter | Generate targeted cover letters from real experience |
-| LinkedIn outreach | Generate concise, personalized outreach messages |
-| Mock interview | Generate question sheets and evaluation reports |
-| Product research | Prepare product and company research before interviews |
-| Application tracking | Define tracker status flow and follow-up rules |
-| PDF helpers | Provide local Markdown-to-PDF scripts |
+| Resume diagnosis | `skill-pack/RESUME_DIAGNOSIS.md` |
+| Resume optimization and targeted rewrites | `skill-pack/WORKFLOW.md`, `skill-pack/PROMPTS.md`, `skill-pack/DATASTORE.md` |
+| JD fit analysis | `skill-pack/JD_MATCHING.md` |
+| Structured and batch evaluation | `skill-pack/EVALUATION.md` |
+| Cover letters | `skill-pack/PROMPTS.md` |
+| LinkedIn outreach | `skill-pack/OUTREACH.md` |
+| Mock interviews | `skill-pack/MOCK_INTERVIEW.md` |
+| Product research | `skill-pack/PRODUCT_RESEARCH.md` |
+| Application tracking and follow-up | `skill-pack/TRACKER.md` |
+| Job scanning and recommendations | `skill-pack/scripts/scan_portals.py`, `skill-pack/scripts/run_pipeline.py` |
+| PDF helpers | `skill-pack/scripts/render_pdf.py` |
+
+This branch does not provide an LLM chat runtime by itself. It defines rules and helper scripts; an external agent or the `offerpilot-agent` branch performs complex reasoning and conversation.
 
 ## Quick Start
 
-1. Open `skill-pack/README.md`
-2. Read the workflow document for your task:
-   - JD matching: `skill-pack/JD_MATCHING.md`
-   - Structured evaluation: `skill-pack/EVALUATION.md`
-   - Resume optimization / targeted rewrite: `skill-pack/WORKFLOW.md` + `skill-pack/PROMPTS.md`
-   - Mock interview: `skill-pack/MOCK_INTERVIEW.md`
-   - Product research: `skill-pack/PRODUCT_RESEARCH.md`
-   - Application tracking: `skill-pack/TRACKER.md`
-   - Outreach: `skill-pack/OUTREACH.md`
-3. Prepare source files:
-   - original resume or `profile_store.yaml`
-   - target JD
-   - optional company, role direction, or application tracker data
-4. Check output expectations in `skill-pack/OUTPUTS.md`
-5. Use local scripts from `skill-pack/scripts/README.md` when needed
+Clone this branch directly:
+
+```bash
+git clone -b offerpilot-skill https://github.com/kalimosd/OfferPilot.git offerpilot-skill
+cd offerpilot-skill
+```
+
+If your AI coding tool supports repo-local skills, start from the matching adapter:
+
+- `skill-pack/adapters/codex/SKILL.md`
+- `skill-pack/adapters/claude-code/SKILL.md`
+- `skill-pack/adapters/cursor/SKILL.md`
+
+Otherwise read in this order:
+
+1. `skill-pack/README.md`
+2. `skill-pack/WORKFLOW.md`
+3. `skill-pack/INPUTS.md`
+4. `skill-pack/RESUME_DIAGNOSIS.md` for resume diagnosis
+5. `skill-pack/JD_MATCHING.md` for China-first JD matching
+6. `skill-pack/EVALUATION.md` for structured evaluation
+7. `skill-pack/MOCK_INTERVIEW.md` for mock interviews
+8. `skill-pack/PRODUCT_RESEARCH.md` for product research
+9. `skill-pack/TRACKER.md` for application tracking
+10. `skill-pack/OUTREACH.md` for outreach messages
+11. `skill-pack/scripts/README.md` when local helpers are useful
+
+## Optional Script Setup
+
+Reading and using the Skill Pack documents does not require installing dependencies. Install the Python helper only when you need text extraction, PDF rendering, job scanning, or validation scripts:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -e .
+python -m playwright install chromium
+```
+
+This branch does not need Node.js or Web UI dependencies.
 
 ## Profile Datastore
 
@@ -68,7 +109,7 @@ Main fields:
 
 | Field | Description |
 |---|---|
-| `meta` | Name, email, phone, update date |
+| `meta` | Name, English name, birth year, email, phone, update date |
 | `experience` | Work experience with multiple bullets per role |
 | `projects` | Side projects, open-source, competitions, school projects |
 | `skills` | Skills, level, years, and evidence |
@@ -78,37 +119,48 @@ Main fields:
 
 Write more than you think you need. The Skill Pack should select the most relevant pieces for each JD.
 
+Private local files such as `profile_store.yaml`, `jds/`, `outputs/`, and `data/` are intended to stay out of git.
+
+## Helper CLI
+
+`offerpilot` is an optional helper CLI for deterministic scripts. It is not a natural-language Agent.
+
+```bash
+offerpilot --help
+offerpilot extract sample_resume.docx --output sample_resume.txt
+offerpilot pdf outputs/resumes/resume.md outputs/resumes/resume.pdf --style standard_cn
+offerpilot validate-inputs profile_store.yaml jds/example.md
+offerpilot validate-profile profile_store.yaml
+offerpilot validate-aliases
+offerpilot scan --cn-only --dry-run
+offerpilot pipeline --days 7 --top-n 10 --cn-focus
+```
+
+You can also call scripts directly:
+
+```bash
+python skill-pack/scripts/validate_inputs.py profile_store.yaml jds/example.md
+python skill-pack/scripts/extract_text.py resume.pdf
+python skill-pack/scripts/render_pdf.py outputs/resumes/resume.md outputs/resumes/resume.pdf
+python skill-pack/scripts/validate_outputs.py outputs/resumes/resume.md
+python skill-pack/scripts/validate_profile_store.py profile_store.yaml
+python skill-pack/scripts/validate_aliases.py skill-pack/data/skill_aliases.zh-en.json
+python skill-pack/scripts/run_pipeline.py --days 7 --top-n 10 --cn-focus
+```
+
 ## Output Directories
 
 All outputs should be saved under `outputs/`:
 
 | Directory | Content |
 |---|---|
-| `outputs/resumes/` | Resume optimization, targeted rewrites, JD fit, structured evaluation |
+| `outputs/resumes/` | Resume diagnosis, optimization, targeted rewrites, JD fit, structured evaluation, batch evaluation |
 | `outputs/research/` | Product research |
-| `outputs/interview/` | Interview question sheets and evaluation reports |
-| `outputs/pipeline/` | Job discovery and recommendation reports |
+| `outputs/interview/` | Interview question sheets, evaluation reports, preparation notes |
+| `outputs/pipeline/` | Job scanning and recommendation reports |
 | `outputs/misc/` | Outreach messages, project explanations, other materials |
 
 Do not place final deliverables directly under the `outputs/` root.
-
-## Local Helper Scripts
-
-These scripts are optional helpers. They do not require the runnable Agent.
-
-```bash
-# Validate source files
-python skill-pack/scripts/validate_inputs.py profile_store.yaml jds/example.md
-
-# Extract text from PDF / DOCX / TXT / MD
-python skill-pack/scripts/extract_text.py resume.pdf
-
-# Render Markdown to PDF
-python skill-pack/scripts/render_pdf.py outputs/resumes/resume.md outputs/resumes/resume.pdf
-
-# Validate output naming and format
-python skill-pack/scripts/validate_outputs.py outputs/resumes/resume.md
-```
 
 ## Skill Pack Structure
 
@@ -121,6 +173,7 @@ skill-pack/
 ├── PROMPTS.md             # Prompt constraints and reusable patterns
 ├── DATASTORE.md           # profile_store.yaml data model
 ├── JD_MATCHING.md         # JD fit analysis
+├── RESUME_DIAGNOSIS.md    # Resume diagnosis without a JD
 ├── EVALUATION.md          # 10-dimension structured evaluation
 ├── MOCK_INTERVIEW.md      # Mock interview workflow
 ├── PRODUCT_RESEARCH.md    # Product research workflow
@@ -128,20 +181,42 @@ skill-pack/
 ├── OUTREACH.md            # LinkedIn outreach
 ├── templates/             # Local templates
 ├── data/                  # Skill aliases and supporting data
+├── schemas/               # JSON Schemas for profile store and aliases
 ├── examples/              # Examples
 ├── scripts/               # Local helper scripts
 └── adapters/              # Cursor / Claude Code / Codex wrappers
 ```
 
-## Adapters
+The root also keeps a small `offerpilot/` Python package for the helper CLI. It is not the primary product surface of this branch.
 
-`skill-pack/adapters/` provides entry instructions for different AI coding environments:
+## Development
 
-- `skill-pack/adapters/cursor/SKILL.md`
-- `skill-pack/adapters/claude-code/SKILL.md`
-- `skill-pack/adapters/codex/SKILL.md`
+Run tests:
 
-If your tool supports repo-local skills, prefer the matching adapter.
+```bash
+source .venv/bin/activate
+python -m pytest
+```
+
+Useful script checks:
+
+```bash
+python skill-pack/scripts/validate_inputs.py sample_resume.md sample_job.md
+python skill-pack/scripts/validate_aliases.py skill-pack/data/skill_aliases.zh-en.json
+```
+
+`skill-pack/templates/profile_store.yaml` is an empty template. Running `validate_profile_store.py` against it will report missing required fields, which is expected. Copy it to `profile_store.yaml`, fill in real data, then validate that file.
+
+## Troubleshooting
+
+| Problem | Fix |
+|---|---|
+| `offerpilot-agent` does not exist | This is the skill branch. Switch to `offerpilot-agent` for the natural-language Agent |
+| Web UI files are incomplete or cannot start | Expected. The Web UI belongs to `offerpilot-agent` |
+| `ModuleNotFoundError` | Run `source .venv/bin/activate`, then `pip install -e .` |
+| PDF rendering fails | Run `python -m playwright install chromium` |
+| Template validation reports missing fields | The template is an empty form, not valid candidate data. Fill a copied `profile_store.yaml` first |
+| Product research needs fresh facts | This branch has no browsing runtime. Provide source material or use the Skill Pack inside an agent with browsing capability |
 
 ## Relationship To The Agent Branch
 
@@ -149,33 +224,14 @@ OfferPilot ships in two forms:
 
 | Branch | Role |
 |---|---|
-| [offerpilot-skill](https://github.com/kalimosd/OfferPilot/tree/offerpilot-skill) | Skill Pack: rules, workflows, templates, scripts, and methodology |
-| [offerpilot-agent](https://github.com/kalimosd/OfferPilot/tree/offerpilot-agent) | Runnable Agent: LangGraph runtime, CLI, Web UI, and automation |
+| [`offerpilot-skill`](https://github.com/kalimosd/OfferPilot/tree/offerpilot-skill) | Skill Pack: rules, workflows, templates, scripts, and methodology |
+| [`offerpilot-agent`](https://github.com/kalimosd/OfferPilot/tree/offerpilot-agent) | Runnable Agent: LangGraph runtime, natural-language CLI, Web UI, and automation |
 
-Think of it as:
+Maintenance guidance:
 
-```text
-skill-pack = rule layer / methodology / portable workflow
-agent      = skill-pack + runtime + tools + UI
-```
-
-The Skill Pack is OfferPilot's rule layer. The Agent branch adds an executor and user interface around it.
-
-This branch may still contain some historical runtime files, but they are not the primary entry point.
-
-## Maintenance Notes
-
-Changes to the Skill Pack should generally start in [offerpilot-skill](https://github.com/kalimosd/OfferPilot/tree/offerpilot-skill):
-
-- workflow documents
-- output rules
-- prompt constraints
-- skill alias data
-- templates
-- scripts
-- adapters
-
-Agent runtime, Web UI, API, and LangGraph state changes belong in [offerpilot-agent](https://github.com/kalimosd/OfferPilot/tree/offerpilot-agent).
+- Workflow docs, output rules, prompt constraints, schemas, templates, skill aliases, adapters, and scripts should generally start in `offerpilot-skill`.
+- LangGraph runtime, Agent tools, Web API, frontend work, and runnable UX belong in `offerpilot-agent`.
+- After syncing skill branch changes into the agent branch, check `docs/AGENT_SYNC_CHECKLIST.md` to decide whether `offerpilot/graph.py` `SYSTEM_PROMPT` needs updates.
 
 ## License
 
