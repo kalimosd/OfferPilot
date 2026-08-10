@@ -5,6 +5,7 @@ __pycache__/
 .DS_Store
 offerpilot.egg-info/
 .coverage
+.claude/
 .cursor/
 .kiro/
 outputs/
