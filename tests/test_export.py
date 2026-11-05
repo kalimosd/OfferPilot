@@ -122,6 +122,23 @@ class ExportTests(unittest.TestCase):
             self.assertIn("Chromium missing", str(ctx.exception))
             browser_renderer.assert_called_once()
 
+    def test_render_inline_html_preserves_snake_case_while_supporting_italic(self) -> None:
+        rendered = render_pdf._render_inline_html(
+            "Updated profile_store_v1.yaml with _italic_ and 中文_斜体_测试"
+        )
+        self.assertIn("profile_store_v1.yaml", rendered)
+        self.assertNotIn("profile<em>store</em>v1.yaml", rendered)
+        self.assertIn("<em>italic</em>", rendered)
+        self.assertIn("中文<em>斜体</em>测试", rendered)
+
+    def test_build_pdf_css_has_no_duplicate_section_heading_rule(self) -> None:
+        css = render_pdf._build_pdf_css(
+            render_pdf._get_style_config("classic", "resume"),
+            document_type="resume",
+            style="classic",
+        )
+        self.assertEqual(css.count(".document h2.section-heading {"), 1)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -24,6 +24,9 @@ def _load_script(name: str):
 validate_outputs = _load_script("validate_outputs.py")
 validate_aliases = _load_script("validate_aliases.py")
 validate_profile_store = _load_script("validate_profile_store.py")
+validate_inputs = _load_script("validate_inputs.py")
+run_pipeline = _load_script("run_pipeline.py")
+scan_portals = _load_script("scan_portals.py")
 
 
 class ValidatorTests(unittest.TestCase):
@@ -146,6 +149,43 @@ class ValidatorTests(unittest.TestCase):
             text = adapter.read_text(encoding="utf-8")
             for required in required_docs + required_triggers:
                 self.assertIn(required, text, msg=f"{required} missing from {adapter}")
+
+    def test_validate_inputs_accepts_yaml_profile_store(self) -> None:
+        self.assertIn(".yaml", validate_inputs.SUPPORTED_EXTENSIONS)
+        self.assertIn(".yml", validate_inputs.SUPPORTED_EXTENSIONS)
+
+    def test_pipeline_skill_matching_avoids_substring_false_positives(self) -> None:
+        row = {
+            "url": "https://example.com/job/1",
+            "date": "2026-08-01",
+            "source": "greenhouse:test",
+            "title": "Android & JavaScript Engineer",
+            "company": "TestCorp",
+        }
+        # 'r' should not match 'android'/'engineer', 'java' should not match 'javascript'
+        candidate = run_pipeline.score_row(
+            row, cfg={}, cn_focus=False, profile_tags={"r", "java", "c++"}
+        )
+        self.assertEqual(candidate.skill_hits, 0)
+
+        # Positive boundary check: 'r', 'java', 'c++', and Chinese tags should match properly
+        row_positive = {
+            "url": "https://example.com/job/2",
+            "date": "2026-08-01",
+            "source": "greenhouse:test",
+            "title": "Senior R / Java / C++ 性能优化 Engineer",
+            "company": "TestCorp",
+        }
+        candidate_pos = run_pipeline.score_row(
+            row_positive, cfg={}, cn_focus=False, profile_tags={"r", "java", "c++", "性能优化"}
+        )
+        self.assertEqual(candidate_pos.skill_hits, 4)
+
+    def test_scan_didi_uses_urllib_without_curl_subprocess(self) -> None:
+        import inspect
+        source = inspect.getsource(scan_portals.scan_didi)
+        self.assertNotIn("subprocess", source)
+        self.assertNotIn('"curl"', source)
 
 
 if __name__ == "__main__":

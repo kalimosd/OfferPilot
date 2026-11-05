@@ -155,6 +155,16 @@ def is_cn_company(name: str) -> bool:
     return any("\u4e00" <= c <= "\u9fff" for c in name)
 
 
+def _tag_matches_blob(tag: str, blob: str) -> bool:
+    """Match skill tag against text blob, requiring non-alphanumeric boundaries for ASCII tags."""
+    if not tag:
+        return False
+    if any("\u4e00" <= c <= "\u9fff" for c in tag):
+        return tag in blob
+    pattern = rf"(?<![a-z0-9]){re.escape(tag)}(?![a-z0-9])"
+    return bool(re.search(pattern, blob))
+
+
 def score_row(row: dict, cfg: dict, cn_focus: bool, profile_tags: set[str]) -> Candidate:
     title = row.get("title", "")
     company = row.get("company", "")
@@ -200,7 +210,7 @@ def score_row(row: dict, cfg: dict, cn_focus: bool, profile_tags: set[str]) -> C
     skill_hits = 0
     if profile_tags:
         for tag in profile_tags:
-            if tag in blob:
+            if _tag_matches_blob(tag, blob):
                 skill_hits += 1
         if skill_hits > 0:
             score += min(4.0, skill_hits * 0.5)

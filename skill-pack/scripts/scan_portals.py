@@ -238,18 +238,19 @@ def scan_kuaishou(api_url: str, keywords: str) -> list[dict]:
 
 def scan_didi(api_url: str, keywords: str) -> list[dict]:
     """Fetch jobs from Didi internal API (paginated, max 16 per page)."""
-    import subprocess
     jobs = []
     page = 1
     while True:
         try:
-            result = subprocess.run(
-                ["curl", "-s", f"{api_url}?page={page}&recruitType=1&size=16",
-                 "-H", "Referer: https://talent.didiglobal.com/social",
-                 "-H", "User-Agent: Mozilla/5.0"],
-                capture_output=True, text=True, timeout=15,
+            req = urllib.request.Request(
+                f"{api_url}?page={page}&recruitType=1&size=16",
+                headers={
+                    "Referer": "https://talent.didiglobal.com/social",
+                    "User-Agent": "Mozilla/5.0",
+                },
             )
-            data = json.loads(result.stdout)
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
         except Exception as e:
             print(f"  ⚠ 滴滴 API page {page} failed — {e}", file=sys.stderr)
             break
