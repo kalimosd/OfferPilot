@@ -253,12 +253,6 @@ search_queries:
   - name: MLOps工程师
     query: 'MLOps OR AI平台 工程师 社招 招聘'
     enabled: true
-  - name: Boss直聘 — Android
-    query: 'site:zhipin.com Android 工程师 社招'
-    enabled: true
-  - name: Boss直聘 — AI工程
-    query: 'site:zhipin.com AI工程师 OR AI应用 社招'
-    enabled: true
   - name: 猎聘 — Android
     query: 'site:liepin.com Android 工程师 社招'
     enabled: true
@@ -276,3 +270,21 @@ location_filter:
   - "Suzhou"
   - "杭州"
   - "Hangzhou"
+
+# ──────────────────────────────────────────
+# 猎聘 条件搜索
+# ──────────────────────────────────────────
+liepin_queries:
+  - name: "AI Agent / 大模型应用"
+    keywords:
+      - "AI Agent"
+      - "大模型应用"
+      - "LLM应用"
+    cities: ["上海", "南京", "苏州", "杭州"]
+    work_year_codes: ["3", "5"]
+  - name: "Android 开发"
+    keywords:
+      - "Android"
+      - "安卓开发"
+    cities: ["上海", "南京", "苏州", "杭州"]
+    work_year_codes: ["3", "5"]

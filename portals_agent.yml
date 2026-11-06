@@ -208,9 +208,6 @@ search_queries:
   - name: Agentic AI — 综合
     query: 'Agentic AI OR AI Agent 开发 招聘 中国 社招'
     enabled: true
-  - name: Boss直聘 — Agent
-    query: 'site:zhipin.com AI Agent 工程师 社招'
-    enabled: true
   - name: 猎聘 — Agent
     query: 'site:liepin.com AI Agent 工程师 社招'
     enabled: true

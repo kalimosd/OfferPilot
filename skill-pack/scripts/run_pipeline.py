@@ -216,6 +216,21 @@ def score_row(row: dict, cfg: dict, cn_focus: bool, profile_tags: set[str]) -> C
             score += min(4.0, skill_hits * 0.5)
             reasons.append(f"技能匹配x{skill_hits}")
 
+    # --- Date freshness decay ---
+    raw_date = row.get("date", "")
+    if raw_date:
+        try:
+            days_old = (datetime.now() - datetime.strptime(raw_date, "%Y-%m-%d")).days
+            if days_old <= 3:
+                score += 0.5
+                reasons.append("最新发现")
+            elif days_old <= 7:
+                score += 0.2
+            elif days_old > 30:
+                score -= min(3.0, 0.1 * (days_old - 30))
+        except ValueError:
+            pass
+
     # --- Location preference (new, 0.5) ---
     loc_prefs = cfg.get("location_filter", [])
     if loc_prefs and any(loc.lower() in blob for loc in loc_prefs):
@@ -300,6 +315,22 @@ def main() -> int:
 
     candidates = [score_row(row, cfg, args.cn_focus, profile_tags) for row in history_rows]
     unique = dedup_keep_best(candidates)
+
+    # --- Company diversity bonus ---
+    # Companies with fewer listings get a small boost to break the "same few
+    # companies" pattern. Only applied when there are 5+ distinct companies.
+    if len({c.company for c in unique}) >= 5:
+        company_counts: dict[str, int] = {}
+        for c in unique:
+            company_counts[c.company] = company_counts.get(c.company, 0) + 1
+        max_count = max(company_counts.values()) if company_counts else 1
+        for c in unique:
+            count = company_counts[c.company]
+            bonus = round(0.5 * (1 - count / max_count), 2)
+            if bonus > 0:
+                c.score = round(c.score + bonus, 1)
+                c.reasons.append(f"多样性+{bonus:.1f}")
+
     ranked = sorted(unique, key=lambda x: (x.score, x.date), reverse=True)
     if args.max_per_company > 0:
         capped: list[Candidate] = []

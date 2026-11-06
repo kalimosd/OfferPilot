@@ -127,7 +127,6 @@ def save_jd(jds_dir: str, job: dict):
 
 def scan_meituan(api_url: str, keywords: str) -> list[dict]:
     """Fetch jobs from Meituan internal API."""
-    import urllib.parse
     payload = json.dumps({
         "page": {"pageNo": 1, "pageSize": 100},
         "jobShareType": "1",
@@ -212,8 +211,6 @@ def scan_kuaishou(api_url: str, keywords: str) -> list[dict]:
                 browser.close()
                 return []
 
-            now_ms = int(datetime.now().timestamp() * 1000)
-            cutoff_ms = now_ms - MAX_AGE_DAYS * 86400 * 1000
             for j in captured[-1].get("result", {}).get("list", []):
                 desc = j.get("description", "") or ""
                 demand = j.get("positionDemand", "") or ""
@@ -316,7 +313,6 @@ def scan_greenhouse(slug: str, company: str) -> list[dict]:
         updated = job.get("updated_at", "")
         if updated:
             try:
-                from email.utils import parsedate_to_datetime
                 job_ts = datetime.fromisoformat(updated.replace("Z", "+00:00")).timestamp()
                 if job_ts < cutoff:
                     continue
@@ -481,6 +477,128 @@ def scan_playwright(company: str, careers_url: str) -> list[dict]:
 
 
 # ---------------------------------------------------------------------------
+# 猎聘 scanner — Playwright intercepts API responses
+# ---------------------------------------------------------------------------
+
+LIEPIN_CITY_CODES = {
+    "上海": "020", "南京": "070", "苏州": "110", "杭州": "090",
+    "北京": "010", "深圳": "050", "广州": "040", "成都": "140",
+    "武汉": "170", "合肥": "130", "西安": "220",
+}
+
+
+def scan_liepin(queries: list[dict]) -> list[dict]:
+    """Search 猎聘 by conditions. Uses Playwright to intercept the search API
+    (api-c.liepin.com/api/com.liepin.searchfront4c.pc-search-job). The browser
+    JS generates valid ckId/skId/fkId tokens automatically.
+
+    Each query entry: {name, keywords: [str], cities: [str], work_year_codes: [str], enabled: bool}
+    work_year_codes: "1"=1-3年, "3"=3-5年, "5"=5-10年
+    """
+    try:
+        from playwright.sync_api import sync_playwright
+    except ImportError:
+        print("  ⚠ 猎聘: playwright not installed, skipping", file=sys.stderr)
+        return []
+
+    jobs = []
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            context = browser.new_context(
+                user_agent=(
+                    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) "
+                    "Chrome/131.0.0.0 Safari/537.36"
+                ),
+                locale="zh-CN",
+            )
+            page = context.new_page()
+
+            for q in queries:
+                if not q.get("enabled", True):
+                    continue
+                name = q.get("name", ",".join(q.get("keywords", [])))
+                for keyword in q.get("keywords", []):
+                    for city in q.get("cities", []):
+                        city_code = LIEPIN_CITY_CODES.get(city, "")
+                        if not city_code:
+                            print(f"  ⚠ 猎聘: unknown city code {city}", file=sys.stderr)
+                            continue
+
+                        search_url = (
+                            f"https://www.liepin.com/zhaopin/"
+                            f"?key={urllib.parse.quote(keyword)}"
+                            f"&dqs={city_code}"
+                        )
+                        work_years = q.get("work_year_codes", [])
+                        if work_years:
+                            search_url += "&workYearCode=" + ",".join(work_years)
+
+                        print(f"  猎聘: {keyword} @ {city}...")
+
+                        captured: list[dict] = []
+
+                        def _on_response(resp):
+                            if "pc-search-job" in resp.url and "cond-init" not in resp.url:
+                                try:
+                                    captured.append(resp.json())
+                                except Exception:
+                                    pass
+
+                        page.on("response", _on_response)
+
+                        try:
+                            page.goto(search_url, timeout=25000, wait_until="domcontentloaded")
+                            page.wait_for_timeout(3000)
+                        except Exception as e:
+                            print(f"    ⚠ load failed — {e}", file=sys.stderr)
+                            page.remove_listener("response", _on_response)
+                            continue
+
+                        page.remove_listener("response", _on_response)
+
+                        if not captured:
+                            print("    No API responses captured (possible block)")
+                            continue
+
+                        for data in captured:
+                            if data.get("flag") != 1:
+                                continue
+                            inner = (data.get("data") or {}).get("data") or {}
+                            job_cards = inner.get("jobCardList") or []
+                            total = inner.get("total", 0)
+                            for j in job_cards:
+                                job = j.get("job") or {}
+                                comp = j.get("comp") or {}
+                                comp_name = comp.get("compName", "")
+                                if comp_name.startswith("某"):
+                                    continue
+                                job_id = job.get("jobId", "")
+                                liepin_url = (
+                                    f"https://www.liepin.com/job/{job_id}.shtml"
+                                    if job_id else ""
+                                )
+                                jobs.append({
+                                    "title": job.get("title", ""),
+                                    "url": liepin_url,
+                                    "company": comp.get("compName", ""),
+                                    "location": job.get("dq", ""),
+                                    "source": f"liepin:{name}",
+                                    "department": "",
+                                    "category": job.get("jobKind", ""),
+                                    "jd": f"{job.get('requireWorkYears','')} / {job.get('requireEduLevel','')} / {job.get('salary','')}",
+                                    "highlight": f"规模: {comp.get('compScale','')} / 行业: {comp.get('compIndustry','')}",
+                                })
+                            print(f"    Found {len(job_cards)} listings (total: {total})")
+
+            browser.close()
+    except Exception as e:
+        print(f"  ⚠ 猎聘 scan failed — {e}", file=sys.stderr)
+    return jobs
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -491,6 +609,7 @@ def main():
     parser.add_argument("--playwright-only", action="store_true", help="Only scan Playwright companies")
     parser.add_argument("--cn-only", action="store_true", help="Only scan Chinese company APIs")
     parser.add_argument("--search-only", action="store_true", help="Only run web search queries")
+    parser.add_argument("--liepin-only", action="store_true", help="Only scan 猎聘")
     parser.add_argument("--dry-run", action="store_true", help="Show results without writing files")
     args = parser.parse_args()
 
@@ -501,7 +620,8 @@ def main():
     today = datetime.now().strftime("%Y-%m-%d")
 
     all_jobs: list[dict] = []
-    only = args.greenhouse_only or args.playwright_only or args.cn_only or args.search_only
+    only = (args.greenhouse_only or args.playwright_only or args.cn_only or
+            args.search_only or args.liepin_only)
 
     # --- Chinese company APIs ---
     if not only or args.cn_only:
@@ -547,6 +667,13 @@ def main():
         print(f"  Total results: {len(search_jobs)}")
         all_jobs.extend(search_jobs)
 
+    # --- 猎聘 (条件搜索) ---
+    if not only or args.liepin_only:
+        print("\n=== 猎聘 ===")
+        liepin_jobs = scan_liepin(cfg.get("liepin_queries", []))
+        print(f"  Total results: {len(liepin_jobs)}")
+        all_jobs.extend(liepin_jobs)
+
     # --- Filter & dedup ---
     print(f"\n=== Filtering ===")
     print(f"Total raw listings: {len(all_jobs)}")
@@ -563,6 +690,12 @@ def main():
         if url in seen_urls_this_run:
             continue
         seen_urls_this_run.add(url)
+
+        # Skip anonymous company listings (某XX公司)
+        company = job.get("company", "")
+        if company.startswith("某"):
+            stats["skipped_title"] += 1
+            continue
 
         # Dedup against history
         if url in seen:

@@ -41,6 +41,7 @@ def _build_parser() -> argparse.ArgumentParser:
     scan.add_argument("--playwright-only", action="store_true", help="Only scan Playwright companies.")
     scan.add_argument("--cn-only", action="store_true", help="Only scan Chinese company APIs.")
     scan.add_argument("--search-only", action="store_true", help="Only run web search queries.")
+    scan.add_argument("--liepin-only", action="store_true", help="Only scan 猎聘.")
     scan.add_argument("--dry-run", action="store_true", help="Show results without writing files.")
 
     pdf = subparsers.add_parser("pdf", help="Render markdown-like output to PDF.")
@@ -159,6 +160,7 @@ def main(argv: list[str] | None = None) -> int:
             *(["--playwright-only"] if args.playwright_only else []),
             *(["--cn-only"] if args.cn_only else []),
             *(["--search-only"] if args.search_only else []),
+            *(["--liepin-only"] if args.liepin_only else []),
             *(["--dry-run"] if args.dry_run else []),
         ]
         return _run_script("scan_portals.py", forwarded)
