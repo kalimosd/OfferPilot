@@ -1,13 +1,15 @@
 # Mock Interview
 
-Use this workflow for technical mock interview tasks.
+Use this workflow for technical mock interview, post-interview debrief, and behavioral/reverse interview preparation.
 
 ## Overview
 
-Mock interview has two phases:
+This workflow supports four interview preparation modes:
 
-1. **Question generation** — analyze JD + profile, produce a question sheet
-2. **Live simulation** — agent plays interviewer, user answers, then agent produces evaluation report
+1. **Phase 1: Question generation** — analyze JD + profile, produce a targeted question sheet
+2. **Phase 2: Live simulation** — agent plays interviewer, user answers, then agent produces an evaluation report
+3. **Phase 3: Post-interview debrief (真实面经复盘)** — analyze real interview questions/transcripts after an actual interview
+4. **Phase 4: Behavioral & reverse interview (行为面 STAR 故事卡与反问清单)** — prepare for manager/HR rounds and reverse Q&A
 
 ## Phase 1: Question Generation
 
@@ -161,9 +163,44 @@ Per question, score 1-5:
 - **2**: partially correct, significant gaps or misconceptions
 - **1**: unable to answer or fundamentally wrong
 
+---
+
+## Phase 3: Post-Interview Debrief (真实面经复盘)
+
+Use this mode when the candidate shares real questions or a transcript from a completed interview.
+
+### Debrief Workflow
+1. **考点拆解**：分析面试官每一问背后的真实考察意图（基础功底、架构权衡、故障排查思路还是跨团队推进）。
+2. **回答诊断**：复盘候选人原回答中的得分点与失分点（如逻辑跳跃、缺少量化指标、只讲了表面现象未讲底层根因）。
+3. **高分重构回答**：结合候选人 `profile_store.yaml` 中的真实项目背景，给出结构清晰（结论先行 + 原理拆解 + 落地收益）的示范回答。
+4. **知识盲区归档**：生成按优先级排序的下一轮补强清单；若复盘中挖出了简历未写的新亮点，提示通过 `PROFILE_BUILDER.md` 回写到 `profile_store.yaml`。
+
+### Output Naming
+Save to `outputs/interview/姓名_公司_岗位_面经复盘_v1.md`.
+
+---
+
+## Phase 4: Behavioral & Reverse Interview (行为面与反问面试官)
+
+Use this mode to prepare for主管面 (Hiring Manager)、交叉面或 HR 面：
+
+### 1. STAR 行为面故事卡（基于 `profile_store.yaml` 真实经历提取）
+针对高频行为面问题，提炼 3 张结构化 `STAR`（Situation / Task / Action / Result）故事卡：
+- **最难的技术攻坚 / 线上故障排查**：突出定位工具链、假设验证过程与根因闭环。
+- **跨团队分歧与推动落地**：突出如何对齐边界（如产品、BSP、多窗口团队）、化解阻力并按期交付。
+- **主动创新与效率突破**：突出痛点识别与自发工具化/AI 工程化改造带来的效率跃升。
+
+### 2. 高水平反问面试官清单（Reverse Interview）
+结合目标公司业务与岗位 JD，准备 3 个高质量反问问题：
+- **业务与技术挑战类**：“团队接下来半年在 [JD 核心方向] 上最优先攻克的技术瓶颈或核心指标是什么？”
+- **工程落地与协作类**：“目前咱们组在 [相关模块/AI 工程] 上的技术栈演进和跨团队协作模式是怎样的？”
+- **角色期望类**：“如果我有幸加入，您期望这个岗位在前 3 个月内交付什么样的核心成果？”
+
+---
+
 ## Error Recovery
 
-- **JD 或 profile_store 缺失**（两个都是必要输入）：不强行生成题单。明确列出缺失的输入，等待用户提供
+- **JD 或 profile_store 缺失**（Phase 1/2 必要输入）：不强行生成题单。明确列出缺失的输入，等待用户提供
 - **JD 过于宽泛无法生成技术问题**（如仅有岗位名称无详细职责）：基于岗位名称推断常见技术栈和面试题，但在题单开头标注「JD 信息有限，问题基于岗位常见考察点生成」
 - **gap analysis 发现 profile 与 JD 几乎完全匹配**：调整深挖/弱点比例为 80/20（极少弱点可挖），并将弱点题集中在行为面或系统设计等通用维度
 - **用户提前结束模拟**：直接生成评估报告，标注「未完成题数」，仅对已完成的题目评分
@@ -177,6 +214,6 @@ Per question, score 1-5:
 - [ ] question sheet saved to outputs/ with correct naming
 - [ ] user confirmed readiness before starting simulation
 - [ ] follow-up questions asked after each answer
-- [ ] evaluation report includes per-question scoring and improvement suggestions
+- [ ] evaluation or debrief report includes per-question scoring and improvement suggestions
 - [ ] review checklist generated with priority levels and learning recommendations
-- [ ] no fabricated technical claims in reference answers
+- [ ] no fabricated technical claims in reference answers or STAR story cards

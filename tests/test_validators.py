@@ -125,24 +125,30 @@ class ValidatorTests(unittest.TestCase):
 
     def test_adapters_share_task_documents_and_triggers(self) -> None:
         required_docs = [
+            "../../PROFILE_BUILDER.md",
             "../../JD_MATCHING.md",
             "../../RESUME_DIAGNOSIS.md",
             "../../DATASTORE.md",
             "../../EVALUATION.md",
+            "../../OFFER_EVALUATION.md",
             "../../MOCK_INTERVIEW.md",
             "../../PRODUCT_RESEARCH.md",
             "../../TRACKER.md",
             "../../OUTREACH.md",
         ]
         required_triggers = [
+            "/offerpilot 建素材库",
             "/offerpilot 结构化评估",
             "/offerpilot 模拟面试",
+            "/offerpilot 面经复盘",
+            "/offerpilot 行为面",
             "/offerpilot 产品研究",
             "/offerpilot 外联消息",
             "/offerpilot 简历诊断",
             "/offerpilot 求职信",
             "/offerpilot 申请追踪",
             "/offerpilot 批量评估",
+            "/offerpilot 谈薪决策",
         ]
 
         for adapter in (ROOT / "skill-pack" / "adapters").glob("*/SKILL.md"):
@@ -186,6 +192,16 @@ class ValidatorTests(unittest.TestCase):
         source = inspect.getsource(scan_portals.scan_didi)
         self.assertNotIn("subprocess", source)
         self.assertNotIn('"curl"', source)
+
+    def test_validate_outputs_accepts_offer_debrief_and_outreach_filenames(self) -> None:
+        for rel_path in (
+            "outputs/resumes/候选人A_小米_Offer评估_v1.md",
+            "outputs/interview/候选人A_小米_客户端_面经复盘_v1.md",
+            "outputs/misc/候选人A_小米_打招呼.md",
+        ):
+            warnings: list[str] = []
+            validate_outputs._check_filename(Path(rel_path), warnings)
+            self.assertEqual(warnings, [], msg=f"Unexpected warnings for {rel_path}: {warnings}")
 
 
 if __name__ == "__main__":

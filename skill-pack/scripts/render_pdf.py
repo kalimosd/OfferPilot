@@ -97,8 +97,29 @@ def render_markdown_to_pdf(
     )
 
     _render_html_to_pdf_with_playwright(html, target_path)
+    _check_pdf_page_budget(target_path, document_type)
 
     return target_path
+
+
+def _check_pdf_page_budget(output_path: Path, document_type: str) -> int:
+    """Inspect rendered PDF page count and warn on stderr if a resume exceeds 1 page."""
+    try:
+        from pypdf import PdfReader
+
+        reader = PdfReader(str(output_path))
+        page_count = len(reader.pages)
+    except Exception:
+        return 1
+
+    if document_type == "resume" and page_count > 1:
+        print(
+            f"WARNING: Rendered resume has {page_count} pages ({output_path}). "
+            "A 1-page resume (14-18 bullets) is strongly recommended. "
+            "Consider '--style compact' or trimming context-only bullets.",
+            file=sys.stderr,
+        )
+    return page_count
 
 
 @dataclass(frozen=True)

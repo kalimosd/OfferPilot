@@ -20,15 +20,19 @@ Use this workflow for managing job application status.
 ## Status Flow
 
 ```
-discovered → applied → interviewing → offer
+discovered → applied → interviewing → offer_evaluating → accepted
+                                                       → declined
                                     → rejected
                                     → ghosted
 ```
 
+Note: `offer` is also accepted as a shorthand alias for `offer_evaluating`. When a candidate receives an offer, suggest running `OFFER_EVALUATION.md` (`/offerpilot 谈薪决策`) for total compensation breakdown and negotiation scripts.
+
 ## Follow-up Rules
 
-- `applied` 超过 7 天无更新 → 提醒跟进
-- `interviewing` 超过 5 天无更新 → 提醒跟进
+- `applied` 超过 7 天无更新 → 提醒跟进（可结合 `OUTREACH.md` 发送礼貌跟进或打招呼消息）
+- `interviewing` 超过 5 天无更新 → 提醒跟进 HR 询问面试结果
+- `offer_evaluating`（或 `offer`）超过 3 天无更新 → 提醒确认谈薪进展与 Offer 签署截止日期
 - 其他状态不提醒
 
 ## Usage

@@ -20,6 +20,11 @@ OUTPUT_HINTS = (
     "产品研究",
     "外联",
     "pipeline",
+    "offer",
+    "复盘",
+    "面经",
+    "打招呼",
+    "profile",
 )
 PLACEHOLDER_RE = re.compile(
     r"<(?:name|email|phone|姓名|邮箱|电话|公司|岗位)[^>]*>",
@@ -33,7 +38,20 @@ RESUME_SECTION_ORDER = [
     "其他项目",
     "技能",
 ]
-PAIR_EXEMPT_NAME_HINTS = ("评估", "匹配", "诊断", "cover", "letter", "外联", "产品研究", "面试")
+PAIR_EXEMPT_NAME_HINTS = (
+    "评估",
+    "匹配",
+    "诊断",
+    "cover",
+    "letter",
+    "外联",
+    "产品研究",
+    "面试",
+    "offer",
+    "复盘",
+    "面经",
+    "打招呼",
+)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -166,7 +184,7 @@ def _check_markdown_pdf_pairs(paths: list[Path], warnings: list[str]) -> None:
 
 def _check_english_name(
     english_name: str | None,
-    errors: list[str],
+    english_errors: list[str],
     warnings: list[str],
 ) -> None:
     if not english_name:
@@ -174,7 +192,7 @@ def _check_english_name(
 
     name = english_name.strip()
     if not re.fullmatch(r"[A-Za-z]+(?: [A-Za-z]+)+", name):
-        errors.append(
+        english_errors.append(
             "--english-name must look like 'GivenName FamilyName' using letters and spaces."
         )
         return
