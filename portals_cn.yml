@@ -288,3 +288,23 @@ liepin_queries:
       - "安卓开发"
     cities: ["上海", "南京", "苏州", "杭州"]
     work_year_codes: ["3", "5"]
+
+# ──────────────────────────────────────────
+# Boss直聘 条件搜索 (运行: offerpilot scan --boss-only)
+# experience: "104"=1-3年, "105"=3-5年
+# ──────────────────────────────────────────
+boss_queries:
+  - name: "AI Agent / 大模型应用"
+    keywords:
+      - "AI Agent"
+      - "大模型应用工程师"
+    cities: ["上海", "南京", "苏州", "杭州"]
+    experience: "104,105"
+    enabled: true
+  - name: "Android 客户端开发"
+    keywords:
+      - "Android开发"
+      - "客户端性能"
+    cities: ["上海", "南京", "苏州", "杭州"]
+    experience: "104,105"
+    enabled: true

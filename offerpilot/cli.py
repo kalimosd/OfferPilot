@@ -25,6 +25,21 @@ def _run_script(script_name: str, args: list[str]) -> int:
     return subprocess.call(command, cwd=str(_repo_root()))
 
 
+def _resolve_path(value: str | None, base: Path | None = None) -> str | None:
+    """Resolve a user-supplied path against the caller's cwd before forwarding.
+
+    Helper scripts run with cwd set to the repository root, so a relative path
+    that is meaningful to the user would otherwise be resolved in the wrong
+    directory.
+    """
+    if not value:
+        return value
+    path = Path(value).expanduser()
+    if not path.is_absolute():
+        path = (base or Path.cwd()) / path
+    return str(path.resolve())
+
+
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="offerpilot",
@@ -36,13 +51,41 @@ def _build_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest="command")
 
     scan = subparsers.add_parser("scan", help="Scan portals for new listings.")
-    scan.add_argument("--config", default="portals_cn.yml", help="Portal config YAML.")
+    scan.add_argument(
+        "--config",
+        default=None,
+        help="Portal config YAML (default: portals_cn.yml).",
+    )
     scan.add_argument("--greenhouse-only", action="store_true", help="Only scan Greenhouse API.")
     scan.add_argument("--playwright-only", action="store_true", help="Only scan Playwright companies.")
     scan.add_argument("--cn-only", action="store_true", help="Only scan Chinese company APIs.")
     scan.add_argument("--search-only", action="store_true", help="Only run web search queries.")
     scan.add_argument("--liepin-only", action="store_true", help="Only scan 猎聘.")
+    scan.add_argument("--boss-only", action="store_true", help="Only scan Boss直聘 (persistent browser).")
     scan.add_argument("--dry-run", action="store_true", help="Show results without writing files.")
+
+    import_boss = subparsers.add_parser(
+        "import-boss",
+        help="Import Boss直聘 jobs from Chrome Console JSON or macOS clipboard.",
+    )
+    import_boss.add_argument("json_path", nargs="?", default=None, help="Optional JSON file path.")
+    import_boss.add_argument(
+        "--from-clipboard",
+        action="store_true",
+        help="Read exported JSON directly from macOS clipboard (pbpaste).",
+    )
+    import_boss.add_argument(
+        "--print-js",
+        action="store_true",
+        help="Print the 1-click Chrome Console JS extraction snippet.",
+    )
+    import_boss.add_argument(
+        "--config",
+        default=None,
+        help="Portal config YAML (default: portals_cn.yml).",
+    )
+    import_boss.add_argument("--no-filter", action="store_true", help="Skip title/location filters.")
+    import_boss.add_argument("--dry-run", action="store_true", help="Preview without writing files.")
 
     pdf = subparsers.add_parser("pdf", help="Render markdown-like output to PDF.")
     pdf.add_argument("input", help="Input markdown file path.")
@@ -154,16 +197,27 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "scan":
         forwarded = [
-            "--config",
-            args.config,
+            *(["--config", _resolve_path(args.config)] if args.config else []),
             *(["--greenhouse-only"] if args.greenhouse_only else []),
             *(["--playwright-only"] if args.playwright_only else []),
             *(["--cn-only"] if args.cn_only else []),
             *(["--search-only"] if args.search_only else []),
             *(["--liepin-only"] if args.liepin_only else []),
+            *(["--boss-only"] if args.boss_only else []),
             *(["--dry-run"] if args.dry_run else []),
         ]
         return _run_script("scan_portals.py", forwarded)
+
+    if args.command == "import-boss":
+        forwarded = [
+            *([_resolve_path(args.json_path)] if args.json_path else []),
+            *(["--config", _resolve_path(args.config)] if args.config else []),
+            *(["--from-clipboard"] if args.from_clipboard else []),
+            *(["--print-js"] if args.print_js else []),
+            *(["--no-filter"] if args.no_filter else []),
+            *(["--dry-run"] if args.dry_run else []),
+        ]
+        return _run_script("import_boss.py", forwarded)
 
     if args.command == "pdf":
         forwarded = [
