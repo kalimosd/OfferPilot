@@ -1,0 +1,40 @@
+name: OfferPilot Skill Pack CI
+
+on:
+  push:
+    branches:
+      - offerpilot-skill
+      - main
+      - offerpilot-agent
+  pull_request:
+    branches:
+      - offerpilot-skill
+      - main
+      - offerpilot-agent
+
+jobs:
+  validate-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run unit tests
+        run: pytest -v
+
+      - name: Validate skill aliases and example profile store
+        run: |
+          python skill-pack/scripts/validate_aliases.py
+          python skill-pack/scripts/validate_profile_store.py skill-pack/examples/profile_store_example.yaml
+          python skill-pack/scripts/validate_inputs.py sample_resume.md sample_job.md

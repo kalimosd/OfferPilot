@@ -127,7 +127,6 @@ def save_jd(jds_dir: str, job: dict):
 
 def scan_meituan(api_url: str, keywords: str) -> list[dict]:
     """Fetch jobs from Meituan internal API."""
-    import urllib.parse
     payload = json.dumps({
         "page": {"pageNo": 1, "pageSize": 100},
         "jobShareType": "1",
@@ -212,8 +211,6 @@ def scan_kuaishou(api_url: str, keywords: str) -> list[dict]:
                 browser.close()
                 return []
 
-            now_ms = int(datetime.now().timestamp() * 1000)
-            cutoff_ms = now_ms - MAX_AGE_DAYS * 86400 * 1000
             for j in captured[-1].get("result", {}).get("list", []):
                 desc = j.get("description", "") or ""
                 demand = j.get("positionDemand", "") or ""
@@ -238,18 +235,19 @@ def scan_kuaishou(api_url: str, keywords: str) -> list[dict]:
 
 def scan_didi(api_url: str, keywords: str) -> list[dict]:
     """Fetch jobs from Didi internal API (paginated, max 16 per page)."""
-    import subprocess
     jobs = []
     page = 1
     while True:
         try:
-            result = subprocess.run(
-                ["curl", "-s", f"{api_url}?page={page}&recruitType=1&size=16",
-                 "-H", "Referer: https://talent.didiglobal.com/social",
-                 "-H", "User-Agent: Mozilla/5.0"],
-                capture_output=True, text=True, timeout=15,
+            req = urllib.request.Request(
+                f"{api_url}?page={page}&recruitType=1&size=16",
+                headers={
+                    "Referer": "https://talent.didiglobal.com/social",
+                    "User-Agent": "Mozilla/5.0",
+                },
             )
-            data = json.loads(result.stdout)
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
         except Exception as e:
             print(f"  ⚠ 滴滴 API page {page} failed — {e}", file=sys.stderr)
             break
@@ -315,7 +313,6 @@ def scan_greenhouse(slug: str, company: str) -> list[dict]:
         updated = job.get("updated_at", "")
         if updated:
             try:
-                from email.utils import parsedate_to_datetime
                 job_ts = datetime.fromisoformat(updated.replace("Z", "+00:00")).timestamp()
                 if job_ts < cutoff:
                     continue
@@ -534,7 +531,6 @@ def scan_liepin(queries: list[dict]) -> list[dict]:
                             f"?key={urllib.parse.quote(keyword)}"
                             f"&dqs={city_code}"
                         )
-                        # Add work year filter
                         work_years = q.get("work_year_codes", [])
                         if work_years:
                             search_url += "&workYearCode=" + ",".join(work_years)
@@ -563,11 +559,10 @@ def scan_liepin(queries: list[dict]) -> list[dict]:
                         page.remove_listener("response", _on_response)
 
                         if not captured:
-                            print(f"    No API responses captured (possible block)")
+                            print("    No API responses captured (possible block)")
                             continue
 
                         for data in captured:
-                            # 猎聘 API: {flag: 1, data: {data: {jobCardList: [], total: N}}}
                             if data.get("flag") != 1:
                                 continue
                             inner = (data.get("data") or {}).get("data") or {}
@@ -577,7 +572,6 @@ def scan_liepin(queries: list[dict]) -> list[dict]:
                                 job = j.get("job") or {}
                                 comp = j.get("comp") or {}
                                 comp_name = comp.get("compName", "")
-                                # Skip anonymous listings (某XX公司)
                                 if comp_name.startswith("某"):
                                     continue
                                 job_id = job.get("jobId", "")

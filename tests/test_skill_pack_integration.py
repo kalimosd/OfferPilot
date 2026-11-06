@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 import yaml
 
-from offerpilot import tools
+from offerpilot import graph, tools
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -49,6 +49,19 @@ class SkillPackToolTests(unittest.TestCase):
         self.assertIn("validate_outputs", tool_names)
         self.assertIn("validate_profile", tool_names)
         self.assertIn("validate_aliases", tool_names)
+
+    def test_agent_system_prompt_and_tracker_statuses_are_synced_with_skill_pack(self) -> None:
+        for expected in (
+            "profile-build",
+            "offer-eval",
+            "14-18 条",
+            "黄金公式",
+            "offer_evaluating",
+        ):
+            self.assertIn(expected, graph.SYSTEM_PROMPT)
+
+        for status in ("offer_evaluating", "accepted", "declined"):
+            self.assertIn(status, tools.VALID_STATUSES)
 
 
 if __name__ == "__main__":

@@ -4,6 +4,8 @@
 
 The profile datastore is a structured personal material library. Instead of only rewriting the few bullets already on a resume, the agent can select and assemble the most relevant bullets from a larger pool based on the target JD.
 
+> To extract a `profile_store.yaml` automatically from an existing resume or incrementally ingest new project/interview details, use `skill-pack/PROFILE_BUILDER.md`.
+
 ## File Format
 
 - Use YAML for human readability and easy manual editing
@@ -171,14 +173,16 @@ When multiple bullets match a JD requirement equally well, prefer:
 1. Parse the JD to extract requirements and keywords
 2. Normalize keywords using `data/skill_aliases.zh-en.json`
 3. Match normalized keywords against bullet tags
-4. Rank matched bullets by relevance and impact level
+4. Rank matched bullets by relevance and impact level (`quantified` > `qualitative` > `context-only`)
 5. If a bullet has a matching variant for the target role type, use the variant
-6. Assemble top bullets into resume sections
+6. Enforce the **1-page resume budget** (`OUTPUTS.md`): select 14–18 highest-ranking bullets across experience and top 2–3 projects, dropping low-relevance `context-only` entries
 7. Polish phrasing per `PROMPTS.md` rules
 
 ## Quick Start
 
 ### 1. Create your datastore
+
+Either ask the agent to extract it from your existing resume (`/offerpilot 建素材库`, see `PROFILE_BUILDER.md`) or copy the template:
 
 ```bash
 cp skill-pack/templates/profile_store.yaml profile_store.yaml
@@ -198,9 +202,7 @@ You do not need to be concise here. The datastore is your full material pool, no
 
 ### 3. Keep it out of git
 
-```bash
-echo "profile_store.yaml" >> .git/info/exclude
-```
+`profile_store.yaml` is listed in `.gitignore` by default so your personal data stays local.
 
 ### 4. Generate a targeted resume
 
@@ -214,13 +216,13 @@ The agent will:
 2. Match keywords against your bullet tags
 3. Pick the most relevant bullets, ranked by impact
 4. Choose the best variant for each bullet when available
-5. Assemble and polish into a targeted resume
+5. Assemble and polish into a targeted 1-page resume
 
 Different JDs produce different bullet selections from the same datastore.
 
 ### 5. Maintain over time
 
-- After finishing a project or getting a result, add a bullet to the datastore
+- After finishing a project or an interview debrief, add new bullets to the datastore (or use `PROFILE_BUILDER.md` to ingest them automatically)
 - Focus on `text` + `tags`; formatting can be rough
 - The more you accumulate, the better the agent can tailor future resumes
 
@@ -230,7 +232,7 @@ If the user does not provide a profile datastore, the workflow falls back to the
 
 ## Error Recovery
 
-- **profile_store 文件不存在**：如果用户说「用 profile 生成」但文件不存在，提示用户先运行 `cp skill-pack/templates/profile_store.yaml profile_store.yaml` 创建模板，或直接使用原始简历
+- **profile_store 文件不存在**：如果用户说「用 profile 生成」但文件不存在，提示用户可通过 `/offerpilot 建素材库` 从现有简历自动提取生成，或运行 `cp skill-pack/templates/profile_store.yaml profile_store.yaml` 创建模板
 - **所有 bullet 都缺少 tags**：降级为关键词匹配（直接搜索 JD 关键词在 bullet text 中的出现），同时提醒用户补充 tags 可以明显提高匹配准确度
 - **没有匹配到任何 bullet**：不要强行填充无关 bullet。明确告知用户「当前 profile 中未找到与该 JD 匹配的经历」，建议手动选择或直接走简历优化路径
 - **skill_aliases.json 文件缺失**：跳过 alias 归一化步骤，直接用原始 JD 关键词匹配 tags

@@ -1,10 +1,11 @@
+import io
 import tempfile
 import unittest
 import warnings
 import importlib.util
 import sys
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 MODULE_PATH = (
     Path(__file__).resolve().parent.parent / "skill-pack" / "scripts" / "render_pdf.py"
@@ -121,6 +122,35 @@ class ExportTests(unittest.TestCase):
 
             self.assertIn("Chromium missing", str(ctx.exception))
             browser_renderer.assert_called_once()
+
+    def test_render_inline_html_preserves_snake_case_while_supporting_italic(self) -> None:
+        rendered = render_pdf._render_inline_html(
+            "Updated profile_store_v1.yaml with _italic_ and 中文_斜体_测试"
+        )
+        self.assertIn("profile_store_v1.yaml", rendered)
+        self.assertNotIn("profile<em>store</em>v1.yaml", rendered)
+        self.assertIn("<em>italic</em>", rendered)
+        self.assertIn("中文<em>斜体</em>测试", rendered)
+
+    def test_build_pdf_css_has_no_duplicate_section_heading_rule(self) -> None:
+        css = render_pdf._build_pdf_css(
+            render_pdf._get_style_config("classic", "resume"),
+            document_type="resume",
+            style="classic",
+        )
+        self.assertEqual(css.count(".document h2.section-heading {"), 1)
+
+    def test_check_pdf_page_budget_warns_when_resume_exceeds_one_page(self) -> None:
+        fake_reader = MagicMock()
+        fake_reader.pages = [object(), object()]
+        stderr_buf = io.StringIO()
+        with patch("pypdf.PdfReader", return_value=fake_reader), patch(
+            "sys.stderr", stderr_buf
+        ):
+            pages = render_pdf._check_pdf_page_budget(Path("dummy.pdf"), "resume")
+
+        self.assertEqual(pages, 2)
+        self.assertIn("WARNING: Rendered resume has 2 pages", stderr_buf.getvalue())
 
 
 if __name__ == "__main__":

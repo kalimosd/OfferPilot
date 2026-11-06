@@ -97,8 +97,29 @@ def render_markdown_to_pdf(
     )
 
     _render_html_to_pdf_with_playwright(html, target_path)
+    _check_pdf_page_budget(target_path, document_type)
 
     return target_path
+
+
+def _check_pdf_page_budget(output_path: Path, document_type: str) -> int:
+    """Inspect rendered PDF page count and warn on stderr if a resume exceeds 1 page."""
+    try:
+        from pypdf import PdfReader
+
+        reader = PdfReader(str(output_path))
+        page_count = len(reader.pages)
+    except Exception:
+        return 1
+
+    if document_type == "resume" and page_count > 1:
+        print(
+            f"WARNING: Rendered resume has {page_count} pages ({output_path}). "
+            "A 1-page resume (14-18 bullets) is strongly recommended. "
+            "Consider '--style compact' or trimming context-only bullets.",
+            file=sys.stderr,
+        )
+    return page_count
 
 
 @dataclass(frozen=True)
@@ -313,7 +334,7 @@ def _render_inline_html(text: str) -> str:
         (r"\*\*(.+?)\*\*", "strong"),
         (r"__(.+?)__", "strong"),
         (r"\*(.+?)\*", "em"),
-        (r"_(.+?)_", "em"),
+        (r"(?<![A-Za-z0-9])_(.+?)_(?![A-Za-z0-9])", "em"),
     ]
 
     for pattern, tag_name in patterns:
@@ -376,6 +397,7 @@ def _build_pdf_css(style_config: dict, *, document_type: str, style: str) -> str
         font-weight: 700;
         margin-top: {tokens["section_space_before"]};
         margin-bottom: {tokens["section_space_after"]};
+        break-after: avoid;
       }}
 
       .document p.meta {{
@@ -390,15 +412,6 @@ def _build_pdf_css(style_config: dict, *, document_type: str, style: str) -> str
         line-height: {tokens["emphasis_line_height"]};
         font-weight: 600;
         margin-bottom: {tokens["emphasis_space_after"]};
-        break-after: avoid;
-      }}
-
-      .document h2.section-heading {{
-        font-size: {tokens["section_font_size"]};
-        line-height: {tokens["section_line_height"]};
-        font-weight: 700;
-        margin-top: {tokens["section_space_before"]};
-        margin-bottom: {tokens["section_space_after"]};
         break-after: avoid;
       }}
 
@@ -669,7 +682,7 @@ def _strip_markdown_inline(text: str) -> str:
     text = re.sub(r"\*\*(.*?)\*\*", r"\1", text)
     text = re.sub(r"\*(.*?)\*", r"\1", text)
     text = re.sub(r"__(.*?)__", r"\1", text)
-    text = re.sub(r"_(.*?)_", r"\1", text)
+    text = re.sub(r"(?<![A-Za-z0-9])_(.*?)_(?![A-Za-z0-9])", r"\1", text)
     return text.strip()
 
 

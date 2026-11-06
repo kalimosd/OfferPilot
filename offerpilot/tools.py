@@ -17,7 +17,17 @@ SCRIPTS_DIR = REPO_ROOT / "skill-pack" / "scripts"
 TRACKER_FILE = REPO_ROOT / "data" / "tracker.tsv"
 
 TRACKER_FIELDS = ["url", "company", "title", "status", "applied_date", "last_update", "notes"]
-VALID_STATUSES = {"discovered", "applied", "interviewing", "offer", "rejected", "ghosted"}
+VALID_STATUSES = {
+    "discovered",
+    "applied",
+    "interviewing",
+    "offer",
+    "offer_evaluating",
+    "accepted",
+    "declined",
+    "rejected",
+    "ghosted",
+}
 
 
 # === Existing tools (migrated) ===
@@ -70,7 +80,15 @@ def render_pdf(input_path: str, output_path: str, style: str = "standard_cn") ->
             break
 
     try:
-        render_module.render_markdown_to_pdf(markdown_text, output_path, style=style, photo_path=photo_path)
+        saved_path = render_module.render_markdown_to_pdf(
+            markdown_text, output_path, style=style, photo_path=photo_path
+        )
+        pages = render_module._check_pdf_page_budget(saved_path, "resume")
+        if pages > 1:
+            return (
+                f"PDF 已生成：{output_path}（共 {pages} 页，超出 1 页单页预算！"
+                "建议精简 context-only 条目或改用 style='compact' 重新导出）"
+            )
         return f"PDF 已生成：{output_path}"
     except Exception as e:
         return f"错误：{e}"
@@ -90,8 +108,13 @@ def list_files(directory: str) -> str:
 
 
 @tool
-def scan_portals(config: str = "portals_cn.yml", cn_only: bool = False,
-                 greenhouse_only: bool = False, search_only: bool = False) -> str:
+def scan_portals(
+    config: str = "portals_cn.yml",
+    cn_only: bool = False,
+    greenhouse_only: bool = False,
+    search_only: bool = False,
+    liepin_only: bool = False,
+) -> str:
     """扫描招聘网站发现新岗位。"""
     script = SCRIPTS_DIR / "scan_portals.py"
     cmd = [sys.executable, str(script), "--config", config]
@@ -101,19 +124,28 @@ def scan_portals(config: str = "portals_cn.yml", cn_only: bool = False,
         cmd.append("--greenhouse-only")
     if search_only:
         cmd.append("--search-only")
+    if liepin_only:
+        cmd.append("--liepin-only")
     result = subprocess.run(cmd, capture_output=True, text=True, cwd=str(REPO_ROOT))
     return result.stdout if result.returncode == 0 else f"错误：{result.stderr}"
 
 
 @tool
-def run_pipeline(config: str = "portals_cn.yml", days: int = 7,
-                 top_n: int = 10, cn_focus: bool = False) -> str:
+def run_pipeline(
+    config: str = "portals_cn.yml",
+    days: int = 7,
+    top_n: int = 10,
+    cn_focus: bool = False,
+    max_per_company: int = 0,
+) -> str:
     """运行端到端岗位 pipeline：扫描 → 排序 → 推荐。"""
     script = SCRIPTS_DIR / "run_pipeline.py"
     cmd = [
         sys.executable, str(script),
         "--config", config, "--days", str(days), "--top-n", str(top_n),
     ]
+    if max_per_company > 0:
+        cmd.extend(["--max-per-company", str(max_per_company)])
     if cn_focus:
         cmd.append("--cn-focus")
     result = subprocess.run(cmd, capture_output=True, text=True, cwd=str(REPO_ROOT))
@@ -191,7 +223,7 @@ def validate_aliases(path: str = "skill-pack/data/skill_aliases.zh-en.json") -> 
 @tool
 def tracker_add(url: str, company: str, title: str,
                 status: str = "discovered", notes: str = "") -> str:
-    """添加一条申请记录到 tracker。status: discovered/applied/interviewing/offer/rejected/ghosted。"""
+    """添加一条申请记录到 tracker。status: discovered/applied/interviewing/offer_evaluating/accepted/declined/rejected/ghosted。"""
     if status not in VALID_STATUSES:
         return f"错误：无效状态 '{status}'，可选: {', '.join(sorted(VALID_STATUSES))}"
     today = datetime.now().strftime("%Y-%m-%d")
@@ -267,7 +299,7 @@ def tracker_query(status: str = "", company: str = "", days: int = 0) -> str:
 
 @tool
 def check_followups() -> str:
-    """检查需要跟进的申请（applied>7天 或 interviewing>5天 未更新）。"""
+    """检查需要跟进的申请（applied>7天、interviewing>5天、offer_evaluating/offer>3天 未更新）。"""
     if not TRACKER_FILE.exists():
         return "tracker 为空"
     today = datetime.now()
@@ -288,6 +320,8 @@ def check_followups() -> str:
                 reminders.append(f"⏰ {row['company']} | {row['title']} — 已投递 {gap} 天未更新")
             elif status == "interviewing" and gap > 5:
                 reminders.append(f"⏰ {row['company']} | {row['title']} — 面试中 {gap} 天未更新")
+            elif status in ("offer", "offer_evaluating") and gap > 3:
+                reminders.append(f"⏰ {row['company']} | {row['title']} — Offer 评估已 {gap} 天未更新，请确认谈薪与截止日期")
     return "\n".join(reminders) if reminders else "✅ 暂无需要跟进的申请"
 
 

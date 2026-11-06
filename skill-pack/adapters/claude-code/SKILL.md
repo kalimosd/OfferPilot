@@ -1,42 +1,45 @@
 ---
 name: offerpilot-claude-code-adapter
-description: Use the OfferPilot skill pack for resume optimization, China-first JD fit diagnosis, targeted resumes, structured evaluation, mock interview prep, product research, application tracking, outreach, and cover letters in Claude Code style repository agents. Trigger on short intents like "按照 offerpilot 优化简历", "用 offerpilot 做 JD 匹配", or "/offerpilot ...".
+description: Use the OfferPilot skill pack for profile datastore building, resume optimization, China-first JD fit diagnosis, targeted resumes, structured evaluation, offer evaluation and negotiation, mock interview prep and debrief, product research, application tracking, multi-channel outreach, and cover letters in Claude Code style repository agents. Trigger on short intents like "按照 offerpilot 优化简历", "用 offerpilot 做 JD 匹配", or "/offerpilot ...".
 ---
 
 # Claude Code Adapter
 
 This adapter provides the minimum platform-specific bridge to the shared OfferPilot workflow.
 
-## Read Order
+## Read Order (Minimal Read Graph)
 
-1. `../../README.md`
-2. `../../WORKFLOW.md`
-3. `../../INPUTS.md`
-4. `../../OUTPUTS.md`
-5. `../../PROMPTS.md`
-6. task-specific document:
+To avoid loading unnecessary rules into context, follow the minimal read path for the active task:
+
+1. Core baseline: `../../README.md`, `../../WORKFLOW.md`, `../../INPUTS.md`, `../../PROMPTS.md`
+2. Resume & PDF deliverable formatting (read ONLY when generating/rewriting resumes or cover letters): `../../OUTPUTS.md`
+3. Task-specific document (read ONLY the one matching the current task):
+   - profile datastore building / cold-start extraction: `../../PROFILE_BUILDER.md` and `../../DATASTORE.md`
    - China-first JD matching: `../../JD_MATCHING.md`
    - resume diagnosis: `../../RESUME_DIAGNOSIS.md`
    - profile datastore assembly: `../../DATASTORE.md`
    - structured or batch evaluation: `../../EVALUATION.md`
-   - mock interview: `../../MOCK_INTERVIEW.md`
+   - offer evaluation and salary negotiation: `../../OFFER_EVALUATION.md`
+   - mock interview, post-interview debrief, or behavioral prep: `../../MOCK_INTERVIEW.md`
    - product research: `../../PRODUCT_RESEARCH.md`
    - application tracking: `../../TRACKER.md`
-   - LinkedIn outreach: `../../OUTREACH.md`
-7. `../../scripts/README.md` when local helper scripts are useful
+   - multi-channel outreach (Boss直聘 / 内推 / LinkedIn / Email): `../../OUTREACH.md`
+4. `../../scripts/README.md` when local helper scripts are useful
 
 ## When To Use
 
+- profile datastore building and cold-start resume extraction
 - resume diagnosis
 - resume optimization
 - China-first JD fit diagnosis
 - targeted resume rewriting
 - structured and batch job evaluation
+- offer total compensation evaluation and negotiation scripts
 - job discovery and recommendation
-- mock interview question generation and evaluation
+- mock interview question generation, live simulation, post-interview debrief, and behavioral STAR prep
 - product research for interview preparation
 - application tracking and follow-up review
-- LinkedIn outreach message generation
+- multi-channel outreach message generation (Boss直聘 / 脉脉内推 / LinkedIn / Email)
 - cover letter generation
 - multilingual application material cleanup
 
@@ -46,18 +49,22 @@ Treat these as direct triggers for this skill:
 
 - `按照 offerpilot 优化简历`
 - `用 offerpilot 做 JD 匹配`
+- `/offerpilot 建素材库`
 - `/offerpilot 优化简历`
 - `/offerpilot 根据我简历推荐岗位`
 - `/offerpilot 结构化评估`
+- `/offerpilot 批量评估`
 - `/offerpilot 模拟面试`
+- `/offerpilot 面经复盘`
+- `/offerpilot 行为面`
 - `/offerpilot 产品研究`
 - `/offerpilot 外联消息`
 - `/offerpilot 简历诊断`
 - `/offerpilot 求职信`
 - `/offerpilot 申请追踪`
-- `/offerpilot 批量评估`
+- `/offerpilot 谈薪决策`
 
-When these short triggers appear, do not ask for a long setup prompt first. Start from the read order, then request only missing required inputs.
+When these short triggers appear, do not ask for a long setup prompt first. Start from the minimal read order for that task, then request only missing required inputs.
 
 ## Claude Code-Specific Notes
 

@@ -41,6 +41,7 @@ def _build_parser() -> argparse.ArgumentParser:
     scan.add_argument("--playwright-only", action="store_true", help="Only scan Playwright companies.")
     scan.add_argument("--cn-only", action="store_true", help="Only scan Chinese company APIs.")
     scan.add_argument("--search-only", action="store_true", help="Only run web search queries.")
+    scan.add_argument("--liepin-only", action="store_true", help="Only scan 猎聘.")
     scan.add_argument("--dry-run", action="store_true", help="Show results without writing files.")
 
     pdf = subparsers.add_parser("pdf", help="Render markdown-like output to PDF.")
@@ -55,8 +56,8 @@ def _build_parser() -> argparse.ArgumentParser:
     pdf.add_argument(
         "--style",
         choices=["classic", "ats", "compact", "standard_cn"],
-        default="classic",
-        help="PDF style.",
+        default="standard_cn",
+        help="PDF style (default: standard_cn).",
     )
     pdf.add_argument("--photo", default=None, help="Optional photo path for header.")
 
@@ -106,8 +107,8 @@ def _build_parser() -> argparse.ArgumentParser:
     run.add_argument(
         "--style",
         choices=["classic", "ats", "compact", "standard_cn"],
-        default="classic",
-        help="PDF style.",
+        default="standard_cn",
+        help="PDF style (default: standard_cn).",
     )
 
     pipeline = subparsers.add_parser(
@@ -115,15 +116,30 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Run end-to-end job pipeline: scan, rank, and recommend.",
     )
     pipeline.add_argument("--config", default="portals_cn.yml", help="Portal config YAML.")
+    pipeline.add_argument("--profile", default="profile_store.yaml", help="Profile datastore YAML.")
     pipeline.add_argument("--no-scan", action="store_true", help="Skip scan and rank from history.")
     pipeline.add_argument("--days", type=int, default=7, help="Use jobs from the last N days.")
     pipeline.add_argument("--top-n", type=int, default=10, help="Number of recommendations.")
+    pipeline.add_argument(
+        "--max-per-company",
+        type=int,
+        default=0,
+        help="Max jobs per company (0=unlimited).",
+    )
     pipeline.add_argument(
         "--output",
         default="outputs/pipeline/pipeline_recommendations.md",
         help="Recommendation markdown output path.",
     )
     pipeline.add_argument("--cn-focus", action="store_true", help="Boost China-focused roles.")
+
+    tracker = subparsers.add_parser(
+        "tracker",
+        help="Inspect application tracker status and overdue follow-up reminders.",
+    )
+    tracker.add_argument("--path", default="data/tracker.tsv", help="Tracker TSV path.")
+    tracker.add_argument("--init", action="store_true", help="Initialize tracker TSV if missing.")
+    tracker.add_argument("--today", default=None, help="Optional reference date (YYYY-MM-DD).")
 
     return parser
 
@@ -144,6 +160,7 @@ def main(argv: list[str] | None = None) -> int:
             *(["--playwright-only"] if args.playwright_only else []),
             *(["--cn-only"] if args.cn_only else []),
             *(["--search-only"] if args.search_only else []),
+            *(["--liepin-only"] if args.liepin_only else []),
             *(["--dry-run"] if args.dry_run else []),
         ]
         return _run_script("scan_portals.py", forwarded)
@@ -161,7 +178,8 @@ def main(argv: list[str] | None = None) -> int:
         return _run_script("render_pdf.py", forwarded)
 
     if args.command == "extract":
-        forwarded = [args.path, *(["--output", args.output] if args.output else [])]
+        forwarded = [args.path, *(["--output", args.output] if args.output else []),
+        ]
         return _run_script("extract_text.py", forwarded)
 
     if args.command == "validate-inputs":
@@ -190,16 +208,29 @@ def main(argv: list[str] | None = None) -> int:
         forwarded = [
             "--config",
             args.config,
+            "--profile",
+            args.profile,
             "--days",
             str(args.days),
             "--top-n",
             str(args.top_n),
+            "--max-per-company",
+            str(args.max_per_company),
             "--output",
             args.output,
             *(["--no-scan"] if args.no_scan else []),
             *(["--cn-focus"] if args.cn_focus else []),
         ]
         return _run_script("run_pipeline.py", forwarded)
+
+    if args.command == "tracker":
+        forwarded = [
+            "--path",
+            args.path,
+            *(["--init"] if args.init else []),
+            *(["--today", args.today] if args.today else []),
+        ]
+        return _run_script("check_tracker.py", forwarded)
 
     parser.print_help()
     return 1
