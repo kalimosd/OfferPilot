@@ -1,0 +1,11 @@
+#!/bin/sh
+# Strip AI co-author trailers from commit messages (repo policy).
+# Claude / Cursor co-author lines must not appear in this repository's history.
+commit_msg_file="$1"
+if [ ! -f "$commit_msg_file" ]; then
+    exit 0
+fi
+tmp="$(mktemp "${commit_msg_file}.strip.XXXXXX")"
+grep -viE '^[[:space:]]*co[- ]authored-by:[[:space:]]*(claude|cursor)' "$commit_msg_file" > "$tmp"
+mv "$tmp" "$commit_msg_file"
+exit 0

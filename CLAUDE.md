@@ -19,3 +19,9 @@ Do not copy only `SKILL.md`; it references `skill-pack/`. Manual steps, copy mod
 - Run tests with `.venv/bin/python -m pytest -q`.
 - Read `skill-pack/WORKFLOW.md` before changing workflow behavior.
 - Keep `SKILL.md` and `skill-pack/adapters/*/SKILL.md` frontmatter consistent (`name: offerpilot`).
+
+## Git Rules
+
+- Commit with the explicit identity `kalimosd <kalimosdzc@outlook.com>`; never fall back to the system user.
+- Do NOT add `Co-Authored-By:` / `Co-authored-by:` trailers for AI tools (Claude, Cursor, etc.) to commit messages. The `.githooks/commit-msg` hook strips them; enable it on fresh clones with `git config core.hooksPath .githooks`.
+
