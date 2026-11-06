@@ -4,7 +4,7 @@
 [![Playwright](https://img.shields.io/badge/Playwright-2EAD33?style=flat&logo=playwright&logoColor=white)](https://playwright.dev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 
-OfferPilot Skill Pack is an AI career workflow rule layer for resume diagnosis, resume optimization, JD matching, targeted rewrites, structured evaluation, interview preparation, product research, application tracking, and outreach message generation.
+OfferPilot Skill Pack is an AI career workflow rule layer for cold-start profile datastore extraction, resume diagnosis, resume optimization, JD matching, targeted rewrites, structured evaluation, mock interviews, post-interview debriefs, product research, application tracking, multi-channel outreach, and offer evaluation/negotiation.
 
 Its core rule is simple: **use the candidate's real experience only. No invented projects, fake metrics, or made-up contact details.**
 
@@ -39,17 +39,19 @@ agent      = skill-pack + runtime + tools + UI
 
 | Capability | Skill Pack source |
 |---|---|
+| Profile datastore building & cold-start extraction | `skill-pack/PROFILE_BUILDER.md`, `skill-pack/DATASTORE.md` |
 | Resume diagnosis | `skill-pack/RESUME_DIAGNOSIS.md` |
-| Resume optimization and targeted rewrites | `skill-pack/WORKFLOW.md`, `skill-pack/PROMPTS.md`, `skill-pack/DATASTORE.md` |
+| Resume optimization and targeted rewrites (1-page budget & few-shot examples) | `skill-pack/WORKFLOW.md`, `skill-pack/PROMPTS.md`, `skill-pack/OUTPUTS.md` |
 | JD fit analysis | `skill-pack/JD_MATCHING.md` |
 | Structured and batch evaluation | `skill-pack/EVALUATION.md` |
+| Offer total compensation evaluation & negotiation scripts | `skill-pack/OFFER_EVALUATION.md` |
 | Cover letters | `skill-pack/PROMPTS.md` |
-| LinkedIn outreach | `skill-pack/OUTREACH.md` |
-| Mock interviews | `skill-pack/MOCK_INTERVIEW.md` |
+| Multi-channel outreach (Boss直聘 / Referral DM / LinkedIn / Cold Email) | `skill-pack/OUTREACH.md` |
+| Mock interviews, post-interview debriefs & behavioral STAR prep | `skill-pack/MOCK_INTERVIEW.md` |
 | Product research | `skill-pack/PRODUCT_RESEARCH.md` |
-| Application tracking and follow-up | `skill-pack/TRACKER.md` |
+| Application tracking and follow-up | `skill-pack/TRACKER.md`, `skill-pack/scripts/check_tracker.py` |
 | Job scanning and recommendations | `skill-pack/scripts/scan_portals.py`, `skill-pack/scripts/run_pipeline.py` |
-| PDF helpers | `skill-pack/scripts/render_pdf.py` |
+| PDF rendering & 1-page budget warning | `skill-pack/scripts/render_pdf.py` |
 
 This branch does not provide an LLM chat runtime by itself. It defines rules and helper scripts; an external agent or the `offerpilot-agent` branch performs complex reasoning and conversation.
 
@@ -62,25 +64,26 @@ git clone -b offerpilot-skill https://github.com/kalimosd/OfferPilot.git offerpi
 cd offerpilot-skill
 ```
 
-If your AI coding tool supports repo-local skills, start from the matching adapter:
+If your AI coding tool supports repo-local skills, start from the matching adapter (with Minimal Read Graph routing):
 
 - `skill-pack/adapters/codex/SKILL.md`
 - `skill-pack/adapters/claude-code/SKILL.md`
 - `skill-pack/adapters/cursor/SKILL.md`
 
-Otherwise read in this order:
+Otherwise read on-demand:
 
 1. `skill-pack/README.md`
-2. `skill-pack/WORKFLOW.md`
-3. `skill-pack/INPUTS.md`
+2. `skill-pack/WORKFLOW.md` and `skill-pack/PROMPTS.md`
+3. `skill-pack/PROFILE_BUILDER.md` for cold-start datastore extraction from a resume
 4. `skill-pack/RESUME_DIAGNOSIS.md` for resume diagnosis
 5. `skill-pack/JD_MATCHING.md` for China-first JD matching
 6. `skill-pack/EVALUATION.md` for structured evaluation
-7. `skill-pack/MOCK_INTERVIEW.md` for mock interviews
+7. `skill-pack/MOCK_INTERVIEW.md` for mock interviews, post-interview debriefs, or behavioral prep
 8. `skill-pack/PRODUCT_RESEARCH.md` for product research
 9. `skill-pack/TRACKER.md` for application tracking
-10. `skill-pack/OUTREACH.md` for outreach messages
-11. `skill-pack/scripts/README.md` when local helpers are useful
+10. `skill-pack/OUTREACH.md` for multi-channel outreach messages
+11. `skill-pack/OFFER_EVALUATION.md` for offer comparison and salary negotiation
+12. `skill-pack/scripts/README.md` when local helpers are useful
 
 ## Optional Script Setup
 
@@ -89,7 +92,7 @@ Reading and using the Skill Pack documents does not require installing dependenc
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-pip install -e .
+pip install -e ".[dev]"
 python -m playwright install chromium
 ```
 
@@ -99,7 +102,7 @@ This branch does not need Node.js or Web UI dependencies.
 
 Use `profile_store.yaml` as your complete personal evidence library. It is not the final resume; it is the fact database.
 
-Start from the template:
+Extract it from your existing resume via `/offerpilot 建素材库` (`skill-pack/PROFILE_BUILDER.md`) or start from the template:
 
 ```bash
 cp skill-pack/templates/profile_store.yaml profile_store.yaml
@@ -117,9 +120,9 @@ Main fields:
 | `certifications` | Certifications |
 | `achievements` | Awards or recognition |
 
-Write more than you think you need. The Skill Pack should select the most relevant pieces for each JD.
+Write more than you think you need. The Skill Pack selects the most relevant pieces within the 1-page budget (14–18 bullets) for each JD.
 
-Private local files such as `profile_store.yaml`, `jds/`, `outputs/`, and `data/` are intended to stay out of git.
+Private local files such as `profile_store.yaml`, `jds/`, `outputs/`, and `data/` are listed in `.gitignore` by default.
 
 ## Helper CLI
 
@@ -132,6 +135,7 @@ offerpilot pdf outputs/resumes/resume.md outputs/resumes/resume.pdf --style stan
 offerpilot validate-inputs profile_store.yaml jds/example.md
 offerpilot validate-profile profile_store.yaml
 offerpilot validate-aliases
+offerpilot tracker --init
 offerpilot scan --cn-only --dry-run
 offerpilot pipeline --days 7 --top-n 10 --cn-focus
 ```
@@ -145,6 +149,7 @@ python skill-pack/scripts/render_pdf.py outputs/resumes/resume.md outputs/resume
 python skill-pack/scripts/validate_outputs.py outputs/resumes/resume.md
 python skill-pack/scripts/validate_profile_store.py profile_store.yaml
 python skill-pack/scripts/validate_aliases.py skill-pack/data/skill_aliases.zh-en.json
+python skill-pack/scripts/check_tracker.py
 python skill-pack/scripts/run_pipeline.py --days 7 --top-n 10 --cn-focus
 ```
 
@@ -154,11 +159,11 @@ All outputs should be saved under `outputs/`:
 
 | Directory | Content |
 |---|---|
-| `outputs/resumes/` | Resume diagnosis, optimization, targeted rewrites, JD fit, structured evaluation, batch evaluation |
+| `outputs/resumes/` | Resume diagnosis, optimization, targeted rewrites, JD fit, structured evaluation, batch evaluation, offer evaluation |
 | `outputs/research/` | Product research |
-| `outputs/interview/` | Interview question sheets, evaluation reports, preparation notes |
+| `outputs/interview/` | Interview question sheets, evaluation reports, post-interview debriefs, behavioral prep |
 | `outputs/pipeline/` | Job scanning and recommendation reports |
-| `outputs/misc/` | Outreach messages, project explanations, other materials |
+| `outputs/misc/` | Boss直聘 greetings, referral DMs, LinkedIn outreach, cover letters, other materials |
 
 Do not place final deliverables directly under the `outputs/` root.
 
@@ -167,18 +172,20 @@ Do not place final deliverables directly under the `outputs/` root.
 ```text
 skill-pack/
 ├── README.md              # Skill Pack entry
-├── WORKFLOW.md            # General workflow
+├── WORKFLOW.md            # General workflow & Minimal Read Graph
+├── PROFILE_BUILDER.md     # Cold-start datastore extraction & update workflow
 ├── INPUTS.md              # Input selection and privacy rules
-├── OUTPUTS.md             # Output formats and quality checks
-├── PROMPTS.md             # Prompt constraints and reusable patterns
+├── OUTPUTS.md             # Output formats, 1-page budget, and quality checks
+├── PROMPTS.md             # Golden Bullet Formula, few-shot examples, and constraints
 ├── DATASTORE.md           # profile_store.yaml data model
 ├── JD_MATCHING.md         # JD fit analysis
 ├── RESUME_DIAGNOSIS.md    # Resume diagnosis without a JD
 ├── EVALUATION.md          # 10-dimension structured evaluation
-├── MOCK_INTERVIEW.md      # Mock interview workflow
+├── OFFER_EVALUATION.md    # Total compensation breakdown, multi-offer comparison & negotiation
+├── MOCK_INTERVIEW.md      # Mock interview, post-interview debrief & behavioral prep
 ├── PRODUCT_RESEARCH.md    # Product research workflow
 ├── TRACKER.md             # Application tracking
-├── OUTREACH.md            # LinkedIn outreach
+├── OUTREACH.md            # Multi-channel outreach (Boss直聘 / Referral / LinkedIn / Email)
 ├── templates/             # Local templates
 ├── data/                  # Skill aliases and supporting data
 ├── schemas/               # JSON Schemas for profile store and aliases

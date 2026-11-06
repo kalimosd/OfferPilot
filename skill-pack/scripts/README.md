@@ -18,7 +18,7 @@ python3 skill-pack/scripts/extract_text.py "resume.pdf" --output "resume.txt"
 
 ### `render_pdf.py`
 
-Use when the workflow already produced a reviewed Markdown-like deliverable and you want a local PDF export.
+Use when the workflow already produced a reviewed Markdown-like deliverable and you want a local PDF export. It automatically checks the rendered PDF page count and warns on `stderr` if a resume exceeds the 1-page budget.
 
 **Prerequisites**: PDF 导出**只走 Playwright（Chromium）**，不再降级到 ReportLab。若未安装浏览器，脚本会尝试自动执行 `python -m playwright install chromium`；若仍失败会直接报错。
 
@@ -32,17 +32,17 @@ python -m playwright install chromium
 Example:
 
 ```bash
-python3 skill-pack/scripts/render_pdf.py "resume.md" "resume.pdf" --document-type resume --style classic
+python3 skill-pack/scripts/render_pdf.py "resume.md" "resume.pdf" --document-type resume --style standard_cn
 ```
 
 ### `validate_inputs.py`
 
-Use for a quick sanity check before running a workflow, especially when there is a risk that the chosen file is already a generated artifact instead of the original source.
+Use for a quick sanity check before running a workflow (supports `.txt`, `.md`, `.pdf`, `.docx`, `.yaml`, `.yml`), especially when there is a risk that the chosen file is already a generated artifact instead of the original source.
 
 Example:
 
 ```bash
-python3 skill-pack/scripts/validate_inputs.py "resume.md" "job.md"
+python3 skill-pack/scripts/validate_inputs.py "profile_store.yaml" "job.md"
 ```
 
 ### `validate_outputs.py`
@@ -52,7 +52,7 @@ Use for output checks after generation, such as output subdirectory placement, f
 Example:
 
 ```bash
-python3 skill-pack/scripts/validate_outputs.py "targeted_resume.md" --english-name "GivenName FamilyName"
+python3 skill-pack/scripts/validate_outputs.py "outputs/resumes/候选人A_小米_客户端_v1.md" --english-name "GivenName FamilyName"
 ```
 
 ### `validate_profile_store.py`
@@ -75,25 +75,36 @@ Example:
 python3 skill-pack/scripts/validate_aliases.py
 ```
 
-## Schemas
+### `check_tracker.py`
 
-- `skill-pack/schemas/profile_store.schema.json`: machine-readable structure for `profile_store.yaml`
-- `skill-pack/schemas/skill_aliases.schema.json`: machine-readable structure for the alias JSON mapping
+Use to initialize or inspect `data/tracker.tsv`, summarize application counts by status, and list overdue follow-up reminders (`applied` > 7 days, `interviewing` > 5 days, `offer_evaluating` > 3 days).
 
-### `run_pipeline.py`
+Example:
 
-Use when you want an end-to-end recommendation cycle in one command:
+```bash
+python3 skill-pack/scripts/check_tracker.py --init
+```
+
+### `scan_portals.py` & `run_pipeline.py`
+
+Use when you want to discover listings across portals or run an end-to-end recommendation cycle in one command:
 
 1. scan portals (optional)
 2. read recent added jobs from history
-3. score and rank jobs
+3. score and rank jobs using boundary-safe skill matching against `profile_store.yaml`
 4. output a Top-N recommendation report
 
 Example:
 
 ```bash
-python3 skill-pack/scripts/run_pipeline.py --days 7 --top-n 10 --cn-focus
+python3 skill-pack/scripts/scan_portals.py --cn-only --dry-run
+python3 skill-pack/scripts/run_pipeline.py --days 7 --top-n 10 --cn-focus --max-per-company 2
 ```
+
+## Schemas
+
+- `skill-pack/schemas/profile_store.schema.json`: machine-readable structure for `profile_store.yaml`
+- `skill-pack/schemas/skill_aliases.schema.json`: machine-readable structure for the alias JSON mapping
 
 ## Usage Rules
 

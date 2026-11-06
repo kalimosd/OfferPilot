@@ -1,9 +1,12 @@
+from datetime import date
 import importlib.util
 import json
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+
+from offerpilot import cli as offerpilot_cli
 
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -27,6 +30,7 @@ validate_profile_store = _load_script("validate_profile_store.py")
 validate_inputs = _load_script("validate_inputs.py")
 run_pipeline = _load_script("run_pipeline.py")
 scan_portals = _load_script("scan_portals.py")
+check_tracker = _load_script("check_tracker.py")
 
 
 class ValidatorTests(unittest.TestCase):
@@ -202,6 +206,46 @@ class ValidatorTests(unittest.TestCase):
             warnings: list[str] = []
             validate_outputs._check_filename(Path(rel_path), warnings)
             self.assertEqual(warnings, [], msg=f"Unexpected warnings for {rel_path}: {warnings}")
+
+    def test_check_tracker_identifies_overdue_followups_and_skips_malformed_rows(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            tracker_file = Path(temp_dir) / "tracker.tsv"
+            tracker_file.write_text(
+                "url\tcompany\ttitle\tstatus\tapplied_date\tlast_update\tnotes\n"
+                "https://a.com\tCompanyA\tAndroid Eng\tapplied\t2026-08-01\t2026-08-01\t\n"
+                "https://b.com\tCompanyB\tAI Eng\tinterviewing\t2026-08-01\t2026-08-04\t\n"
+                "https://c.com\tCompanyC\tSystem Eng\toffer_evaluating\t2026-08-01\t2026-08-06\t\n"
+                "https://d.com\tCompanyD\tBackend Eng\tapplied\t2026-08-08\t2026-08-08\tFresh\n"
+                "malformed_row_with_too_few_columns\n",
+                encoding="utf-8",
+            )
+            counts, followups, skipped = check_tracker.analyze_tracker(
+                tracker_file, today=date(2026, 8, 10)
+            )
+
+        self.assertEqual(skipped, 1)
+        self.assertEqual(counts["applied"], 2)
+        self.assertEqual(counts["interviewing"], 1)
+        self.assertEqual(counts["offer_evaluating"], 1)
+        self.assertEqual(
+            [f.company for f in followups],
+            ["CompanyA", "CompanyB", "CompanyC"],
+        )
+
+    def test_cli_parser_aligns_defaults_and_exposes_pipeline_and_tracker_flags(self) -> None:
+        parser = offerpilot_cli._build_parser()
+        pdf_args = parser.parse_args(["pdf", "in.md", "out.pdf"])
+        self.assertEqual(pdf_args.style, "standard_cn")
+
+        pipe_args = parser.parse_args(
+            ["pipeline", "--profile", "custom.yaml", "--max-per-company", "2"]
+        )
+        self.assertEqual(pipe_args.profile, "custom.yaml")
+        self.assertEqual(pipe_args.max_per_company, 2)
+
+        tracker_args = parser.parse_args(["tracker", "--init", "--today", "2026-08-10"])
+        self.assertTrue(tracker_args.init)
+        self.assertEqual(tracker_args.today, "2026-08-10")
 
 
 if __name__ == "__main__":
