@@ -289,6 +289,22 @@ python -m offerpilot.agent "运行 pipeline，扫描最近 14 天，推荐前 20
 
 如果你不是直接跑 OfferPilot Agent，而是想让 Cursor、Claude Code、Codex 这类工具按照一套文档流程工作，就使用 `skill-pack/`。
 
+### 安装为 Claude Code / Codex Skill
+
+仓库根目录的 `SKILL.md` 是标准 skill 入口。运行：
+
+```bash
+./scripts/install_skill.sh claude   # 安装到 ~/.claude/skills/offerpilot
+./scripts/install_skill.sh codex    # 安装到 ~/.agents/skills/offerpilot
+./scripts/install_skill.sh all      # 两个都装
+```
+
+- Claude Code：`/offerpilot 优化简历`
+- Codex：`$offerpilot 优化简历`，或使用 `/skills` 选择器
+- 复制模式：`./scripts/install_skill.sh all --copy`
+- 不要只复制 `SKILL.md`，它依赖同目录下的 `skill-pack/`
+- 手动安装、项目级安装和卸载：见 `INSTALL.md`
+
 建议阅读顺序：
 
 1. `skill-pack/WORKFLOW.md`

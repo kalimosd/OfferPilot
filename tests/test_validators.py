@@ -2,16 +2,29 @@ from datetime import date
 import importlib.util
 import json
 import os
+import re
+import subprocess
 import sys
 import tempfile
 import unittest
 from pathlib import Path
 from unittest import mock
 
+import yaml
+
 from offerpilot import cli as offerpilot_cli
 
 
 ROOT = Path(__file__).resolve().parent.parent
+
+
+def _read_skill_frontmatter(path: Path) -> dict:
+    text = path.read_text(encoding="utf-8")
+    match = re.match(r"^---\n(.*?)\n---\n", text, re.DOTALL)
+    assert match is not None, f"{path} has no YAML frontmatter"
+    data = yaml.safe_load(match.group(1))
+    assert isinstance(data, dict), f"{path} frontmatter is not a mapping"
+    return data
 
 
 def _load_script(name: str):
@@ -678,6 +691,107 @@ class ValidatorTests(unittest.TestCase):
                 [str(payload), "--config", str(bad), "--dry-run"]
             )
             self.assertEqual(code, 1)
+
+
+    def test_skill_entry_points_use_name_offerpilot(self) -> None:
+        skill_paths = [
+            ROOT / "SKILL.md",
+            ROOT / "skill-pack" / "adapters" / "claude-code" / "SKILL.md",
+            ROOT / "skill-pack" / "adapters" / "codex" / "SKILL.md",
+            ROOT / "skill-pack" / "adapters" / "cursor" / "SKILL.md",
+        ]
+        for path in skill_paths:
+            self.assertTrue(path.exists(), f"missing {path}")
+            frontmatter = _read_skill_frontmatter(path)
+            self.assertEqual(frontmatter.get("name"), "offerpilot", f"bad name in {path}")
+            self.assertTrue(
+                frontmatter.get("description", "").strip(), f"missing description in {path}"
+            )
+
+    def test_root_skill_references_exist(self) -> None:
+        skill_text = (ROOT / "SKILL.md").read_text(encoding="utf-8")
+        referenced = re.findall(r"`(skill-pack/[A-Za-z0-9_./-]+\.md)`", skill_text)
+        self.assertTrue(referenced, "root SKILL.md references no skill-pack docs")
+        for rel in referenced:
+            self.assertTrue(
+                (ROOT / rel).exists(), f"root SKILL.md references missing file: {rel}"
+            )
+
+    def test_adapter_relative_references_exist(self) -> None:
+        for adapter in ("claude-code", "codex", "cursor"):
+            adapter_dir = ROOT / "skill-pack" / "adapters" / adapter
+            skill_text = (adapter_dir / "SKILL.md").read_text(encoding="utf-8")
+            referenced = re.findall(r"`(\.\./\.\./[A-Za-z0-9_./-]+\.md)`", skill_text)
+            self.assertTrue(referenced, f"{adapter} adapter references no docs")
+            for rel in referenced:
+                self.assertTrue(
+                    (adapter_dir / rel).resolve().exists(),
+                    f"{adapter} adapter references missing file: {rel}",
+                )
+
+    def test_install_script_exists_and_is_executable(self) -> None:
+        script = ROOT / "scripts" / "install_skill.sh"
+        self.assertTrue(script.exists(), "missing scripts/install_skill.sh")
+        self.assertTrue(os.access(script, os.X_OK), f"{script} is not executable")
+        self.assertTrue((ROOT / "INSTALL.md").exists(), "missing INSTALL.md")
+
+    def _run_installer(self, target: str, mode: str, skills_dir: Path) -> subprocess.CompletedProcess:
+        env = dict(os.environ)
+        env["CLAUDE_SKILLS_DIR"] = str(skills_dir / "claude")
+        env["AGENTS_SKILLS_DIR"] = str(skills_dir / "agents")
+        args = [str(ROOT / "scripts" / "install_skill.sh"), target]
+        if mode:
+            args.append(mode)
+        return subprocess.run(
+            ["bash", *args],
+            cwd=str(ROOT),
+            env=env,
+            capture_output=True,
+            text=True,
+        )
+
+    def test_install_script_symlinks_into_skill_dirs(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            skills_dir = Path(temp_dir) / "skills"
+            result = self._run_installer("all", "", skills_dir)
+            self.assertEqual(result.returncode, 0, result.stderr)
+
+            for root in (skills_dir / "claude", skills_dir / "agents"):
+                skill = root / "offerpilot"
+                self.assertTrue((skill / "SKILL.md").is_symlink(), f"SKILL.md not symlinked in {root}")
+                self.assertTrue((skill / "skill-pack").is_symlink(), f"skill-pack not symlinked in {root}")
+                self.assertTrue((skill / "SKILL.md").exists(), f"SKILL.md broken in {root}")
+                self.assertTrue((skill / "skill-pack" / "WORKFLOW.md").exists())
+
+    def test_install_script_copy_mode_produces_standalone_copy(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            skills_dir = Path(temp_dir) / "skills"
+            result = self._run_installer("claude", "--copy", skills_dir)
+            self.assertEqual(result.returncode, 0, result.stderr)
+
+            skill = skills_dir / "claude" / "offerpilot"
+            self.assertFalse((skill / "SKILL.md").is_symlink())
+            self.assertFalse((skill / "skill-pack").is_symlink())
+            self.assertTrue((skill / "SKILL.md").is_file())
+            self.assertTrue((skill / "skill-pack" / "WORKFLOW.md").is_file())
+
+    def test_install_script_refuses_to_overwrite_plain_files(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            skills_dir = Path(temp_dir) / "skills"
+            existing = skills_dir / "claude" / "offerpilot"
+            existing.mkdir(parents=True)
+            (existing / "SKILL.md").write_text("# local\n", encoding="utf-8")
+
+            result = self._run_installer("claude", "", skills_dir)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("--force", result.stderr)
+            self.assertEqual(
+                (existing / "SKILL.md").read_text(encoding="utf-8"), "# local\n"
+            )
+
+            forced = self._run_installer("claude", "--force", skills_dir)
+            self.assertEqual(forced.returncode, 0, forced.stderr)
+            self.assertTrue((existing / "SKILL.md").is_symlink())
 
 
 if __name__ == "__main__":

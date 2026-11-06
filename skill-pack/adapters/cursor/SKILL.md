@@ -1,5 +1,5 @@
 ---
-name: offerpilot-cursor-adapter
+name: offerpilot
 description: Use the OfferPilot skill pack for profile datastore building, resume optimization, China-first JD fit diagnosis, targeted rewrites, structured evaluation, offer evaluation and negotiation, mock interview prep and debrief, product research, application tracking, multi-channel outreach, and cover letters in Cursor or other repository-local coding agents. Trigger on short intents like "按照 offerpilot 优化简历", "用 offerpilot 做 JD 匹配", or "/offerpilot ...".
 ---
 

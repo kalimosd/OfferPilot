@@ -1,5 +1,5 @@
 ---
-name: offerpilot-claude-code-adapter
+name: offerpilot
 description: Use the OfferPilot skill pack for profile datastore building, resume optimization, China-first JD fit diagnosis, targeted resumes, structured evaluation, offer evaluation and negotiation, mock interview prep and debrief, product research, application tracking, multi-channel outreach, and cover letters in Claude Code style repository agents. Trigger on short intents like "按照 offerpilot 优化简历", "用 offerpilot 做 JD 匹配", or "/offerpilot ...".
 ---
 

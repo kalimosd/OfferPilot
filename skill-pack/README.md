@@ -21,6 +21,8 @@ Use it when you want to build a personal material datastore, diagnose resumes, a
 4. Pick an adapter from `adapters/` if your agent supports repository-local skills
 5. Check `scripts/README.md` when local helper scripts are needed
 
+> **Installable skill:** the repository-root `SKILL.md` is the canonical Claude Code / Codex skill entry. See `../INSTALL.md` for `./scripts/install_skill.sh` usage, invocation names, and manual installation.
+
 ## What Is Inside
 
 - `WORKFLOW.md`: task flow, Minimal Read Graph, and checkpoints

@@ -256,6 +256,22 @@ python -m offerpilot.agent "run pipeline, scan last 14 days, recommend top 20 Ch
 
 Use `skill-pack/` when you want a portable workflow for an AI coding agent rather than the built-in OfferPilot agent.
 
+### Install as a Claude Code / Codex Skill
+
+The repository-root `SKILL.md` is the canonical skill entry point. Run:
+
+```bash
+./scripts/install_skill.sh claude   # installs to ~/.claude/skills/offerpilot
+./scripts/install_skill.sh codex    # installs to ~/.agents/skills/offerpilot
+./scripts/install_skill.sh all      # install both
+```
+
+- Claude Code: `/offerpilot optimize my resume`
+- Codex: `$offerpilot optimize my resume`, or the `/skills` picker
+- Copy mode: `./scripts/install_skill.sh all --copy`
+- Do not copy only `SKILL.md`; it references `skill-pack/`
+- Manual, project-local, and uninstall instructions: see `INSTALL.md`
+
 Recommended reading order:
 
 1. `skill-pack/WORKFLOW.md`
